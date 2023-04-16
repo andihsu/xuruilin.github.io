@@ -4,19 +4,19 @@
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
 
-a {
+.topurl {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-decoration: none;
     color: blue;
 }
 
-a:hover {
+.topurl:hover {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-decoration: underline;
     color: cornflowerblue;
 }
 
-a:visited {
+.topurl:visited {
     text-decoration: none;
     color: blue;
 }
