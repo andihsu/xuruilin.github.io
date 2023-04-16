@@ -24,7 +24,7 @@ a:visited {
 .mmurl {
     text-decoration: none;
     color: white;
-    float: right;
+    text-align: right;
 }
 
 .mmurl:hover {
