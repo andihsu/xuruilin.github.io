@@ -1,38 +1,22 @@
-.toptitle {
+a {
     font-size: 50px;
     text-align: center;
     font-family: Tahoma, Verdana, Arial, sans-serif;
 }
 
-.topurl {
+a {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-decoration: none;
     color: blue;
 }
 
-.topurl:hover {
+a:hover {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-decoration: underline;
     color: cornflowerblue;
 }
 
-.topurl:visited {
+a:visited {
     text-decoration: none;
     color: blue;
-}
-
-.mmurl {
-    text-decoration: none;
-    color: white;
-    text-align: right;
-}
-
-.mmurl:hover {
-    text-decoration: underline;
-    color: black;
-}
-
-.mmurl:visited {
-    text-decoration: none;
-    color: white;
 }
