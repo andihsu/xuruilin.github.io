@@ -1,0 +1,678 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>JavaSE 笔记（六）集合类与IO</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="6fdfdd41-6b43-4114-9b96-5e2daee98759" class="page mono"><header><h1 class="page-title">JavaSE 笔记（六）集合类与IO</h1><p class="page-description"></p></header><div class="page-body"><figure id="9aac899a-be70-45f3-ac5a-74cdeabb3048" class="image"><a href="https://s2.loli.net/2022/10/04/SkAn9RQpqC4tVW5.png"><img src="https://s2.loli.net/2022/10/04/SkAn9RQpqC4tVW5.png"/></a></figure><p id="6fafb4dc-9c36-4c10-9c76-7885dfc71c91" class="">image-20221004131436371</p><h1 id="e297e48e-aad7-4ee6-80f5-1e7f2d350f64" class="">集合类与IO</h1><p id="5c3236fd-497d-4b6f-9c55-870b6c81a429" class="">前面我们已经把基础介绍完了，从这节课开始，我们就正式进入到集合类的讲解中。</p><h2 id="73aa1ec1-2510-4a0d-985a-30488284213d" class="">集合类</h2><p id="5e30a5a5-04cf-4dbe-acb8-435497207105" class="">集合类是Java中非常重要的存在，使用频率极高。集合其实与我们数学中的集合是差不多的概念，集合表示一组对象，每一个对象我们都可以称其为元素。不同的集合有着不同的性质，比如一些集合允许重复的元素，而另一些则不允许，一些集合是有序的，而其他则是无序的。</p><figure id="34b4e051-ceae-4989-b835-fe21e392eedd" class="image"><a href="https://s2.loli.net/2022/09/30/ZWxPduaYGgRzmNO.png"><img src="https://s2.loli.net/2022/09/30/ZWxPduaYGgRzmNO.png"/></a></figure><p id="45935b5f-4e94-4b0b-95c1-9847c1ef7249" class="">image-20220930233059528</p><p id="6e5069da-967a-48dc-a5d5-f67dafcb1f36" class="">集合类其实就是为了更好地组织、管理和操作我们的数据而存在的，包括列表、集合、队列、映射等数据结构。从这一块开始，我们会从源码角度给大家讲解（先从接口定义对于集合需要实现哪些功能开始说起，包括这些集合类的底层机制是如何运作的）不仅仅是教会大家如何去使用。</p><p id="b2020f72-6431-4c0a-93b4-d20d4c943170" class="">集合跟数组一样，可以表示同样的一组元素，但是他们的相同和不同之处在于：</p><ol type="1" id="836453f5-2a0d-4a62-bcaa-8ace9cb09fd2" class="numbered-list" start="1"><li>它们都是容器，都能够容纳一组元素。</li></ol><p id="047e1926-5c37-4637-b60c-e8c114f1c0f1" class="">不同之处：</p><ol type="1" id="1b4023d1-7813-4234-a911-852e57f09636" class="numbered-list" start="1"><li>数组的大小是固定的，集合的大小是可变的。</li></ol><ol type="1" id="479f974b-4244-4cfb-b0aa-5e4e3c66095b" class="numbered-list" start="2"><li>数组可以存放基本数据类型，但集合只能存放对象。</li></ol><ol type="1" id="6f8893a3-bba7-4f5a-bec3-cfdcac8a7260" class="numbered-list" start="3"><li>数组存放的类型只能是一种，但集合可以有不同种类的元素。</li></ol><h3 id="b411dae0-044a-470c-8163-ea099ae43b7d" class="">集合根接口</h3><p id="e2616dd4-2ca3-4e82-af31-89a9303ecca1" class="">Java中已经帮我们将常用的集合类型都实现好了，我们只需要直接拿来用就行了，比如我们之前学习的顺序表：</p><pre id="c2e5562f-1420-4a2e-8f9f-3be52a64f7b4" class="code code-wrap"><code>import java.util.ArrayList;   //集合类基本都是在java.util包下定义的public class Main {    public static void main(String[] args) {        ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();        list.add(&quot;树脂666&quot;);    }}</code></pre><p id="3f04b8cd-5935-44a8-8a0f-8a253959794f" class="">当然，我们会在这一部分中认识大部分Java为我们提供的集合类。所有的集合类最终都是实现自集合根接口的，比如我们下面就会讲到的ArrayList类，它的祖先就是Collection接口：</p><figure id="6a0e7de3-7b68-459c-a5fc-117371d036c0" class="image"><a href="https://s2.loli.net/2022/09/30/U9DdJinhCp6BITe.png"><img src="https://s2.loli.net/2022/09/30/U9DdJinhCp6BITe.png"/></a></figure><p id="06cc2f1d-6077-4704-a29a-8b7fe25b8518" class="">image-20220930232759715</p><p id="97d6a740-e32c-4213-8654-1eb660d13512" class="">这个接口定义了集合类的一些基本操作，我们来看看有哪些方法：</p><pre id="bf758006-934e-4ede-bd8e-d4e2eb2970ec" class="code code-wrap"><code>public interface Collection&lt;E&gt; extends Iterable&lt;E&gt; {    //-------这些是查询相关的操作----------    //获取当前集合中的元素数量    int size();    //查看当前集合是否为空    boolean isEmpty();    //查询当前集合中是否包含某个元素    boolean contains(Object o);    //返回当前集合的迭代器，我们会在后面介绍    Iterator&lt;E&gt; iterator();    //将集合转换为数组的形式    Object[] toArray();    //支持泛型的数组转换，同上    &lt;T&gt; T[] toArray(T[] a);    //-------这些是修改相关的操作----------    //向集合中添加元素，不同的集合类具体实现可能会对插入的元素有要求，    //这个操作并不是一定会添加成功，所以添加成功返回true，否则返回false    boolean add(E e);    //从集合中移除某个元素，同样的，移除成功返回true，否则false    boolean remove(Object o);    //-------这些是批量执行的操作----------    //查询当前集合是否包含给定集合中所有的元素    //从数学角度来说，就是看给定集合是不是当前集合的子集    boolean containsAll(Collection&lt;?&gt; c);    //添加给定集合中所有的元素    //从数学角度来说，就是将当前集合变成当前集合与给定集合的并集    //添加成功返回true，否则返回false    boolean addAll(Collection&lt;? extends E&gt; c);    //移除给定集合中出现的所有元素，如果某个元素在当前集合中不存在，那么忽略这个元素    //从数学角度来说，就是求当前集合与给定集合的差集    //移除成功返回true，否则false    boolean removeAll(Collection&lt;?&gt; c);    //Java8新增方法，根据给定的Predicate条件进行元素移除操作    default boolean removeIf(Predicate&lt;? super E&gt; filter) {        Objects.requireNonNull(filter);        boolean removed = false;        final Iterator&lt;E&gt; each = iterator();   //这里用到了迭代器，我们会在后面进行介绍        while (each.hasNext()) {            if (filter.test(each.next())) {                each.remove();                removed = true;            }        }        return removed;    }    //只保留当前集合中在给定集合中出现的元素，其他元素一律移除    //从数学角度来说，就是求当前集合与给定集合的交集    //移除成功返回true，否则false    boolean retainAll(Collection&lt;?&gt; c);    //清空整个集合，删除所有元素    void clear();    //-------这些是比较以及哈希计算相关的操作----------    //判断两个集合是否相等    boolean equals(Object o);    //计算当前整个集合对象的哈希值    int hashCode();    //与迭代器作用相同，但是是并行执行的，我们会在下一章多线程部分中进行介绍    @Override    default Spliterator&lt;E&gt; spliterator() {        return Spliterators.spliterator(this, 0);    }    //生成当前集合的流，我们会在后面进行讲解    default Stream&lt;E&gt; stream() {        return StreamSupport.stream(spliterator(), false);    }    //生成当前集合的并行流，我们会在下一章多线程部分中进行介绍    default Stream&lt;E&gt; parallelStream() {        return StreamSupport.stream(spliterator(), true);    }}</code></pre><p id="6c8f628d-81ce-41cf-9f8f-f1ebdec2b128" class="">可以看到，在这个接口中对于集合相关的操作，还是比较齐全的，那么我们接着就来看看它的实现类。</p><h3 id="084871e3-8c73-4929-8c0d-e0983db61b36" class="">List列表</h3><p id="bcaaaa37-88ce-4741-a69f-3739da66c5bb" class="">首先我们需要介绍的是List列表（线性表），线性表支持随机访问，相比之前的Collection接口定义，功能还会更多一些。首先介绍ArrayList，我们已经知道，它的底层是用数组实现的，内部维护的是一个可动态进行扩容的数组，也就是我们之前所说的顺序表，跟我们之前自己写的ArrayList相比，它更加的规范，并且功能更加强大，同时实现自List接口。</p><figure id="ee97e441-0787-4538-a1c9-39858950133d" class="image"><a href="https://s2.loli.net/2022/09/30/U9DdJinhCp6BITe.png"><img src="https://s2.loli.net/2022/09/30/U9DdJinhCp6BITe.png"/></a></figure><p id="06e6b7bd-95a3-40a9-bffc-f8238e0b5f6c" class="">image-20220930232759715</p><p id="094c5175-465a-415b-813a-35f82511d4ca" class="">List是集合类型的一个分支，它的主要特性有：</p><ul id="92403189-59c5-4dea-be41-8c668a79e7d7" class="bulleted-list"><li style="list-style-type:disc">是一个有序的集合，插入元素默认是插入到尾部，按顺序从前往后存放，每个元素都有一个自己的下标位置</li></ul><ul id="d196a452-a14a-409c-9bcb-89d15693517e" class="bulleted-list"><li style="list-style-type:disc">列表中允许存在重复元素</li></ul><p id="8d0eb4a7-f44d-4ea3-993d-f1e11de68471" class="">在List接口中，定义了列表类型需要支持的全部操作，List直接继承自前面介绍的Collection接口，其中很多地方重新定义了一次Collection接口中定义的方法，这样做是为了更加明确方法的具体功能，当然，为了直观，我们这里就省略掉：</p><pre id="cde54342-59ee-4c0a-be1a-26c53f27ef85" class="code code-wrap"><code>//List是一个有序的集合类，每个元素都有一个自己的下标位置//List中可插入重复元素//针对于这些特性，扩展了Collection接口中一些额外的操作public interface List&lt;E&gt; extends Collection&lt;E&gt; {    ...    //将给定集合中所有元素插入到当前结合的给定位置上（后面的元素就被挤到后面去了，跟我们之前顺序表的插入是一样的）    boolean addAll(int index, Collection&lt;? extends E&gt; c);    ...    //Java 8新增方法，可以对列表中每个元素都进行处理，并将元素替换为处理之后的结果    default void replaceAll(UnaryOperator&lt;E&gt; operator) {        Objects.requireNonNull(operator);        final ListIterator&lt;E&gt; li = this.listIterator();  //这里同样用到了迭代器        while (li.hasNext()) {            li.set(operator.apply(li.next()));        }    }    //对当前集合按照给定的规则进行排序操作，这里同样只需要一个Comparator就行了    @SuppressWarnings({&quot;unchecked&quot;, &quot;rawtypes&quot;})    default void sort(Comparator&lt;? super E&gt; c) {        Object[] a = this.toArray();        Arrays.sort(a, (Comparator) c);        ListIterator&lt;E&gt; i = this.listIterator();        for (Object e : a) {            i.next();            i.set((E) e);        }    }    ...    //-------- 这些是List中独特的位置直接访问操作 --------    //获取对应下标位置上的元素    E get(int index);    //直接将对应位置上的元素替换为给定元素    E set(int index, E element);    //在指定位置上插入元素，就跟我们之前的顺序表插入是一样的    void add(int index, E element);    //移除指定位置上的元素    E remove(int index);    //------- 这些是List中独特的搜索操作 -------    //查询某个元素在当前列表中的第一次出现的下标位置    int indexOf(Object o);    //查询某个元素在当前列表中的最后一次出现的下标位置    int lastIndexOf(Object o);    //------- 这些是List的专用迭代器 -------    //迭代器我们会在下一个部分讲解    ListIterator&lt;E&gt; listIterator();    //迭代器我们会在下一个部分讲解    ListIterator&lt;E&gt; listIterator(int index);    //------- 这些是List的特殊转换 -------    //返回当前集合在指定范围内的子集    List&lt;E&gt; subList(int fromIndex, int toIndex);    ...}</code></pre><p id="647781c5-0045-4722-b0ab-6b521e351cb9" class="">可以看到，在List接口中，扩展了大量列表支持的操作，其中最突出的就是直接根据下标位置进行的增删改查操作。而在ArrayList中，底层就是采用数组实现的，跟我们之前的顺序表思路差不多：</p><pre id="99b38b41-5fd1-499a-96dd-aa690bb5954e" class="code code-wrap"><code>public class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt;        implements List&lt;E&gt;, RandomAccess, Cloneable, java.io.Serializable{    //默认的数组容量    private static final int DEFAULT_CAPACITY = 10;    ...    //存放数据的底层数组，这里的transient关键字我们会在后面I/O中介绍用途    transient Object[] elementData;    //记录当前数组元素数的    private int size;    //这是ArrayList的其中一个构造方法    public ArrayList(int initialCapacity) {        if (initialCapacity &gt; 0) {            this.elementData = new Object[initialCapacity];   //根据初始化大小，创建当前列表        } else if (initialCapacity == 0) {            this.elementData = EMPTY_ELEMENTDATA;        } else {            throw new IllegalArgumentException(&quot;Illegal Capacity: &quot;+                                               initialCapacity);        }    }    ...    public boolean add(E e) {        ensureCapacityInternal(size + 1);  // 这里会判断容量是否充足，不充足需要扩容        elementData[size++] = e;        return true;    }    ...    //默认的列表最大长度为Integer.MAX_VALUE - 8    //JVM都C++实现中，在数组的对象头中有一个_length字段，用于记录数组的长    //度，所以这个8就是存了数组_length字段（这个只做了解就行）        private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;    private void grow(int minCapacity) {        int oldCapacity = elementData.length;        int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);   //扩容规则跟我们之前的是一样的，也是1.5倍        if (newCapacity - minCapacity &lt; 0)    //要是扩容之后的大小还没最小的大小大，那么直接扩容到最小的大小            newCapacity = minCapacity;        if (newCapacity - MAX_ARRAY_SIZE &gt; 0)   //要是扩容之后比最大的大小还大，需要进行大小限制            newCapacity = hugeCapacity(minCapacity);  //调整为限制的大小        elementData = Arrays.copyOf(elementData, newCapacity);   //使用copyOf快速将内容拷贝到扩容后的新数组中并设定为新的elementData底层数组    }}</code></pre><p id="45fe734b-5f23-47c0-a393-81c318d7fb72" class="">一般的，如果我们要使用一个集合类，我们会使用接口的引用：</p><pre id="47ace7ca-e677-48cb-936d-c5cc101d9138" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;();   //使用接口的引用来操作具体的集合类实现，是为了方便日后如果我们想要更换不同的集合类实现，而且接口中本身就已经定义了主要的方法，所以说没必要直接用实现类    list.add(&quot;科技与狠活&quot;);   //使用add添加元素    list.add(&quot;上头啊&quot;);    System.out.println(list);   //打印集合类，可以得到一个非常规范的结果}</code></pre><p id="1b8e8f89-383d-467c-acf5-64522770e8e4" class="">可以看到，打印集合类的效果，跟我们使用Arrays工具类是一样的：</p><figure id="30b0b6f5-208a-46b6-8901-110370518752" class="image"><a href="https://s2.loli.net/2022/10/01/v3uzfnhamXV5St8.png"><img src="https://s2.loli.net/2022/10/01/v3uzfnhamXV5St8.png"/></a></figure><p id="3783454e-cbf6-4ddd-9fad-413dbaab6866" class="">image-20221001002151164</p><p id="391d53cc-7a13-4990-8321-c7761bb30a7a" class="">集合的各种功能我们都可以来测试一下，特别注意一下，我们在使用Integer时，要注意传参问题：</p><pre id="fbb8d0d4-82c8-4139-9a8f-e553450e4dfc" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(10);   //添加Integer的值10    list.remove((Integer) 10);   //注意，不能直接用10，默认情况下会认为传入的是int类型值，删除的是下标为10的元素，我们这里要删除的是刚刚传入的值为10的Integer对象    System.out.println(list);   //可以看到，此时元素成功被移除}</code></pre><p id="6333d305-aeaa-43f3-8365-bf246fc79b69" class="">那要是这样写呢？</p><pre id="4bbdde39-ac72-4a31-9edb-c1afed4000d6" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(new Integer(10));   //添加的是一个对象    list.remove(new Integer(10));   //删除的是另一个对象    System.out.println(list);}</code></pre><p id="5d4bf2e7-c9cd-4cca-b9e7-58411b01c0d5" class="">可以看到，结果依然是删除成功，这是因为集合类在删除元素时，只会调用<code>equals</code>方法进行判断是否为指定元素，而不是进行等号判断，所以说一定要注意，如果两个对象使用<code>equals</code>方法相等，那么集合中就是相同的两个对象：</p><pre id="59339c9f-99f5-4b07-a664-9b5a0f9351c3" class="code code-wrap"><code>//ArrayList源码部分public boolean remove(Object o) {    if (o == null) {        ...    } else {        for (int index = 0; index &lt; size; index++)            if (o.equals(elementData[index])) {   //这里只是对两个对象进行equals判断                fastRemove(index);                return true;  //只要判断成功，直接认为就是要删除的对象，删除就完事            }    }    return false;}</code></pre><p id="32729f9e-31ca-4e09-bf4f-57821ea99d64" class="">列表中允许存在相同元素，所以说我们可以添加两个一模一样的：</p><pre id="63ab64bf-554f-4f0b-a1ff-91f0a48a1df8" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;();    String str = &quot;哟唉嘛干你&quot;;    list.add(str);    list.add(str);    System.out.println(list);}</code></pre><figure id="b3d70ab5-459b-43f2-907f-5648b140cf33" class="image"><a href="https://s2.loli.net/2022/10/01/paeKLsGntNVfHPT.png"><img src="https://s2.loli.net/2022/10/01/paeKLsGntNVfHPT.png"/></a></figure><p id="78f1db5c-6083-45d2-acd9-05e3bf13f680" class="">image-20221001231509926</p><p id="27058597-ef66-4b79-8a51-2a95ec28ba69" class="">那要是此时我们删除对象呢，是一起删除还是只删除一个呢？</p><pre id="d86600d8-c79f-473c-9da8-cd396ccac8b7" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;();    String str = &quot;哟唉嘛干你&quot;;    list.add(str);    list.add(str);    list.remove(str);    System.out.println(list);}</code></pre><figure id="c8d4204d-c244-4bff-bb94-20cf5e391b55" class="image"><a href="https://s2.loli.net/2022/10/01/5HdFh74wlqbMoj6.png"><img src="https://s2.loli.net/2022/10/01/5HdFh74wlqbMoj6.png"/></a></figure><p id="7cc99877-fb91-432c-9f19-3824301c809b" class="">image-20221001231619391</p><p id="f2d93f34-bc8e-48e7-adb5-942e79fc7b05" class="">可以看到，这种情况下，只会删除排在前面的第一个元素。</p><p id="52c30e0b-b11f-4dc4-bce6-8fc1d846ee5d" class="">集合类是支持嵌套使用的，一个集合中可以存放多个集合，套娃嘛，谁不会：</p><pre id="4260f859-6753-4832-82ca-495ed5834b40" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;List&lt;String&gt;&gt; list = new LinkedList&lt;&gt;();    list.add(new LinkedList&lt;&gt;());   //集合中的每一个元素就是一个集合，这个套娃是可以一直套下去的    System.out.println(list.get(0).isEmpty());}</code></pre><p id="c6b11403-040a-4ca2-bd5f-8a71f11c117b" class="">在Arrays工具类中，我们可以快速生成一个只读的List：</p><pre id="c3d482ce-c2ef-4bd0-9906-11d3909a0630" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);   //非常方便    System.out.println(list);}</code></pre><p id="20d4a924-1a5f-46c8-8501-33eaab45729c" class="">注意，这个生成的List是只读的，不能进行修改操作，只能使用获取内容相关的方法，否则抛出 UnsupportedOperationException 异常。要生成正常使用的，我们可以将这个只读的列表作为参数传入：</p><pre id="2c3f942a-6d37-4586-91d1-aa9276742c86" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;(Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;));    System.out.println(list);}</code></pre><p id="f95cbb39-5a1b-4b0d-ada5-148a97e5aa1b" class="">当然，也可以利用静态代码块：</p><pre id="9543d156-a501-469f-8399-0fc1c512847c" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;String&gt;() {{   //使用匿名内部类（匿名内部类在Java8无法使用钻石运算符，但是之后的版本可以）            add(&quot;A&quot;);            add(&quot;B&quot;);            add(&quot;C&quot;);    }};    System.out.println(list);}</code></pre><p id="bbae1476-136e-4e16-a614-40c6437bea56" class="">这里我们接着介绍另一个列表实现类，LinkedList同样是List的实现类，只不过它是采用的链式实现，也就是我们之前讲解的链表，只不过它是一个双向链表，也就是同时保存两个方向：</p><pre id="d13682b1-dffe-406f-99dd-1724fdbc3dfe" class="code code-wrap"><code>public class LinkedList&lt;E&gt;    extends AbstractSequentialList&lt;E&gt;    implements List&lt;E&gt;, Deque&lt;E&gt;, Cloneable, java.io.Serializable{    transient int size = 0;    //引用首结点    transient Node&lt;E&gt; first;    //引用尾结点    transient Node&lt;E&gt; last;    //构造方法，很简单，直接创建就行了    public LinkedList() {    }    ...    private static class Node&lt;E&gt; {   //内部使用的结点类        E item;        Node&lt;E&gt; next;   //不仅保存指向下一个结点的引用，还保存指向上一个结点的引用        Node&lt;E&gt; prev;        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) {            this.item = element;            this.next = next;            this.prev = prev;        }    }    ...}</code></pre><p id="e875e1ad-006d-4dfb-a7a7-51244c799cb1" class="">LinkedList的使用和ArrayList的使用几乎相同，各项操作的结果也是一样的，在什么使用使用ArrayList和LinkedList，我们需要结合具体的场景来决定，尽可能的扬长避短。</p><p id="7fc31593-1c79-4028-9df0-0c8ca239d26c" class="">只不过LinkedList不仅可以当做List来使用，也可以当做双端队列使用，我们会在后面进行详细介绍。</p><h3 id="1e800a95-58b9-4543-9c9b-a50fac2aa5c0" class="">迭代器</h3><p id="abff917f-e496-42be-9885-f122982055ce" class="">我们接着来介绍迭代器，实际上我们的集合类都是支持使用<code>foreach</code>语法的：</p><pre id="66de76ec-3231-44c6-820d-f61f9ce0997b" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    for (String s : list) {   //集合类同样支持这种语法        System.out.println(s);    }}</code></pre><p id="c8e0abcd-462c-46a0-9a5d-a2897df0a470" class="">但是由于仅仅是语法糖，实际上编译之后：</p><pre id="24068a62-85b4-4249-b9b3-8b94069b0f7f" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    Iterator var2 = list.iterator();   //这里使用的是List的迭代器在进行遍历操作    while(var2.hasNext()) {        String s = (String)var2.next();        System.out.println(s);    }}</code></pre><p id="80d69eb6-f149-4dd1-a1ac-3b7e687d42a9" class="">那么这个迭代器是一个什么东西呢？我们来研究一下：</p><pre id="d2de3c83-3b7f-4516-9a77-83aa5e8bd4eb" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    //通过调用iterator方法快速获取当前集合的迭代器    //Iterator迭代器本身也是一个接口，由具体的集合实现类来根据情况实现    Iterator&lt;String&gt; iterator = list.iterator();}</code></pre><p id="cf1ac89c-346b-4010-9c60-b39469fbb53e" class="">通过使用迭代器，我们就可以实现对集合中的元素的进行遍历，就像我们遍历数组那样，它的运作机制大概是：</p><figure id="72c4e687-5698-4442-b5a4-7c1ea3afd433" class="image"><a href="https://s2.loli.net/2022/10/02/8KS5jbTv7LoAVOs.png"><img src="https://s2.loli.net/2022/10/02/8KS5jbTv7LoAVOs.png"/></a></figure><p id="615d2b5b-af20-469e-91e7-09a3fd1c89ff" class="">image-20221002150914323</p><p id="9bd394b6-c474-4eb4-9819-3f995b8a084f" class="">一个新的迭代器就像上面这样，默认有一个指向集合中第一个元素的指针：</p><figure id="b1a5d282-5f21-44fd-9571-566d469cdce4" class="image"><a href="https://s2.loli.net/2022/10/02/HxjfipVB9TlEbz5.png"><img src="https://s2.loli.net/2022/10/02/HxjfipVB9TlEbz5.png"/></a></figure><p id="4ccb7d62-e64b-44b6-ab1d-22efc49f4069" class="">image-20221002151110991</p><p id="30f7059b-827a-4bde-8aa4-43e3572a3aa2" class="">每一次<code>next</code>操作，都会将指针后移一位，直到完成每一个元素的遍历，此时再调用<code>next</code>将不能再得到下一个元素。至于为什么要这样设计，是因为集合类的实现方案有很多，可能是链式存储，也有可能是数组存储，不同的实现有着不同的遍历方式，而迭代器则可以将多种多样不同的集合类遍历方式进行统一，只需要各个集合类根据自己的情况进行对应实现就行了。</p><p id="884ae0e1-2ea0-4ef3-8eef-30de233800e7" class="">我们来看看这个接口的源码定义了哪些操作：</p><pre id="5af64e82-b1e9-4a9c-a891-2a9ebb3f2937" class="code code-wrap"><code>public interface Iterator&lt;E&gt; {    //看看是否还有下一个元素    boolean hasNext();    //遍历当前元素，并将下一个元素作为待遍历元素    E next();    //移除上一个被遍历的元素（某些集合不支持这种操作）    default void remove() {        throw new UnsupportedOperationException(&quot;remove&quot;);    }    //对剩下的元素进行自定义遍历操作    default void forEachRemaining(Consumer&lt;? super E&gt; action) {        Objects.requireNonNull(action);        while (hasNext())            action.accept(next());    }}</code></pre><p id="768bb550-b232-4835-9b15-21b1f4f31ac7" class="">在ArrayList和LinkedList中，迭代器的实现也不同，比如ArrayList就是直接按下标访问：</p><pre id="e199d2ef-ec4d-44d1-a103-53fd5f89d78c" class="code code-wrap"><code>public E next() {    ...    cursor = i + 1;   //移动指针    return (E) elementData[lastRet = i];  //直接返回指针所指元素}</code></pre><p id="fc1f9d80-2067-4530-b04e-0a4dc6f5fab0" class="">LinkedList就是不断向后寻找结点：</p><pre id="6633cb41-af33-46e6-b9c6-d40c2f73cfaa" class="code code-wrap"><code>public E next() {    ...    next = next.next;   //向后继续寻找结点    nextIndex++;    return lastReturned.item;  //返回结点内部存放的元素}</code></pre><p id="ea57f0ce-692c-42f1-8a42-89e3eabd90b6" class="">虽然这两种列表的实现不同，遍历方式也不同，但是都是按照迭代器的标准进行了实现，所以说，我们想要遍历一个集合中所有的元素，那么就可以直接使用迭代器来完成，而不需要关心集合类是如何实现，我们该怎么去遍历：</p><pre id="74ca076c-928d-433b-9948-9f19bf2d34b5" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    Iterator&lt;String&gt; iterator = list.iterator();    while (iterator.hasNext()) {    //每次循环一定要判断是否还有元素剩余        System.out.println(iterator.next());  //如果有就可以继续获取到下一个元素    }}</code></pre><p id="37af3a50-b4bb-418c-a332-6f9c6393d76b" class="">注意，迭代器的使用是一次性的，用了之后就不能用了，如果需要再次进行遍历操作，那么需要重新生成一个迭代器对象。为了简便，我们可以直接使用<code>foreach</code>语法来快速遍历集合类，效果是完全一样的：</p><pre id="0423e17d-872b-4e1e-b0a0-cbd0220dc24e" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    for (String s : list) {        System.out.println(s);    }}</code></pre><p id="c43bb604-d5a1-43de-b360-03f12958bbb2" class="">在Java8提供了一个支持Lambda表达式的forEach方法，这个方法接受一个Consumer，也就是对遍历的每一个元素进行的操作：</p><pre id="f1f12e8b-d0fb-4f54-835e-a8909dd5167a" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);    list.forEach(System.out::println);}</code></pre><p id="81bea2cd-f878-45bc-abf3-f989725114b3" class="">这个效果跟上面的写法是完全一样的，因为forEach方法内部本质上也是迭代器在处理，这个方法是在Iterable接口中定义的：</p><pre id="992a0f72-eab0-432e-8fb2-0347d8d84340" class="code code-wrap"><code>default void forEach(Consumer&lt;? super T&gt; action) {    Objects.requireNonNull(action);    for (T t : this) {   //foreach语法遍历每一个元素        action.accept(t);   //调用Consumer的accept来对每一个元素进行消费    }}</code></pre><p id="823a212d-685f-4478-8cb3-c08e850eb5d8" class="">那么我们来看一下，Iterable这个接口又是是什么东西？</p><figure id="85859852-cf10-45f5-ac86-407ce2086d8b" class="image"><a href="https://s2.loli.net/2022/10/02/4ShtiO6kdIcwZ85.png"><img src="https://s2.loli.net/2022/10/02/4ShtiO6kdIcwZ85.png"/></a></figure><p id="c3060dda-93da-480e-a71f-4b0e2682c0cd" class="">image-20221002152713622</p><p id="39355705-9770-4676-80bf-a2d8f189b816" class="">我们来看看定义了哪些内容：</p><pre id="e9503257-0b6a-4aee-8d29-0c00b495d80b" class="code code-wrap"><code>//注意这个接口是集合接口的父接口，不要跟之前的迭代器接口搞混了public interface Iterable&lt;T&gt; {    //生成当前集合的迭代器，在Collection接口中重复定义了一次    Iterator&lt;T&gt; iterator();    //Java8新增方法，因为是在顶层接口中定义的，因此所有的集合类都有这个方法    default void forEach(Consumer&lt;? super T&gt; action) {        Objects.requireNonNull(action);        for (T t : this) {            action.accept(t);        }    }    //这个方法会在多线程部分中进行介绍，暂时不做讲解    default Spliterator&lt;T&gt; spliterator() {        return Spliterators.spliteratorUnknownSize(iterator(), 0);    }}</code></pre><p id="a3124ae5-8f3b-4dc7-9dd7-33bd1eca6bd7" class="">得益于Iterable提供的迭代器生成方法，实际上只要是实现了迭代器接口的类（我们自己写的都行），都可以使用<code>foreach</code>语法：</p><pre id="14769172-1042-47cd-bd66-dad6d436bcf9" class="code code-wrap"><code>public class Test implements Iterable&lt;String&gt;{   //这里我们随便写一个类，让其实现Iterable接口    @Override    public Iterator&lt;String&gt; iterator() {        return new Iterator&lt;String&gt;() {   //生成一个匿名的Iterator对象            @Override            public boolean hasNext() {   //这里随便写的，直接返回true，这将会导致无限循环                return true;            }            @Override            public String next() {   //每次就直接返回一个字符串吧                return &quot;测试&quot;;            }        };    }}</code></pre><p id="30ad6032-dcf3-440e-ae33-93e2f5dd1589" class="">可以看到，直接就支持这种语法了，虽然我们这个是自己写的，并不是集合类：</p><pre id="e3642621-b11b-4fc3-8afb-89b38354aaae" class="code code-wrap"><code>public static void main(String[] args) {    Test test = new Test();    for (String s : test) {        System.out.println(s);    }}</code></pre><figure id="b74b91e8-171d-44ca-967b-98ba9ac6f152" class="image"><a href="https://s2.loli.net/2022/10/02/KejcFB8TChE5z4o.png"><img src="https://s2.loli.net/2022/10/02/KejcFB8TChE5z4o.png"/></a></figure><p id="79a27051-c6b8-4aca-849d-8db5d4222444" class="">image-20221002154018319</p><p id="ed5e2d38-5b78-4900-b798-6d5a0da53979" class="">是不是感觉集合类的设计非常巧妙？</p><p id="c636d2aa-8149-4876-ab9a-8be6e74ac54a" class="">我们这里再来介绍一下ListIterator，这个迭代器是针对于List的强化版本，增加了更多方便的操作，因为List是有序集合，所以它支持两种方向的遍历操作，不仅能从前向后，也可以从后向前：</p><pre id="701c393c-15d1-4388-9b7a-1b5b7cee8fa8" class="code code-wrap"><code>public interface ListIterator&lt;E&gt; extends Iterator&lt;E&gt; {    //原本就有的    boolean hasNext();    //原本就有的    E next();    //查看前面是否有已经遍历的元素    boolean hasPrevious();    //跟next相反，这里是倒着往回遍历    E previous();    //返回下一个待遍历元素的下标    int nextIndex();    //返回上一个已遍历元素的下标    int previousIndex();    //原本就有的    void remove();    //将上一个已遍历元素修改为新的元素    void set(E e);    //在遍历过程中，插入新的元素到当前待遍历元素之前    void add(E e);}</code></pre><p id="507abb09-3eb2-456e-a116-7e7ecf1bd48b" class="">我们来测试一下吧：</p><pre id="baad55d2-6dd0-4105-b306-83143dca3192" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;(Arrays.asList(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;));    ListIterator&lt;String&gt; iterator = list.listIterator();    iterator.next();   //此时得到A    iterator.set(&quot;X&quot;);  //将A原本位置的上的元素设定为成新的    System.out.println(list);}</code></pre><figure id="ecd7446c-1e3a-47fe-acce-f308b2ea8c20" class="image"><a href="https://s2.loli.net/2022/10/02/C3xNDTEWGaPLfO6.png"><img src="https://s2.loli.net/2022/10/02/C3xNDTEWGaPLfO6.png"/></a></figure><p id="e15b846a-6ffe-4cb0-a93e-61df03858fc3" class="">image-20221002154844743</p><p id="f3e06afd-dbba-4d16-b150-0303fe8dc0c4" class="">这种迭代器因为能够双向遍历，所以说可以反复使用。</p><h3 id="82c3c040-ef5d-4350-ba59-93afacabefb0" class="">Queue和Deque</h3><p id="cd577e38-ac5b-4a13-ab1d-49c5853e141b" class="">通过前面的学习，我们已经了解了List的使用，其中LinkedList除了可以直接当做列表使用之外，还可以当做其他的数据结构使用，可以看到它不仅仅实现了List接口：</p><pre id="20629b21-4ba0-48e3-bf9a-4af50d58d9b9" class="code code-wrap"><code>public class LinkedList&lt;E&gt;    extends AbstractSequentialList&lt;E&gt;    implements List&lt;E&gt;, Deque&lt;E&gt;, Cloneable, java.io.Serializable{</code></pre><p id="aa80c6d4-fd5a-4c19-82fe-fdac1dcd04e7" class="">这个Deque接口是干嘛的呢？我们先来看看它的继承结构：</p><figure id="792d940c-66a9-42d2-82be-0ace516c2a87" class="image"><a href="https://s2.loli.net/2022/10/02/sCMgv9rl5b743BE.png"><img src="https://s2.loli.net/2022/10/02/sCMgv9rl5b743BE.png"/></a></figure><p id="f5fcbf33-cae3-4266-b1e6-1bfe71cb8804" class="">image-20221002162108279</p><p id="7e138052-19ce-4268-ab9c-243bd420cdd2" class="">我们先来看看队列接口，它扩展了大量队列相关操作：</p><pre id="71acf172-14b0-4442-8009-4a4050c4076d" class="code code-wrap"><code>public interface Queue&lt;E&gt; extends Collection&lt;E&gt; {    //队列的添加操作，是在队尾进行插入（只不过List也是一样的，默认都是尾插）    //如果插入失败，会直接抛出异常    boolean add(E e);    //同样是添加操作，但是插入失败不会抛出异常    boolean offer(E e);    //移除队首元素，但是如果队列已经为空，那么会抛出异常    E remove();    //同样是移除队首元素，但是如果队列为空，会返回null    E poll();    //仅获取队首元素，不进行出队操作，但是如果队列已经为空，那么会抛出异常    E element();    //同样是仅获取队首元素，但是如果队列为空，会返回null    E peek();}</code></pre><p id="fb025d5a-c9be-41fe-9642-46f411c126d5" class="">我们可以直接将一个LinkedList当做一个队列来使用：</p><pre id="d799c385-7462-42ae-87a9-15e289fd7dfa" class="code code-wrap"><code>public static void main(String[] args) {    Queue&lt;String&gt; queue = new LinkedList&lt;&gt;();   //当做队列使用，还是很方便的    queue.offer(&quot;AAA&quot;);    queue.offer(&quot;BBB&quot;);    System.out.println(queue.poll());    System.out.println(queue.poll());}</code></pre><figure id="59ae96db-a89a-47a5-8a71-a78ef3b56c18" class="image"><a href="https://s2.loli.net/2022/10/02/veHxlUkKyVYErgm.png"><img src="https://s2.loli.net/2022/10/02/veHxlUkKyVYErgm.png"/></a></figure><p id="7e0a3efc-8aad-47f9-bbb0-b6d0e80e0ad3" class="">image-20221002163512442</p><p id="76f538f5-2e04-49e1-9666-fdc0dc6e736a" class="">我们接着来看双端队列，实际上双端队列就是队列的升级版，我们一个普通的队列就是：</p><figure id="1265f125-4c76-415e-aa19-2383479d91ec" class="image"><a href="https://s2.loli.net/2022/07/25/xBuZckTNtR54AEq.png"><img src="https://s2.loli.net/2022/07/25/xBuZckTNtR54AEq.png"/></a></figure><p id="d035f43f-87c8-4960-94a3-4d45b0d4a59b" class="">image-20220725103600318</p><p id="b8790700-433a-43e3-9650-5af1bdee21a0" class="">普通队列中从队尾入队，队首出队，而双端队列允许在队列的两端进行入队和出队操作：</p><figure id="68760f67-7f14-4fd1-83d7-462118e8e6a1" class="image"><a href="https://s2.loli.net/2022/10/02/gn8i3teclAKbhQS.png"><img src="https://s2.loli.net/2022/10/02/gn8i3teclAKbhQS.png"/></a></figure><p id="0ebe6e60-dd73-4bd1-bb9a-bbd9db2944bb" class="">image-20221002164302507</p><figure id="8d92f17a-e568-4358-b5bf-b656571e91c2" class="image"><a href="https://s2.loli.net/2022/10/02/in8IX3QkwtsLgWN.png"><img src="https://s2.loli.net/2022/10/02/in8IX3QkwtsLgWN.png"/></a></figure><p id="b0302f3d-fad0-44e0-813b-186f60f0aadb" class="">image-20221002164431746</p><p id="8e7c2f62-b291-45d3-87d6-d3bfd1180e5a" class="">利用这种特性，双端队列既可以当做普通队列使用，也可以当做栈来使用，我们来看看Java中是如何定义的Deque双端队列接口的：</p><pre id="581feceb-9d15-453a-87eb-9fba10b2a902" class="code code-wrap"><code>//在双端队列中，所有的操作都有分别对应队首和队尾的public interface Deque&lt;E&gt; extends Queue&lt;E&gt; {    //在队首进行插入操作    void addFirst(E e);    //在队尾进行插入操作    void addLast(E e);    //不用多说了吧？    boolean offerFirst(E e);    boolean offerLast(E e);    //在队首进行移除操作    E removeFirst();    //在队尾进行移除操作    E removeLast();    //不用多说了吧？    E pollFirst();    E pollLast();    //获取队首元素    E getFirst();    //获取队尾元素    E getLast();        //不用多说了吧？    E peekFirst();    E peekLast();    //从队列中删除第一个出现的指定元素    boolean removeFirstOccurrence(Object o);    //从队列中删除最后一个出现的指定元素    boolean removeLastOccurrence(Object o);    // *** 队列中继承下来的方法操作是一样的，这里就不列出了 ***    ...    // *** 栈相关操作已经帮助我们定义好了 ***    //将元素推向栈顶    void push(E e);    //将元素从栈顶出栈    E pop();    // *** 集合类中继承的方法这里也不多种介绍了 ***    ...    //生成反向迭代器，这个迭代器也是单向的，但是是next方法是从后往前进行遍历的    Iterator&lt;E&gt; descendingIterator();}</code></pre><p id="0d3c0c95-ac7d-4192-b0dd-5aff22e3b00d" class="">我们可以来测试一下，比如我们可以直接当做栈来进行使用：</p><pre id="2b523ebf-c101-4e2d-a857-b3f27029bd96" class="code code-wrap"><code>public static void main(String[] args) {    Deque&lt;String&gt; deque = new LinkedList&lt;&gt;();    deque.push(&quot;AAA&quot;);    deque.push(&quot;BBB&quot;);    System.out.println(deque.pop());    System.out.println(deque.pop());}</code></pre><figure id="9b6342b1-cf92-4f3c-b478-c978c1e4d322" class="image"><a href="https://s2.loli.net/2022/10/02/92woGL5MiBsTcKe.png"><img src="https://s2.loli.net/2022/10/02/92woGL5MiBsTcKe.png"/></a></figure><p id="7de90097-f200-484a-8eb0-e57051f9dfd4" class="">image-20221002165618791</p><p id="550e3a53-c751-40f9-a93b-1409bf17d99a" class="">可以看到，得到的顺序和插入顺序是完全相反的，其实只要各位理解了前面讲解的数据结构，就很简单了。我们来测试一下反向迭代器和正向迭代器：</p><pre id="8aee7e61-eff1-4988-ac49-62b4b9b769cb" class="code code-wrap"><code>public static void main(String[] args) {    Deque&lt;String&gt; deque = new LinkedList&lt;&gt;();    deque.addLast(&quot;AAA&quot;);    deque.addLast(&quot;BBB&quot;);    Iterator&lt;String&gt; descendingIterator = deque.descendingIterator();    System.out.println(descendingIterator.next());    Iterator&lt;String&gt; iterator = deque.iterator();    System.out.println(iterator.next());}</code></pre><p id="10074190-63f3-43f3-bdc4-6b75767bd5bc" class="">可以看到，正向迭代器和反向迭代器的方向是完全相反的。</p><p id="4d0b4c96-fea7-43d5-ac61-835aef6e2ef5" class="">当然，除了LinkedList实现了队列接口之外，还有其他的实现类，但是并不是很常用，这里做了解就行了：</p><pre id="1c52d4ef-3417-4e02-8b86-5dddf6b7217f" class="code code-wrap"><code>public static void main(String[] args) {    Deque&lt;String&gt; deque = new ArrayDeque&lt;&gt;();   //数组实现的栈和队列    Queue&lt;String&gt; queue = new PriorityQueue&lt;&gt;();  //优先级队列}</code></pre><p id="6c4cb108-0a7c-4b3f-ad77-f1fe39d72c4e" class="">这里需要介绍一下优先级队列，优先级队列可以根据每一个元素的优先级，对出队顺序进行调整，默认情况按照自然顺序：</p><pre id="9726e144-902e-49e5-970d-f2e6fbfbcc37" class="code code-wrap"><code>public static void main(String[] args) {    Queue&lt;Integer&gt; queue = new PriorityQueue&lt;&gt;();    queue.offer(10);    queue.offer(4);    queue.offer(5);    System.out.println(queue.poll());    System.out.println(queue.poll());    System.out.println(queue.poll());}</code></pre><figure id="fea5a18a-0e43-44cc-ac3a-065b1855879f" class="image"><a href="https://s2.loli.net/2022/10/03/bmEP9fgCS1Ksaqw.png"><img src="https://s2.loli.net/2022/10/03/bmEP9fgCS1Ksaqw.png"/></a></figure><p id="22bb4c91-11bf-4f07-af02-57f175a0bb47" class="">image-20221003210253093</p><p id="ac71a39a-10f7-48cd-bffe-905bb5b9aeb1" class="">可以看到，我们的插入顺序虽然是10/4/5，但是出队顺序是按照优先级来的，类似于VIP用户可以优先结束排队。我们也可以自定义比较规则，同样需要给一个Comparator的实现：</p><pre id="b74027a7-b921-4aa0-ac87-46b5bb748dd5" class="code code-wrap"><code>public static void main(String[] args) {    Queue&lt;Integer&gt; queue = new PriorityQueue&lt;&gt;((a, b) -&gt; b - a);   //按照从大到小顺序出队    queue.offer(10);    queue.offer(4);    queue.offer(5);    System.out.println(queue.poll());    System.out.println(queue.poll());    System.out.println(queue.poll());}</code></pre><figure id="97ca9d09-b165-4701-a5d0-e7f9372352ad" class="image"><a href="https://s2.loli.net/2022/10/03/G5SZgKxvUJyPABD.png"><img src="https://s2.loli.net/2022/10/03/G5SZgKxvUJyPABD.png"/></a></figure><p id="eeb6354f-e200-42da-9acf-e4cf32035856" class="">image-20221003210436684</p><p id="f0195ff1-ba83-477e-9b5f-c5caad69b6f5" class="">只不过需要注意的是，优先级队列并不是队列中所有的元素都是按照优先级排放的，优先级队列<strong>只能保证出队顺序是按照优先级</strong>进行的，我们可以打印一下：</p><figure id="7b396fc0-69c2-4555-ba04-0fb0c5edfa60" class="image"><a href="https://s2.loli.net/2022/10/03/9dSheG4xqFoXB5i.png"><img src="https://s2.loli.net/2022/10/03/9dSheG4xqFoXB5i.png"/></a></figure><p id="99d28a43-c30c-4f66-8baa-432813a6ba9e" class="">image-20221003210545678</p><p id="ec2c76c9-beb8-4448-80e4-656fad3a57d7" class="">想要了解优先级队列的具体是原理，可以在《数据结构与算法》篇视频教程中学习大顶堆和小顶堆。</p><h3 id="03b5a552-c405-40a4-ac0a-b55632012cdc" class="">Set集合</h3><p id="77b4d1fb-aa75-485c-b862-d04d65e2bb5d" class="">前面我们已经介绍了列表，我们接着来看Set集合，这种集合类型比较特殊，我们先来看看Set的定义：</p><pre id="f9d9c95f-902e-4053-8de5-d08bc9ee368e" class="code code-wrap"><code>public interface Set&lt;E&gt; extends Collection&lt;E&gt; {    // Set集合中基本都是从Collection直接继承过来的方法，只不过对这些方法有更加特殊的定义    int size();    boolean isEmpty();    boolean contains(Object o);    Iterator&lt;E&gt; iterator();    Object[] toArray();    &lt;T&gt; T[] toArray(T[] a);    //添加元素只有在当前Set集合中不存在此元素时才会成功，如果插入重复元素，那么会失败    boolean add(E e);    //这个同样是删除指定元素    boolean remove(Object o);    boolean containsAll(Collection&lt;?&gt; c);    //同样是只能插入那些不重复的元素    boolean addAll(Collection&lt;? extends E&gt; c);    boolean retainAll(Collection&lt;?&gt; c);    boolean removeAll(Collection&lt;?&gt; c);    void clear();    boolean equals(Object o);    int hashCode();    //这个方法我们同样会放到多线程中进行介绍    @Override    default Spliterator&lt;E&gt; spliterator() {        return Spliterators.spliterator(this, Spliterator.DISTINCT);    }}</code></pre><p id="40de83c2-3b9f-4cb7-b88e-eb9465a38e4a" class="">我们发现接口中定义的方法都是Collection中直接继承的，因此，Set支持的功能其实也就和Collection中定义的差不多，只不过：</p><ul id="a075c058-2bbc-4481-b593-93216e53242d" class="bulleted-list"><li style="list-style-type:disc">不允许出现重复元素</li></ul><ul id="5cb6b6ef-fe70-4786-af96-e95d1ca59ab0" class="bulleted-list"><li style="list-style-type:disc">不支持随机访问（不允许通过下标访问）</li></ul><p id="eec441cc-9830-4aea-9976-f648e5ecd5fc" class="">首先认识一下HashSet，它的底层就是采用哈希表实现的（我们在这里先不去探讨实现原理，因为底层实质上是借用的一个HashMap在实现，这个需要我们学习了Map之后再来讨论）我们可以非常高效的从HashSet中存取元素，我们先来测试一下它的特性：</p><pre id="d513f2d3-d949-40c7-9f80-50c4e545a17d" class="code code-wrap"><code>public static void main(String[] args) {    Set&lt;String&gt; set = new HashSet&lt;&gt;();    System.out.println(set.add(&quot;AAA&quot;));   //这里我们连续插入两个同样的字符串    System.out.println(set.add(&quot;AAA&quot;));    System.out.println(set);   //可以看到，最后实际上只有一个成功插入了}</code></pre><figure id="668155d6-1c02-41b9-a730-d9af5b7b3739" class="image"><a href="https://s2.loli.net/2022/10/03/y5AoUG1iuWzhOSj.png"><img src="https://s2.loli.net/2022/10/03/y5AoUG1iuWzhOSj.png"/></a></figure><p id="7f9a357b-30ba-4b76-8f43-0aa6f4db29fe" class="">image-20221003211330129</p><p id="fd7de425-51bf-4e28-91e4-7034f1c0ccdc" class="">在Set接口中并没有定义支持指定下标位置访问的添加和删除操作，我们只能简单的删除Set中的某个对象：</p><pre id="44c08f91-b144-4621-8cfa-cb044cd4b146" class="code code-wrap"><code>public static void main(String[] args) {    Set&lt;String&gt; set = new HashSet&lt;&gt;();    System.out.println(set.add(&quot;AAA&quot;));    System.out.println(set.remove(&quot;AAA&quot;));    System.out.println(set);}</code></pre><p id="de2f6bf4-7866-4cca-95e9-ef40d633b254" class="">由于底层采用哈希表实现，所以说无法维持插入元素的顺序：</p><pre id="17911340-17d5-4f9f-80fb-80b39fd28b9b" class="code code-wrap"><code>public static void main(String[] args) {    Set&lt;String&gt; set = new HashSet&lt;&gt;();    set.addAll(Arrays.asList(&quot;A&quot;, &quot;0&quot;, &quot;-&quot;, &quot;+&quot;));    System.out.println(set);}</code></pre><figure id="123e2ec5-34d7-40ee-af46-6226fe45c7cb" class="image"><a href="https://s2.loli.net/2022/10/03/OekDqMlpVbxImsK.png"><img src="https://s2.loli.net/2022/10/03/OekDqMlpVbxImsK.png"/></a></figure><p id="3a430168-5862-4a07-ab9b-435a77e162c4" class="">image-20221003211635759</p><p id="b2278e59-b498-43bd-bea2-9559ef4c768c" class="">那要是我们就是想要使用维持顺序的Set集合呢？我们可以使用LinkedHashSet，LinkedHashSet底层维护的不再是一个HashMap，而是LinkedHashMap，它能够在插入数据时利用链表自动维护顺序，因此这样就能够保证我们插入顺序和最后的迭代顺序一致了。</p><pre id="8919bad7-f0dd-4e71-a0aa-e9481b7e4a12" class="code code-wrap"><code>public static void main(String[] args) {    Set&lt;String&gt; set = new LinkedHashSet&lt;&gt;();    set.addAll(Arrays.asList(&quot;A&quot;, &quot;0&quot;, &quot;-&quot;, &quot;+&quot;));    System.out.println(set);}</code></pre><figure id="af49111f-4535-4912-aca3-4ad4e2b562f9" class="image"><a href="https://s2.loli.net/2022/10/03/TpczL2Zi1OkaHWI.png"><img src="https://s2.loli.net/2022/10/03/TpczL2Zi1OkaHWI.png"/></a></figure><p id="fafd97d4-029a-48a0-845f-00b834d8fdc1" class="">image-20221003212147700</p><p id="083f8aec-510b-4d6e-9e8f-8aa7c43244c1" class="">还有一种Set叫做TreeSet，它会在元素插入时进行排序：</p><pre id="d55a0095-cfac-48aa-a7d3-032b8165be8a" class="code code-wrap"><code>public static void main(String[] args) {    TreeSet&lt;Integer&gt; set = new TreeSet&lt;&gt;();    set.add(1);    set.add(3);    set.add(2);    System.out.println(set);}</code></pre><figure id="cb721e1f-1da6-427e-aac9-e202745866bf" class="image"><a href="https://s2.loli.net/2022/10/03/3VwDQzRxUTGrOZb.png"><img src="https://s2.loli.net/2022/10/03/3VwDQzRxUTGrOZb.png"/></a></figure><p id="75e8420d-bae7-400b-806d-e83792859b93" class="">image-20221003212233263</p><p id="4ee6b42e-2201-446b-bf77-357d1d1c00a0" class="">可以看到最后得到的结果并不是我们插入顺序，而是按照数字的大小进行排列。当然，我们也可以自定义排序规则：</p><pre id="bab023ad-cc8c-4415-84fe-fc5550365e70" class="code code-wrap"><code>public static void main(String[] args) {    TreeSet&lt;Integer&gt; set = new TreeSet&lt;&gt;((a, b) -&gt; b - a);  //同样是一个Comparator    set.add(1);    set.add(3);    set.add(2);    System.out.println(set);}</code></pre><p id="5e85eda9-c7bc-4a57-b205-3654df0fa3e3" class="">目前，Set集合只是粗略的进行了讲解，但是学习Map之后，我们还会回来看我们Set的底层实现，所以说最重要的还是Map。本节只需要记住Set的性质、使用即可。</p><h3 id="a311f4c0-06b7-4c5b-a98c-4f9dd9f004a6" class="">Map映射</h3><p id="5a98cc47-e8fb-4fb3-ad4f-9634af111b15" class="">什么是映射？我们在高中阶段其实已经学习过映射（Mapping）了，映射指两个元素的之间相互“对应”的关系，也就是说，我们的元素之间是两两对应的，是以键值对的形式存在。</p><figure id="aa5b7a08-1ed1-430e-a0f0-34fb724d7236" class="image"><a href="https://s2.loli.net/2022/10/03/QSxqJLwiNM1nZlO.jpg"><img src="https://s2.loli.net/2022/10/03/QSxqJLwiNM1nZlO.jpg"/></a></figure><p id="5b9e73e2-2c2f-4472-a9f8-54fea2149069" class="">39e19f3e-04e8-4c43-8fb5-6d5288a7cdf8</p><p id="4d4b7f26-5d7c-4430-8802-e5bfb5564a11" class="">而Map就是为了实现这种数据结构而存在的，我们通过保存键值对的形式来存储映射关系，就可以轻松地通过键找到对应的映射值，比如现在我们要保存很多学生的信息，而这些学生都有自己的ID，我们可以将其以映射的形式保存，将ID作为键，学生详细信息作为值，这样我们就可以通过学生的ID快速找到对应学生的信息了。</p><figure id="df37c6ad-c371-4d9b-9005-03dfceaaf50c" class="image"><a href="https://s2.loli.net/2022/10/03/i2x6m3hzFC5GIAd.png"><img src="https://s2.loli.net/2022/10/03/i2x6m3hzFC5GIAd.png"/></a></figure><p id="14ffa5c0-8677-4008-bca5-8cba833eaa40" class="">image-20221003213157956</p><p id="b524e312-78af-41a9-8214-8e32a2b6d3a2" class="">在Map中，这些映射关系被存储为键值对，我们先来看看Map接口中定义了哪些操作：</p><pre id="fb7b6528-20c0-46f8-b1f2-13be2b1b912e" class="code code-wrap"><code>//Map并不是Collection体系下的接口，而是单独的一个体系，因为操作特殊//这里需要填写两个泛型参数，其中K就是键的类型，V就是值的类型，比如上面的学生信息，ID一般是int，那么键就是Integer类型的，而值就是学生信息，所以说值是学生对象类型的public interface Map&lt;K,V&gt; {    //-------- 查询相关操作 --------    //获取当前存储的键值对数量    int size();    //是否为空    boolean isEmpty();    //查看Map中是否包含指定的键    boolean containsKey(Object key);    //查看Map中是否包含指定的值    boolean containsValue(Object value);    //通过给定的键，返回其映射的值    V get(Object key);    //-------- 修改相关操作 --------    //向Map中添加新的映射关系，也就是新的键值对    V put(K key, V value);    //根据给定的键，移除其映射关系，也就是移除对应的键值对    V remove(Object key);    //-------- 批量操作 --------    //将另一个Map中的所有键值对添加到当前Map中    void putAll(Map&lt;? extends K, ? extends V&gt; m);    //清空整个Map    void clear();    //-------- 其他视图操作 --------    //返回Map中存放的所有键，以Set形式返回    Set&lt;K&gt; keySet();    //返回Map中存放的所有值    Collection&lt;V&gt; values();    //返回所有的键值对，这里用的是内部类Entry在表示    Set&lt;Map.Entry&lt;K, V&gt;&gt; entrySet();    //这个是内部接口Entry，表示一个键值对    interface Entry&lt;K,V&gt; {        //获取键值对的键        K getKey();        //获取键值对的值        V getValue();        //修改键值对的值        V setValue(V value);        //判断两个键值对是否相等        boolean equals(Object o);        //返回当前键值对的哈希值        int hashCode();        ...    }    ...}</code></pre><p id="278d7766-5c36-4bab-b747-6a1f4dda3d2f" class="">当然，Map中定义了非常多的方法，尤其是在Java 8之后新增的大量方法，我们会在后面逐步介绍的。</p><p id="e100e3bc-18ae-4111-8904-cd18bbcc2e1a" class="">我们可以来尝试使用一下Map，实际上非常简单，这里我们使用最常见的HashMap，它的底层采用哈希表实现：</p><pre id="ac8178f8-0a0b-4bc0-991d-3c6afb454980" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;小明&quot;);   //使用put方法添加键值对，返回值我们会在后面讨论    map.put(2, &quot;小红&quot;);    System.out.println(map.get(2)); //使用get方法根据键获取对应的值}</code></pre><figure id="fc448da4-0fb6-435f-9b9e-90078a2635f2" class="image"><a href="https://s2.loli.net/2022/10/03/8Fl6YizINQP9dmX.png"><img src="https://s2.loli.net/2022/10/03/8Fl6YizINQP9dmX.png"/></a></figure><p id="b8efb444-a924-4c4f-bb99-b1df1749f0aa" class="">image-20221003214807048</p><p id="97e8dbda-5ebc-4de8-9d1f-3fda774a0350" class="">注意，Map中无法添加相同的键，同样的键只能存在一个，即使值不同。如果出现键相同的情况，那么会覆盖掉之前的：</p><pre id="7eb8d674-13e0-48b6-ac67-cb0b50efa418" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;小明&quot;);    map.put(1, &quot;小红&quot;);   //这里的键跟之前的是一样的，这样会导致将之前的键值对覆盖掉    System.out.println(map.get(1));}</code></pre><figure id="e356355f-6e53-4f41-8655-3ba2f40c17d3" class="image"><a href="https://s2.loli.net/2022/10/03/8Fl6YizINQP9dmX.png"><img src="https://s2.loli.net/2022/10/03/8Fl6YizINQP9dmX.png"/></a></figure><p id="31ade4b8-4718-4948-9485-418cab9002ed" class="">image-20221003214807048</p><p id="58c56a65-798a-46ee-bdd1-0b3ce772d073" class="">为了防止意外将之前的键值对覆盖掉，我们可以使用：</p><pre id="e0511069-1439-4e2d-ade1-e64ac291e54d" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;小明&quot;);    map.putIfAbsent(1, &quot;小红&quot;);   //Java8新增操作，只有在不存在相同键的键值对时才会存放    System.out.println(map.get(1));}</code></pre><p id="2771648e-a22c-4402-bf79-92033f71945c" class="">还有，我们在获取一个不存在的映射时，默认会返回null作为结果：</p><pre id="66211249-336c-49c1-82a9-2ad061f97b85" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;小明&quot;);   //Map中只有键为1的映射    System.out.println(map.get(3));  //此时获取键为3的值，那肯定是没有的，所以说返回null}</code></pre><p id="f1127581-0b4b-4031-8695-d847f0117d11" class="">我们也可以为这种情况添加一个预备方案，当Map中不存在时，可以返回一个备选的返回值：</p><pre id="0e5a576a-e61b-45b6-a279-43feb41e0b6f" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;小明&quot;);    System.out.println(map.getOrDefault(3, &quot;备胎&quot;));   //Java8新增操作，当不存在对应的键值对时，返回备选方案}</code></pre><p id="915e924c-b644-4051-979e-e9a173c013aa" class="">同样的，因为HashMap底层采用哈希表实现，所以不维护顺序，我们在获取所有键和所有值时，可能会是乱序的：</p><pre id="99cf3ae0-5a3d-464a-8fa0-ea13ff3c0ec2" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;String , String&gt; map = new HashMap&lt;&gt;();    map.put(&quot;0&quot;, &quot;十七张&quot;);    map.put(&quot;+&quot;, &quot;牌&quot;);    map.put(&quot;P&quot;, &quot;你能秒我&quot;);    System.out.println(map);    System.out.println(map.keySet());    System.out.println(map.values());}</code></pre><figure id="f7896d94-cebe-4886-b051-55b57fcd929d" class="image"><a href="https://s2.loli.net/2022/10/03/DNXqwk3UOPnMmlc.png"><img src="https://s2.loli.net/2022/10/03/DNXqwk3UOPnMmlc.png"/></a></figure><p id="86b92ead-04da-44dd-9f92-02ad07a79906" class="">image-20221003220156062</p><p id="fba07e37-0244-46bc-95bf-88d946382c62" class="">如果需要维护顺序，我们同样可以使用LinkedHashMap，它的内部对插入顺序进行了维护：</p><pre id="18355a34-50f0-44c5-bd20-af8bd0d4817a" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;String , String&gt; map = new LinkedHashMap&lt;&gt;();    map.put(&quot;0&quot;, &quot;十七张&quot;);    map.put(&quot;+&quot;, &quot;牌&quot;);    map.put(&quot;P&quot;, &quot;你能秒我&quot;);    System.out.println(map);    System.out.println(map.keySet());    System.out.println(map.values());}</code></pre><figure id="f54c171f-6e16-48d0-80d1-b04fbae2bffe" class="image"><a href="https://s2.loli.net/2022/10/03/QHkWZsFvzASpxqL.png"><img src="https://s2.loli.net/2022/10/03/QHkWZsFvzASpxqL.png"/></a></figure><p id="336750b8-cb90-4e4c-8fab-1c7327c6f082" class="">image-20221003220458539</p><p id="52f87757-61d6-4e22-9e81-0a16e9fb0132" class="">实际上Map的使用还是挺简单的，我们接着来看看Map的底层是如何实现的，首先是最简单的HashMap，我们前面已经说过了，它的底层采用的是哈希表，首先回顾我们之前学习的哈希表，我们当时说了，哈希表可能会出现哈希冲突，这样保存的元素数量就会存在限制，而我们可以通过连地址法解决这种问题，最后哈希表就长这样了：</p><figure id="897e5e01-906b-44be-9f3d-2d14e1513cca" class="image"><a href="https://s2.loli.net/2022/09/30/kr4CcVEwI72AiDU.png"><img src="https://s2.loli.net/2022/09/30/kr4CcVEwI72AiDU.png"/></a></figure><p id="85315a5d-2995-4113-82c2-b2dbe386049a" class="">image-20220820221104298</p><p id="c6288c5e-e65c-4839-b6bd-ba31a6c3e9fb" class="">实际上这个表就是一个存放头结点的数组+若干结点，而HashMap也是这样的，我们来看看这里面是怎么定义的：</p><pre id="a76e7a86-1765-47d3-b681-c400a69b03e5" class="code code-wrap"><code>public class HashMap&lt;K,V&gt; extends AbstractMap&lt;K,V&gt;    implements Map&lt;K,V&gt;, Cloneable, Serializable {    ...    static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {   //内部使用结点，实际上就是存放的映射关系        final int hash;        final K key;   //跟我们之前不一样，我们之前一个结点只有键，而这里的结点既存放键也存放值，当然计算哈希还是使用键        V value;        Node&lt;K,V&gt; next;                ...    }    ...    transient Node&lt;K,V&gt;[] table;   //这个就是哈希表本体了，可以看到跟我们之前的写法是一样的，也是头结点数组，只不过HashMap中没有设计头结点（相当于没有头结点的链表）    final float loadFactor;   //负载因子，这个东西决定了HashMap的扩容效果    public HashMap() {        this.loadFactor = DEFAULT_LOAD_FACTOR; //当我们创建对象时，会使用默认的负载因子，值为0.75    }    ...}</code></pre><p id="101f0322-ee65-4839-9929-7b657b83aa4a" class="">可以看到，实际上底层大致结构跟我们之前学习的差不多，只不过多了一些特殊的东西：</p><ul id="9c2aaa22-5d3c-45e0-8ca0-51c8ab1639b1" class="bulleted-list"><li style="list-style-type:disc">HashMap支持自动扩容，哈希表的大小并不是一直不变的，否则太过死板</li></ul><ul id="5b61c83d-5783-4732-a5bb-cb76c1e0f5b8" class="bulleted-list"><li style="list-style-type:disc">HashMap并不是只使用简单的链地址法，当链表长度到达一定限制时，会转变为效率更高的红黑树结构</li></ul><p id="a5b51551-20aa-4864-866a-2c392acbf572" class="">我们来研究一下它的put方法：</p><pre id="6a9eb4e4-16be-41e4-9dbc-1d35bd5c86e8" class="code code-wrap"><code>public V put(K key, V value) {    //这里计算完键的哈希值之后，调用的另一个方法进行映射关系存放    return putVal(hash(key), key, value, false, true);}final V putVal(int hash, K key, V value, boolean onlyIfAbsent,               boolean evict) {    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;    if ((tab = table) == null || (n = tab.length) == 0)  //如果底层哈希表没初始化，先初始化        n = (tab = resize()).length;   //通过resize方法初始化底层哈希表，初始容量为16，后续会根据情况扩容，底层哈希表的长度永远是2的n次方    //因为传入的哈希值可能会很大，这里同样是进行取余操作    //(n - 1) &amp; hash 等价于 hash % n 这里的i就是最终得到的下标位置了    if ((p = tab[i = (n - 1) &amp; hash]) == null)        tab[i] = newNode(hash, key, value, null);   //如果这个位置上什么都没有，那就直接放一个新的结点    else {   //这种情况就是哈希冲突了        Node&lt;K,V&gt; e; K k;        if (p.hash == hash &amp;&amp;   //如果上来第一个结点的键的哈希值跟当前插入的键的哈希值相同，键也相同，说明已经存放了相同键的键值对了，那就执行覆盖操作            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))            e = p;   //这里直接将待插入结点等于原本冲突的结点，一会直接覆盖        else if (p instanceof TreeNode)   //如果第一个结点是TreeNode类型的，说明这个链表已经升级为红黑树了            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);  //在红黑树中插入新的结点        else {            for (int binCount = 0; ; ++binCount) {  //普通链表就直接在链表尾部插入                if ((e = p.next) == null) {                    p.next = newNode(hash, key, value, null);  //找到尾部，直接创建新的结点连在后面                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) //如果当前链表的长度已经很长了，达到了阈值                        treeifyBin(tab, hash);          //那么就转换为红黑树来存放                    break;   //直接结束                }                if (e.hash == hash &amp;&amp;                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))  //同样的，如果在向下找的过程中发现已经存在相同键的键值对了，直接结束，让p等于e一会覆盖就行了                    break;                p = e;            }        }        if (e != null) { // 如果e不为空，只有可能是前面出现了相同键的情况，其他情况e都是null，所有直接覆盖就行            V oldValue = e.value;            if (!onlyIfAbsent || oldValue == null)                e.value = value;            afterNodeAccess(e);            return oldValue;   //覆盖之后，会返回原本的被覆盖值        }    }    ++modCount;    if (++size &gt; threshold)   //键值对size计数自增，如果超过阈值，会对底层哈希表数组进行扩容        resize();   //调用resize进行扩容    afterNodeInsertion(evict);    return null;  //正常插入键值对返回值为null}</code></pre><p id="cecb509a-222c-4393-99e9-1247bdefa873" class="">是不是感觉只要前面的数据结构听懂了，这里简直太简单。根据上面的推导，我们在正常插入一个键值对时，会得到null返回值，而冲突时会得到一个被覆盖的值：</p><pre id="7ccf56f9-fc83-4c0b-b26d-29a251d34933" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;String , String&gt; map = new HashMap&lt;&gt;();    System.out.println(map.put(&quot;0&quot;, &quot;十七张&quot;));    System.out.println(map.put(&quot;0&quot;, &quot;慈善家&quot;));}</code></pre><figure id="2a64ed02-7994-4af2-9855-4227b0060366" class="image"><a href="https://s2.loli.net/2022/10/03/A2rXocbU9StlDOC.png"><img src="https://s2.loli.net/2022/10/03/A2rXocbU9StlDOC.png"/></a></figure><p id="e91daebe-f99c-41c1-aec8-17c67ece6a23" class="">image-20221003224137177</p><p id="a07a0277-18f5-413c-8361-fb64a444c219" class="">现在我们知道，当HashMap的一个链表长度过大时，会自动转换为红黑树：</p><figure id="7d753cbd-a746-45a0-bebd-421163522227" class="image"><a href="https://s2.loli.net/2022/10/03/E7GnIVjPAwf8Fol.jpg"><img src="https://s2.loli.net/2022/10/03/E7GnIVjPAwf8Fol.jpg"/></a></figure><p id="178ec72a-730d-4b0a-89e5-e239c21ee3a1" class="">710c1c38-95a8-493d-8645-067b991af908</p><p id="755ab704-9079-4743-af5d-5f46d5c7917d" class="">但是这样始终治标不治本，受限制的始终是底层哈希表的长度，我们还需要进一步对底层的这个哈希表进行扩容才可以从根本上解决问题，我们来看看<code>resize()</code>方法：</p><pre id="bddb536b-da80-4ae9-9454-16ae14968d99" class="code code-wrap"><code>final Node&lt;K,V&gt;[] resize() {    Node&lt;K,V&gt;[] oldTab = table;   //先把下面这几个旧的东西保存一下    int oldCap = (oldTab == null) ? 0 : oldTab.length;    int oldThr = threshold;    int newCap, newThr = 0;  //这些是新的容量和扩容阈值    if (oldCap &gt; 0) {  //如果旧容量大于0，那么就开始扩容        if (oldCap &gt;= MAXIMUM_CAPACITY) {  //如果旧的容量已经大于最大限制了，那么直接给到 Integer.MAX_VALUE            threshold = Integer.MAX_VALUE;            return oldTab;  //这种情况不用扩了        }        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)   //新的容量等于旧容量的2倍，同样不能超过最大值            newThr = oldThr &lt;&lt; 1; //新的阈值也提升到原来的两倍    }    else if (oldThr &gt; 0) // 旧容量不大于0只可能是还没初始化，这个时候如果阈值大于0，直接将新的容量变成旧的阈值        newCap = oldThr;    else {               // 默认情况下阈值也是0，也就是我们刚刚无参new出来的时候        newCap = DEFAULT_INITIAL_CAPACITY;   //新的容量直接等于默认容量16        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY); //阈值为负载因子乘以默认容量，负载因子默认为0.75，也就是说只要整个哈希表用了75%的容量，那么就进行扩容，至于为什么默认是0.75，原因很多，这里就不解释了，反正作为新手，这些都是大佬写出来的，我们用就完事。    }    ...    threshold = newThr;    @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];    table = newTab;   //将底层数组变成新的扩容之后的数组    if (oldTab != null) {  //如果旧的数组不为空，那么还需要将旧的数组中所有元素全部搬到新的里面去        ...   //详细过程就不介绍了    }}</code></pre><p id="b48bb20d-eddc-4909-b70a-6c57c2533e5e" class="">是不是感觉自己有点了解HashMap的运作机制了，其实并不是想象中的那么难，因为这些东西再怎么都是人写的。</p><p id="7de8493f-daad-48d1-8dba-09bdb5b24327" class="">而LinkedHashMap是直接继承自HashMap，具有HashMap的全部性质，同时得益于每一个节点都是一个双向链表，在插入键值对时，同时保存了插入顺序：</p><pre id="89e81549-3dd3-4b60-b79e-521b2166f401" class="code code-wrap"><code>static class Entry&lt;K,V&gt; extends HashMap.Node&lt;K,V&gt; {   //LinkedHashMap中的结点实现    Entry&lt;K,V&gt; before, after;   //这里多了一个指向前一个结点和后一个结点的引用    Entry(int hash, K key, V value, Node&lt;K,V&gt; next) {        super(hash, key, value, next);    }}</code></pre><p id="b3277b72-fa9a-4203-b264-2b184903c54d" class="">这样我们在遍历LinkedHashMap时，顺序就同我们的插入顺序一致。当然，也可以使用访问顺序，也就是说对于刚访问过的元素，会被排到最后一位。</p><p id="c713ce3d-dbf6-4e92-b33a-030d5f51d91c" class="">当然还有一种比较特殊的Map叫做TreeMap，就像它的名字一样，就是一个Tree，它的内部直接维护了一个红黑树（没有使用哈希表）因为它会将我们插入的结点按照规则进行排序，所以说直接采用红黑树会更好，我们在创建时，直接给予一个比较规则即可，跟之前的TreeSet是一样的：</p><pre id="d53fb12a-a255-4cdb-ae26-5b4a1c068d27" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer , String&gt; map = new TreeMap&lt;&gt;((a, b) -&gt; b - a);    map.put(0, &quot;单走&quot;);    map.put(1, &quot;一个六&quot;);    map.put(3, &quot;**&quot;);    System.out.println(map);}</code></pre><figure id="09227679-5b68-4467-b382-dddf7063564c" class="image"><a href="https://s2.loli.net/2022/10/03/2oJXBui5aD8q1Gh.png"><img src="https://s2.loli.net/2022/10/03/2oJXBui5aD8q1Gh.png"/></a></figure><p id="4013a80a-aa75-4b43-a625-2ce1ebdcaad6" class="">image-20221003231135805</p><p id="dfb084a0-0a17-4659-b13f-50f40bc5d9a6" class="">现在我们倒回来看之前讲解的HashSet集合，实际上它的底层很简单：</p><pre id="fe402fb8-ad4c-4ab8-b1d6-920c5a082c59" class="code code-wrap"><code>public class HashSet&lt;E&gt;    extends AbstractSet&lt;E&gt;    implements Set&lt;E&gt;, Cloneable, java.io.Serializable{    private transient HashMap&lt;E,Object&gt; map;   //对，你没看错，底层直接用map来做事    // 因为Set只需要存储Key就行了，所以说这个对象当做每一个键值对的共享Value    private static final Object PRESENT = new Object();    //直接构造一个默认大小为16负载因子0.75的HashMap    public HashSet() {        map = new HashMap&lt;&gt;();    }    ...    //你会发现所有的方法全是替身攻击    public Iterator&lt;E&gt; iterator() {        return map.keySet().iterator();    }    public int size() {        return map.size();    }    public boolean isEmpty() {        return map.isEmpty();    }}</code></pre><p id="e9b78633-3827-4299-88c7-5bd756e73158" class="">通过观察HashSet的源码发现，HashSet几乎都在操作内部维护的一个HashMap，也就是说，HashSet只是一个表壳，而内部维护的HashMap才是灵魂！就像你进了公司，在外面花钱请别人帮你写公司的业务，你只需要坐着等别人写好然后你自己拿去交差就行了。所以说，HashSet利用了HashMap内部的数据结构，轻松地就实现了Set定义的全部功能！</p><p id="d91282c8-cfea-4eb5-8952-288a9394f871" class="">再来看TreeSet，实际上用的就是我们的TreeMap：</p><pre id="3e713390-8f64-4876-a342-44c5025a932b" class="code code-wrap"><code>public class TreeSet&lt;E&gt; extends AbstractSet&lt;E&gt;    implements NavigableSet&lt;E&gt;, Cloneable, java.io.Serializable{    //底层需要一个NavigableMap，就是自动排序的Map    private transient NavigableMap&lt;E,Object&gt; m;    //不用我说了吧    private static final Object PRESENT = new Object();    ...    //直接使用TreeMap解决问题    public TreeSet() {        this(new TreeMap&lt;E,Object&gt;());    }    ...}</code></pre><p id="03dba707-e2d1-41c6-a873-3742759c0379" class="">同理，这里就不多做阐述了。</p><p id="99741bb9-9241-4941-af00-3f0522cc5902" class="">我们接着来看看Map中定义的哪些杂七杂八的方法，首先来看看<code>compute</code>方法：</p><pre id="e684f500-eada-40cd-9bd8-b3505c9fa52f" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;A&quot;);    map.put(2, &quot;B&quot;);    map.compute(1, (k, v) -&gt; {   //compute会将指定Key的值进行重新计算，若Key不存在，v会返回null        return v+&quot;M&quot;;     //这里返回原来的value+M    });    map.computeIfPresent(1, (k, v) -&gt; {   //当Key存在时存在则计算并赋予新的值      return v+&quot;M&quot;;     //这里返回原来的value+M    });    System.out.println(map);}</code></pre><p id="e2b0b7db-11a1-4b13-a449-60b33071ac3c" class="">也可以使用<code>computeIfAbsent</code>，当不存在Key时，计算并将键值对放入Map中：</p><pre id="c21fe273-5154-4d5a-b295-7142fa417380" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer, String&gt; map = new HashMap&lt;&gt;();    map.put(1, &quot;A&quot;);    map.put(2, &quot;B&quot;);    map.computeIfAbsent(0, (k) -&gt; {   //若不存在则计算并插入新的值        return &quot;M&quot;;     //这里返回M    });    System.out.println(map);}</code></pre><p id="c20d5381-cf71-450d-95f1-fad0b9b0b77e" class="">merge方法用于处理数据：</p><pre id="c21554e8-7578-46a0-afe0-1aab26ac4336" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Student&gt; students = Arrays.asList(            new Student(&quot;yoni&quot;, &quot;English&quot;, 80),            new Student(&quot;yoni&quot;, &quot;Chiness&quot;, 98),            new Student(&quot;yoni&quot;, &quot;Math&quot;, 95),            new Student(&quot;taohai.wang&quot;, &quot;English&quot;, 50),            new Student(&quot;taohai.wang&quot;, &quot;Chiness&quot;, 72),            new Student(&quot;taohai.wang&quot;, &quot;Math&quot;, 41),            new Student(&quot;Seely&quot;, &quot;English&quot;, 88),            new Student(&quot;Seely&quot;, &quot;Chiness&quot;, 89),            new Student(&quot;Seely&quot;, &quot;Math&quot;, 92)    );    Map&lt;String, Integer&gt; scoreMap = new HashMap&lt;&gt;();    //merge方法可以对重复键的值进行特殊操作，比如我们想计算某个学生的所有科目分数之后，那么就可以像这样：    students.forEach(student -&gt; scoreMap.merge(student.getName(), student.getScore(), Integer::sum));    scoreMap.forEach((k, v) -&gt; System.out.println(&quot;key:&quot; + k + &quot;总分&quot; + &quot;value:&quot; + v));}static class Student {    private final String name;    private final String type;    private final int score;    public Student(String name, String type, int score) {        this.name = name;        this.type = type;        this.score = score;    }    public String getName() {        return name;    }    public int getScore() {        return score;    }    public String getType() {        return type;    }}</code></pre><p id="c00181d1-9a25-4d13-bed3-cc9fd1af1e16" class=""><code>replace</code>方法可以快速替换某个映射的值：</p><pre id="2241b97c-4ea9-4d54-b306-9b3fa51d7582" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer , String&gt; map = new HashMap&lt;&gt;();    map.put(0, &quot;单走&quot;);    map.replace(0, &quot;&gt;&gt;&gt;&quot;);   //直接替换为新的    System.out.println(map);}</code></pre><p id="c9f9acca-f2cf-4a3b-8870-c14ad66251ea" class="">也可以精准匹配：</p><pre id="605d47ab-4fe1-4b7f-9d31-0371a13bda18" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer , String&gt; map = new HashMap&lt;&gt;();    map.put(0, &quot;单走&quot;);    map.replace(0, &quot;巴卡&quot;, &quot;玛卡&quot;);   //只有键和值都匹配时，才进行替换    System.out.println(map);}</code></pre><p id="c50f4569-cd6e-4844-a341-ac04c999d8ec" class="">包括remove方法，也支持键值同时匹配：</p><pre id="2f0f51a0-7e2c-43a2-a008-8346951ea1f1" class="code code-wrap"><code>public static void main(String[] args) {    Map&lt;Integer , String&gt; map = new HashMap&lt;&gt;();    map.put(0, &quot;单走&quot;);    map.remove(0, &quot;单走&quot;);  //只有同时匹配时才移除    System.out.println(map);}</code></pre><p id="9e1235df-4184-40ab-8957-2bff5aa4a282" class="">是不是感觉学习了Map之后，涨了不少姿势？</p><h3 id="5824c8a5-25ab-40a9-84f1-24d61f953a09" class="">Stream流</h3><p id="129c8a64-5508-4eeb-aa52-c24a77b00355" class="">Java 8 API添加了一个新的抽象称为流Stream，可以让你以一种声明的方式处理数据。Stream 使用一种类似用 SQL 语句从数据库查询数据的直观方式来提供一种对 Java 集合运算和表达的高阶抽象。Stream API可以极大提高Java程序员的生产力，让程序员写出高效率、干净、简洁的代码。这种风格将要处理的元素集合看作一种流， 流在管道中传输， 并且可以在管道的节点上进行处理， 比如筛选， 排序，聚合等。元素流在管道中经过中间操作（intermediate operation）的处理，最后由最终操作(terminal operation)得到前面处理的结果。</p><figure id="2126f46c-d4d8-4179-a697-1e93126467eb" class="image"><a href="https://s2.loli.net/2022/10/03/r4AtmVRZ51y7uxd.png"><img src="https://s2.loli.net/2022/10/03/r4AtmVRZ51y7uxd.png"/></a></figure><p id="f3407152-8558-4d83-86d5-504d82057e46" class="">image-20221003232832897</p><p id="4ccb26dc-eb82-491b-9752-3f2a06ca30ae" class="">它看起来就像一个工厂的流水线一样！我们就可以把一个Stream当做流水线处理：</p><pre id="71bd6dba-72a9-4fde-aef7-9470e17bf065" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;();    list.add(&quot;A&quot;);    list.add(&quot;B&quot;);    list.add(&quot;C&quot;);    //移除为B的元素    Iterator&lt;String&gt; iterator = list.iterator();    while (iterator.hasNext()){        if(iterator.next().equals(&quot;B&quot;)) iterator.remove();    }    //Stream操作    list = list     //链式调用            .stream()    //获取流            .filter(e -&gt; !e.equals(&quot;B&quot;))   //只允许所有不是B的元素通过流水线            .collect(Collectors.toList());   //将流水线中的元素重新收集起来，变回List    System.out.println(list);}</code></pre><p id="4822aa4c-7259-4017-b32c-4e98616df894" class="">可能从上述例子中还不能感受到流处理带来的便捷，我们通过下面这个例子来感受一下：</p><pre id="2a134a22-ae7a-4a41-8e1c-e40b9a19b506" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(1);    list.add(2);    list.add(3);    list.add(3);    list = list            .stream()                .distinct()   //去重（使用equals判断）            .sorted((a, b) -&gt; b - a)    //进行倒序排列            .map(e -&gt; e+1)    //每个元素都要执行+1操作            .limit(2)    //只放行前两个元素            .collect(Collectors.toList());    System.out.println(list);}</code></pre><p id="00a4f810-7140-4cfb-b797-70259934ec7b" class="">当遇到大量的复杂操作时，我们就可以使用Stream来快速编写代码，这样不仅代码量大幅度减少，而且逻辑也更加清晰明了（如果你学习过SQL的话，你会发现它更像一个Sql语句）</p><p id="6d3b2806-c05d-4b61-b56b-b294a39d8fe3" class=""><strong>注意</strong>：不能认为每一步是直接依次执行的！我们可以断点测试一下：</p><pre id="66e40afc-d661-46f9-8ce1-681363b8ac8a" class="code code-wrap"><code>List&lt;Integer&gt; list = new ArrayList&lt;&gt;();list.add(1);list.add(2);list.add(3);list.add(3);list = list        .stream()        .distinct()   //断点        .sorted((a, b) -&gt; b - a)        .map(e -&gt; {            System.out.println(&quot;&gt;&gt;&gt; &quot;+e);   //断点            return e+1;        })        .limit(2)   //断点        .collect(Collectors.toList());</code></pre><p id="32fae6b7-7c24-4533-af0f-158065652e20" class="">实际上，stream会先记录每一步操作，而不是直接开始执行内容，当整个链式调用完成后，才会依次进行，也就是说需要的时候，工厂的机器才会按照预定的流程启动。</p><p id="cb359523-24bb-4c7d-80ad-edbac5fd6652" class="">接下来，我们用一堆随机数来进行更多流操作的演示：</p><pre id="c2f007b4-a40a-4933-a363-a838b31d8b5d" class="code code-wrap"><code>public static void main(String[] args) {    Random random = new Random();  //没想到吧，Random支持直接生成随机数的流    random            .ints(-100, 100)   //生成-100~100之间的，随机int型数字（本质上是一个IntStream）            .limit(10)   //只获取前10个数字（这是一个无限制的流，如果不加以限制，将会无限进行下去！）            .filter(i -&gt; i &lt; 0)   //只保留小于0的数字            .sorted()    //默认从小到大排序            .forEach(System.out::println);   //依次打印}</code></pre><p id="58662c08-1116-4232-a476-3b02520e3eb4" class="">我们可以生成一个统计实例来帮助我们快速进行统计：</p><pre id="98f6d56f-b129-41f5-8266-bca84c285aa1" class="code code-wrap"><code>public static void main(String[] args) {    Random random = new Random();  //Random是一个随机数工具类    IntSummaryStatistics statistics = random            .ints(0, 100)            .limit(100)            .summaryStatistics();    //获取语法统计实例    System.out.println(statistics.getMax());  //快速获取最大值    System.out.println(statistics.getCount());  //获取数量    System.out.println(statistics.getAverage());   //获取平均值}</code></pre><p id="d467125f-3cea-4530-ac7c-4eca34f73b41" class="">普通的List只需要一个方法就可以直接转换到方便好用的IntStream了：</p><pre id="b3345e0c-251f-4564-908d-90405606c2ae" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(1);    list.add(1);    list.add(2);    list.add(3);    list.add(4);    list.stream()            .mapToInt(i -&gt; i)    //将每一个元素映射为Integer类型（这里因为本来就是Integer）            .summaryStatistics();}</code></pre><p id="45ff8417-fc64-40b8-8df6-517a8c49235e" class="">我们还可以通过<code>flat</code>来对整个流进行进一步细分：</p><pre id="4f06bb22-422d-4ddb-87bc-d75af48a06ca" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;String&gt; list = new ArrayList&lt;&gt;();    list.add(&quot;A,B&quot;);    list.add(&quot;C,D&quot;);    list.add(&quot;E,F&quot;);   //我们想让每一个元素通过,进行分割，变成独立的6个元素    list = list            .stream()    //生成流            .flatMap(e -&gt; Arrays.stream(e.split(&quot;,&quot;)))    //分割字符串并生成新的流            .collect(Collectors.toList());   //汇成新的List    System.out.println(list);   //得到结果}</code></pre><p id="222062b6-38a7-44c4-889d-9e9cafd636ff" class="">我们也可以只通过Stream来完成所有数字的和，使用<code>reduce</code>方法：</p><pre id="a1bc9a80-530e-4011-aff8-91952a2039da" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(1);    list.add(2);    list.add(3);    int sum = list            .stream()            .reduce((a, b) -&gt; a + b)   //计算规则为：a是上一次计算的值，b是当前要计算的参数，这里是求和            .get();    //我们发现得到的是一个Optional类实例，通过get方法返回得到的值    System.out.println(sum);}</code></pre><p id="097d4ebc-0713-4647-8022-b3c29ea048a1" class="">可能，作为新手来说，一次性无法接受这么多内容，但是在各位以后的开发中，就会慢慢使用到这些东西了。</p><h3 id="b588ba4b-da24-4194-9a08-80965d80437d" class="">Collections工具类</h3><p id="bf3ae5fd-f542-4c18-a127-5613f137776a" class="">我们在前面介绍了Arrays，它是一个用于操作数组的工具类，它给我们提供了大量的工具方法。</p><p id="42139b66-e85c-490c-955a-067c628adb86" class="">既然数组操作都这么方便了，集合操作能不能也安排点高级的玩法呢？那必须的，JDK为我们准备的Collocations类就是专用于集合的工具类，比如我们想快速求得List中的最大值和最小值：</p><pre id="8849d432-00ef-4ab9-b9bd-47553740b7e6" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    Collections.max(list);    Collections.min(list);}</code></pre><p id="be7cc267-6fcb-4f17-a5ed-e1b40afcf95d" class="">同样的，我们可以对一个集合进行二分搜索（注意，集合的具体类型，必须是实现Comparable接口的类）：</p><pre id="1059c7bf-76c6-436e-9a5f-c127057e6fe4" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = Arrays.asList(2, 3, 8, 9, 10, 13);    System.out.println(Collections.binarySearch(list, 8));}</code></pre><p id="6e57e564-28a6-4bb1-8d2a-a98c2a61a236" class="">我们也可以对集合的元素进行快速填充，注意这个填充是对集合中已有的元素进行覆盖：</p><pre id="6efceb42-20c8-4a2b-9921-0f6e85ebe420" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;(Arrays.asList(1,2,3,4,5));    Collections.fill(list, 6);    System.out.println(list);}</code></pre><p id="99eec5da-d485-4fd6-bcd6-c47771f826f8" class="">如果集合中本身没有元素，那么<code>fill</code>操作不会生效。</p><p id="e6c3d4bb-1480-4a03-ab3b-e2b1b53fe8c1" class="">有些时候我们可能需要生成一个空的集合类返回，那么我们可以使用<code>emptyXXX</code>来快速生成一个只读的空集合：</p><pre id="697800d5-d97c-46c5-b869-87fa04a05c44" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = Collections.emptyList();    //Collections.singletonList() 会生成一个只有一个元素的List    list.add(10);   //不支持，会直接抛出异常}</code></pre><p id="5fe5a47a-d8c6-45cc-82d4-bd0806149f09" class="">我们也可以将一个可修改的集合变成只读的集合：</p><pre id="495b629c-4a54-4c90-b60f-c50b71aad93b" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;(Arrays.asList(1,2,3,4,5));    List&lt;Integer&gt; newList = Collections.unmodifiableList(list);    newList.add(10);   //不支持，会直接抛出异常}</code></pre><p id="27bf2e30-4e1c-4ace-b3ce-f7b768eb63f4" class="">我们也可以寻找子集合的位置：</p><pre id="819b084f-2233-4155-a29e-f8063c7de8e4" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;(Arrays.asList(1,2,3,4,5));    System.out.println(Collections.indexOfSubList(list, Arrays.asList(4, 5)));}</code></pre><p id="47599a6f-87f3-4af1-b84a-31fb92371fe0" class="">得益于泛型的类型擦除机制，实际上最后只要是Object的实现类都可以保存到集合类中，那么就会出现这种情况：</p><pre id="9a0fd744-c5c6-4180-943d-474bf2d4ba23" class="code code-wrap"><code>public static void main(String[] args) {    //使用原始类型接收一个Integer类型的ArrayList    List list = new ArrayList&lt;&gt;(Arrays.asList(1,2,3,4,5));    list.add(&quot;aaa&quot;);   //我们惊奇地发现，这玩意居然能存字符串进去    System.out.println(list);}</code></pre><figure id="03c1d52b-ef29-4a11-b5fc-1f6663d10b64" class="image"><a href="https://s2.loli.net/2022/10/04/FP5z3X8SEMkGYtT.png"><img src="https://s2.loli.net/2022/10/04/FP5z3X8SEMkGYtT.png"/></a></figure><p id="b9ad3bd5-8a3b-468e-ba86-c42c1a4d1561" class="">image-20221004001007854</p><p id="d4866235-4a48-4ca3-9890-17304848f38b" class="">没错，由于泛型机制上的一些漏洞，实际上对应类型的集合类有可能会存放其他类型的值，泛型的类型检查只存在于编译阶段，只要我们绕过这个阶段，在实际运行时，并不会真的进行类型检查，要解决这种问题很简单，就是在运行时进行类型检查：</p><pre id="9371a80b-cc39-49b9-b99a-4a10ddbf17db" class="code code-wrap"><code>public static void main(String[] args) {    List list = new ArrayList&lt;&gt;(Arrays.asList(1,2,3,4,5));    list = Collections.checkedList(list, Integer.class);   //这里的.class关键字我们会在后面反射中介绍，表示Integer这个类型    list.add(&quot;aaa&quot;);    System.out.println(list);}</code></pre><p id="60df1e28-8fc0-42af-a5a9-22113f387ef2" class=""><code>checkedXXX</code>可以将给定集合类进行包装，在运行时同样会进行类型检查，如果通过上面的漏洞插入一个本不应该是当前类型集合支持的类型，那么会直接抛出类型转换异常：</p><figure id="5fac0e02-09b7-47ac-92b3-ac4a66a890a8" class="image"><a href="https://s2.loli.net/2022/10/04/5BHq1u9JU3bhdI6.png"><img src="https://s2.loli.net/2022/10/04/5BHq1u9JU3bhdI6.png"/></a></figure><p id="369bbaac-580f-40f5-aee1-840fb2f83eb8" class="">image-20221004001409799</p><p id="9a733e07-1c29-4375-9072-4da7972fe077" class="">是不是感觉这个工具类好像还挺好用的？实际上在我们的开发中，这个工具类也经常被使用到。</p><hr id="ab8887e1-ab0c-449d-b175-3649ad181a6d"/><h2 id="e217f9f3-d5f8-475d-9038-fd842bf87e65" class="">Java I/O</h2><p id="e4458408-3a44-4070-bdeb-c9364ae2b6c5" class=""><strong>注意：</strong>这块会涉及到<strong>操作系统</strong>和<strong>计算机组成原理</strong>相关内容。</p><p id="90a87eaa-d1e1-4ba6-96ae-0e80c2915322" class="">I/O简而言之，就是输入输出，那么为什么会有I/O呢？其实I/O无时无刻都在我们的身边，比如读取硬盘上的文件，网络文件传输，鼠标键盘输入，也可以是接受单片机发回的数据，而能够支持这些操作的设备就是I/O设备。</p><p id="571b509b-d5ec-4883-9e07-ba2ab2db1c9b" class="">我们可以大致看一下整个计算机的总线结构：</p><figure id="72e32992-55fd-4bb1-a22a-712c9843b54b" class="image"><a href="https://s2.loli.net/2022/10/04/Q8JGeMprkgHsnPY.png"><img src="https://s2.loli.net/2022/10/04/Q8JGeMprkgHsnPY.png"/></a></figure><p id="603655d2-296e-464e-91a9-bf72ea488d9a" class="">image-20221004002405375</p><p id="58f82e26-0f12-4f30-b6aa-b5d5e6163540" class="">常见的I/O设备一般是鼠标、键盘这类通过USB进行传输的外设或者是通过Sata接口或是M.2连接的硬盘。一般情况下，这些设备是由CPU发出指令通过南桥芯片间接进行控制，而不是由CPU直接操作。</p><p id="17294876-6d8c-4b68-bc74-e05daaa3083d" class="">而我们在程序中，想要读取这些外部连接的I/O设备中的内容，就需要将数据传输到内存中。而需要实现这样的操作，单单凭借一个小的程序是无法做到的，而操作系统（如：Windows/Linux/MacOS）就是专门用于控制和管理计算机硬件和软件资源的软件，我们需要读取一个IO设备的内容时，就可以向操作系统发出请求，由操作系统帮助我们来和底层的硬件交互以完成我们的读取/写入请求。</p><p id="063f4392-eba9-4e2d-ae47-750e8f5855fa" class="">从读取硬盘文件的角度来说，不同的操作系统有着不同的文件系统（也就是文件在硬盘中的存储排列方式，如Windows就是NTFS、MacOS就是APFS），硬盘只能存储一个个0和1这样的二进制数据，至于0和1如何排列，各自又代表什么意思，就是由操作系统的文件系统来决定的。从网络通信角度来说，网络信号通过网卡等设备翻译为二进制信号，再交给系统进行读取，最后再由操作系统来给到程序。</p><figure id="9e30bebf-2f5f-461d-8844-b0bc37eedbcb" class="image"><a href="https://s2.loli.net/2022/10/04/13h7yTekm2FfnRw.png"><img src="https://s2.loli.net/2022/10/04/13h7yTekm2FfnRw.png"/></a></figure><p id="8cd73c0a-dc34-4d4d-8141-12b5f0572d4b" class="">image-20221004002733950</p><p id="3829d8b6-ef2f-412f-a0a2-7a77d83ea990" class="">（传统的SATA硬盘就是通过SATA线与电脑主板相连，这样才可以读取到数据）</p><p id="91b1f6c2-2058-46fb-b4ad-ae0aaf69065e" class="">JDK提供了一套用于IO操作的框架，为了方便我们开发者使用，就定义了一个像水流一样，根据流的传输方向和读取单位，分为字节流InputStream和OutputStream以及字符流Reader和Writer的IO框架，当然，这里的Stream并不是前面集合框架认识的Stream，这里的流指的是数据流，通过流，我们就可以一直从流中读取数据，直到读取到尽头，或是不断向其中写入数据，直到我们写入完成，而这类IO就是我们所说的BIO，</p><p id="b1166467-3321-4b61-b77e-6a0c6c918fe2" class="">字节流一次读取一个字节，也就是一个<code>byte</code>的大小，而字符流顾名思义，就是一次读取一个字符，也就是一个<code>char</code>的大小（在读取纯文本文件的时候更加适合），有关这两种流，会在后面详细介绍，这个章节我们需要学习16个关键的流。</p><h3 id="dc0f3eb9-6c90-4dc1-823b-c030fb10092a" class="">文件字节流</h3><p id="30f7190b-684f-41db-92d2-6f6d689b224b" class="">要学习和使用IO，首先就要从最易于理解的读取文件开始说起。</p><p id="ec5ba769-28b1-415b-b225-fb6092e4b458" class="">首先介绍一下FileInputStream，我们可以通过它来获取文件的输入流：</p><pre id="6094b620-b261-42e4-8a5c-f17e350a25ed" class="code code-wrap"><code>public static void main(String[] args) {    try {   //注意，IO相关操作会有很多影响因素，有可能出现异常，所以需要明确进行处理        FileInputStream inputStream = new FileInputStream(&quot;路径&quot;);        //路径支持相对路径和绝对路径    } catch (FileNotFoundException e) {        e.printStackTrace();    }}</code></pre><p id="c0119efe-2d83-4097-a509-f12097b25afa" class="">相对路径是在当前运行目录（就是你在哪个目录运行java命令启动Java程序的）的路径下寻找文件，而绝对路径，是从根目录开始寻找。路径分割符支持使用<code>/</code>或是<code>\\</code>，但是不能写为<code>\</code>因为它是转义字符！比如在Windows下：</p><pre id="89d4c2ef-e186-49f1-b12e-d59ae86bfe9d" class="code code-wrap"><code>C://User/lbw/nb    这个就是一个绝对路径，因为是从盘符开始的
+test/test          这个就是一个相对路径，因为并不是从盘符开始的，而是一个直接的路径</code></pre><p id="eff0cde7-ce6a-4b89-9eb8-ec1f064124f4" class="">在Linux和MacOS下：</p><pre id="88190226-a747-4bfb-9483-93b8b363442e" class="code code-wrap"><code>/root/tmp       这个就是一个绝对路径，绝对路径以/开头
+test/test       这个就是一个相对路径，不是以/开头的</code></pre><p id="11dcb87b-7bba-4563-b469-e4cca213aea2" class="">当然，这个其实还是很好理解的，我们在使用时注意一下就行了。</p><p id="a49b7cc9-40ff-4764-992e-720e17d474ac" class="">在使用完成一个流之后，必须关闭这个流来完成对资源的释放，否则资源会被一直占用：</p><pre id="95b8f126-ef6f-40d3-a174-db8ef9d6bbc4" class="code code-wrap"><code>public static void main(String[] args) {    FileInputStream inputStream = null;    //定义可以先放在try外部    try {        inputStream = new FileInputStream(&quot;路径&quot;);    } catch (FileNotFoundException e) {        e.printStackTrace();    } finally {        try {    //建议在finally中进行，因为关闭流是任何情况都必须要执行的！            if(inputStream != null) inputStream.close();        } catch (IOException e) {            e.printStackTrace();        }    }}</code></pre><p id="073e33f8-d483-48f0-b3dd-fe572ee66ecd" class="">虽然这样的写法才是最保险的，但是显得过于繁琐了，尤其是finally中再次嵌套了一个try-catch块，因此在JDK1.7新增了try-with-resource语法，用于简化这样的写法（本质上还是和这样的操作一致，只是换了个写法）</p><pre id="1b8f8016-9df4-4f97-985b-0395a4e70397" class="code code-wrap"><code>public static void main(String[] args) {    //注意，这种语法只支持实现了AutoCloseable接口的类！    try(FileInputStream inputStream = new FileInputStream(&quot;路径&quot;)) {   //直接在try()中定义要在完成之后释放的资源    } catch (IOException e) {   //这里变成IOException是因为调用close()可能会出现，而FileNotFoundException是继承自IOException的        e.printStackTrace();    }    //无需再编写finally语句块，因为在最后自动帮我们调用了close()}</code></pre><p id="5c6dfb6a-9c23-4ed0-9f7d-c13406d58997" class="">之后为了方便，我们都使用此语法进行教学。</p><p id="bf32d79c-2cb3-4dd9-a0b2-509786ccd97a" class="">现在我们拿到了文件的输入流，那么怎么才能读取文件里面的内容呢？我们可以使用<code>read</code>方法：</p><pre id="11abbfa7-95c9-4225-af5b-70aebecd00f4" class="code code-wrap"><code>public static void main(String[] args) {    //test.txt：a    try(FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {        //使用read()方法进行字符读取        System.out.println((char) inputStream.read());  //读取一个字节的数据（英文字母只占1字节，中文占2字节）        System.out.println(inputStream.read());   //唯一一个字节的内容已经读完了，再次读取返回-1表示没有内容了    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="11aa1657-55b8-4376-aaec-d43d1692cb07" class="">使用read可以直接读取一个字节的数据，注意，流的内容是有限的，读取一个少一个。我们如果想一次性全部读取的话，可以直接使用一个while循环来完成：</p><pre id="d7f905fe-7c97-46ea-8981-e62dd89b7389" class="code code-wrap"><code>public static void main(String[] args) {    //test.txt：abcd    try(FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {        int tmp;        while ((tmp = inputStream.read()) != -1){   //通过while循环来一次性读完内容            System.out.println((char)tmp);        }    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="04c7cd9d-c230-433b-b4a1-e3acb170c08a" class="">使用<code>available</code>方法能查看当前可读的剩余字节数量（注意：并不一定真实的数据量就是这么多，尤其是在网络I/O操作时，这个方法只能进行一个预估也可以说是暂时能一次性可以读取的数量，当然在磁盘IO下，一般情况都是真实的数据量）</p><pre id="2327f24a-87b0-4c26-830a-1107bde00451" class="code code-wrap"><code>try(FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {    System.out.println(inputStream.available());  //查看剩余数量}catch (IOException e){    e.printStackTrace();}</code></pre><p id="874d7ff9-d972-4566-9f1e-7ed45892854a" class="">当然，一个一个读取效率太低了，那能否一次性全部读取呢？我们可以预置一个合适容量的byte[]数组来存放：</p><pre id="0e5ad9e8-bfcf-4fe0-9804-40f66375db58" class="code code-wrap"><code>public static void main(String[] args) {    //test.txt：abcd    try(FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {        byte[] bytes = new byte[inputStream.available()];   //我们可以提前准备好合适容量的byte数组来存放        System.out.println(inputStream.read(bytes));   //一次性读取全部内容（返回值是读取的字节数）        System.out.println(new String(bytes));   //通过String(byte[])构造方法得到字符串    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="a58b60dd-7cad-43bb-bced-98923505c331" class="">也可以控制要读取数量：</p><pre id="d5e2a0a8-00f0-4b78-811d-d1e0ea0e70af" class="code code-wrap"><code>System.out.println(inputStream.read(bytes, 1, 2));   //第二个参数是从给定数组的哪个位置开始放入内容，第三个参数是读取流中的字节数</code></pre><p id="53bf5b9d-a394-472f-936d-527f07686a90" class=""><strong>注意</strong>：一次性读取同单个读取一样，当没有任何数据可读时，依然会返回-1</p><p id="d43d6053-f20e-4f9c-b573-ec3e9a0165cb" class="">通过<code>skip()</code>方法可以跳过指定数量的字节：</p><pre id="334378f6-f480-4471-9897-f58547f3fdb9" class="code code-wrap"><code>public static void main(String[] args) {    //test.txt：abcd    try(FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {        System.out.println(inputStream.skip(1));        System.out.println((char) inputStream.read());   //跳过了一个字节    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="1d073463-592b-4374-94f9-ca9211d0cc43" class="">注意：FileInputStream是不支持<code>reset()</code>的，虽然有这个方法，但是这里先不提及。</p><p id="a92fff3b-acd4-410c-bf7b-f737651eb34b" class="">既然有输入流，那么文件输出流也是必不可少的：</p><pre id="70c27e62-a593-4721-ba6f-ec3e9e167449" class="code code-wrap"><code>public static void main(String[] args) {    //输出流也需要在最后调用close()方法，并且同样支持try-with-resource    try(FileOutputStream outputStream = new FileOutputStream(&quot;output.txt&quot;)) {        //注意：若此文件不存在，会直接创建这个文件！    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="974fd1fa-359a-4635-a4b3-d55c3f05f7f4" class="">输出流没有<code>read()</code>操作而是<code>write()</code>操作，使用方法同输入流一样，只不过现在的方向变为我们向文件里写入内容：</p><pre id="b66ede14-d347-470f-8020-1dfc409428f4" class="code code-wrap"><code>public static void main(String[] args) {    try(FileOutputStream outputStream = new FileOutputStream(&quot;output.txt&quot;)) {        outputStream.write(&#x27;c&#x27;);   //同read一样，可以直接写入内容        outputStream.write(&quot;lbwnb&quot;.getBytes());   //也可以直接写入byte[]        outputStream.write(&quot;lbwnb&quot;.getBytes(), 0, 1);  //同上输入流        outputStream.flush();  //建议在最后执行一次刷新操作（强制写入）来保证数据正确写入到硬盘文件中    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="64bffef2-76e5-4c03-84b0-f5f12928e2b6" class="">那么如果是我只想在文件尾部进行追加写入数据呢？我们可以调用另一个构造方法来实现：</p><pre id="681529fb-a135-490d-b92e-9fc03ae794ce" class="code code-wrap"><code>public static void main(String[] args) {    try(FileOutputStream outputStream = new FileOutputStream(&quot;output.txt&quot;, true)) {  //true表示开启追加模式        outputStream.write(&quot;lb&quot;.getBytes());   //现在只会进行追加写入，而不是直接替换原文件内容        outputStream.flush();    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="ba97692f-cde7-4475-923f-4507a9b6af5b" class="">利用输入流和输出流，就可以轻松实现文件的拷贝了：</p><pre id="05e1022f-5874-48b9-bb26-f8993ee643f7" class="code code-wrap"><code>public static void main(String[] args) {    try(FileOutputStream outputStream = new FileOutputStream(&quot;output.txt&quot;);        FileInputStream inputStream = new FileInputStream(&quot;test.txt&quot;)) {   //可以写入多个        byte[] bytes = new byte[10];    //使用长度为10的byte[]做传输媒介        int tmp;   //存储本地读取字节数        while ((tmp = inputStream.read(bytes)) != -1){   //直到读取完成为止            outputStream.write(bytes, 0, tmp);    //写入对应长度的数据到输出流        }    }catch (IOException e){        e.printStackTrace();    }}</code></pre><h3 id="04fe6930-7f9f-48bc-9257-e50fabbac3d5" class="">文件字符流</h3><p id="a57ec642-ea2b-4a29-891a-e8c5eafff3dd" class="">字符流不同于字节，字符流是以一个具体的字符进行读取，因此它只适合读纯文本的文件，如果是其他类型的文件不适用：</p><pre id="ba07e666-7769-4ae5-b10d-61adcc78c1c5" class="code code-wrap"><code>public static void main(String[] args) {    try(FileReader reader = new FileReader(&quot;test.txt&quot;)){        reader.skip(1);   //现在跳过的是一个字符        System.out.println((char) reader.read());   //现在是按字符进行读取，而不是字节，因此可以直接读取到中文字符    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="bbf0b0c9-314d-4435-9f7d-579c14456fa4" class="">同理，字符流只支持<code>char[]</code>类型作为存储：</p><pre id="fc97a66a-c4f9-4f0b-8612-0d5ba958630c" class="code code-wrap"><code>public static void main(String[] args) {    try(FileReader reader = new FileReader(&quot;test.txt&quot;)){        char[] str = new char[10];        reader.read(str);        System.out.println(str);   //直接读取到char[]中    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="557c9dcf-f419-4abd-a148-4b2068670a22" class="">既然有了Reader肯定也有Writer：</p><pre id="8e6b0070-5139-4075-9d11-e3e88967cc97" class="code code-wrap"><code>public static void main(String[] args) {    try(FileWriter writer = new FileWriter(&quot;output.txt&quot;)){        writer.getEncoding();   //支持获取编码（不同的文本文件可能会有不同的编码类型）       writer.write(&#x27;牛&#x27;);       writer.append(&#x27;牛&#x27;);   //其实功能和write一样        writer.flush();   //刷新    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="ebd196bd-caa0-4c0d-9e35-d4188149f291" class="">我们发现不仅有<code>write()</code>方法，还有一个<code>append()</code>方法，但是实际上他们效果是一样的，看源码：</p><pre id="fb2828d5-fca7-40c8-ab01-3c643f3b4287" class="code code-wrap"><code>public Writer append(char c) throws IOException {    write(c);    return this;}</code></pre><p id="82505816-0369-4d6c-88f3-edbc216997f9" class="">append支持像StringBuilder那样的链式调用，返回的是Writer对象本身。</p><p id="cb9b6332-792f-4d6c-91d6-93e956940579" class=""><strong>练习</strong>：尝试一下用Reader和Writer来拷贝纯文本文件。</p><p id="b08578ab-3af0-44da-8c44-42c36d3a0cb3" class="">这里需要额外介绍一下File类，它是专门用于表示一个文件或文件夹，只不过它只是代表这个文件，但并不是这个文件本身。通过File对象，可以更好地管理和操作硬盘上的文件。</p><pre id="b02e8d4a-8f50-40ff-9833-107dd62488c2" class="code code-wrap"><code>public static void main(String[] args) {    File file = new File(&quot;test.txt&quot;);   //直接创建文件对象，可以是相对路径，也可以是绝对路径    System.out.println(file.exists());   //此文件是否存在    System.out.println(file.length());   //获取文件的大小    System.out.println(file.isDirectory());   //是否为一个文件夹    System.out.println(file.canRead());   //是否可读    System.out.println(file.canWrite());   //是否可写    System.out.println(file.canExecute());   //是否可执行}</code></pre><p id="942ed329-9577-4f2b-ad75-bc08bde0d27f" class="">通过File对象，我们就能快速得到文件的所有信息，如果是文件夹，还可以获取文件夹内部的文件列表等内容：</p><pre id="7de24c8c-3f16-4f3d-8153-0ba6c2269033" class="code code-wrap"><code>File file = new File(&quot;/&quot;);System.out.println(Arrays.toString(file.list()));   //快速获取文件夹下的文件名称列表for (File f : file.listFiles()){   //所有子文件的File对象    System.out.println(f.getAbsolutePath());   //获取文件的绝对路径}</code></pre><p id="626470cf-e31b-48e7-a058-45f92c58567f" class="">如果我们希望读取某个文件的内容，可以直接将File作为参数传入字节流或是字符流：</p><pre id="5b9cf849-5730-4737-a32b-dab9ed63dc1a" class="code code-wrap"><code>File file = new File(&quot;test.txt&quot;);try (FileInputStream inputStream = new FileInputStream(file)){   //直接做参数    System.out.println(inputStream.available());}catch (IOException e){    e.printStackTrace();}</code></pre><p id="93f5a58b-4ed1-4708-83d9-90220cacf82d" class=""><strong>练习</strong>：尝试拷贝文件夹下的所有文件到另一个文件夹</p><h3 id="3d108a09-65ab-445d-8497-77019eed7d78" class="">缓冲流</h3><p id="fee43bd9-b93e-4161-aeb6-49f4e374dea6" class="">虽然普通的文件流读取文件数据非常便捷，但是每次都需要从外部I/O设备去获取数据，由于外部I/O设备的速度一般都达不到内存的读取速度，很有可能造成程序反应迟钝，因此性能还不够高，而缓冲流正如其名称一样，它能够提供一个缓冲，提前将部分内容存入内存（缓冲区）在下次读取时，如果缓冲区中存在此数据，则无需再去请求外部设备。同理，当向外部设备写入数据时，也是由缓冲区处理，而不是直接向外部设备写入。</p><figure id="4e60ae5f-bf4b-4434-8383-f6c9bca10eb1" class="image"><a href="https://s2.loli.net/2022/10/04/S8O61JP2lqKTzjd.png"><img src="https://s2.loli.net/2022/10/04/S8O61JP2lqKTzjd.png"/></a></figure><p id="5c980dff-1507-4a5d-9da3-1d559919e42a" class="">image-20221004125755217</p><p id="eb4ed25b-1e38-455a-868e-833382c1142d" class="">要创建一个缓冲字节流，只需要将原本的流作为构造参数传入BufferedInputStream即可：</p><pre id="4b0f9b72-3f73-45b8-898c-a81b65b10203" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(&quot;test.txt&quot;))){   //传入FileInputStream        System.out.println((char) bufferedInputStream.read());   //操作和原来的流是一样的    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="f7fe358b-361e-495c-adbc-bbb8fcaf5efd" class="">实际上进行I/O操作的并不是BufferedInputStream，而是我们传入的FileInputStream，而BufferedInputStream虽然有着同样的方法，但是进行了一些额外的处理然后再调用FileInputStream的同名方法，这样的写法称为<code>装饰者模式</code>，我们会在设计模式篇中详细介绍。我们可以来观察一下它的<code>close</code>方法源码：</p><pre id="536ac592-61fe-41f7-8fae-5d2995be3858" class="code code-wrap"><code>public void close() throws IOException {    byte[] buffer;    while ( (buffer = buf) != null) {        if (bufUpdater.compareAndSet(this, buffer, null)) {  //CAS无锁算法，并发会用到，暂时不需要了解            InputStream input = in;            in = null;            if (input != null)                input.close();            return;        }        // Else retry in case a new buf was CASed in fill()    }}</code></pre><p id="cd66975e-3b8d-4355-9b08-b5f436dff758" class="">实际上这种模式是父类FilterInputStream提供的规范，后面我们还会讲到更多FilterInputStream的子类。</p><p id="f82c9b29-2aac-4816-859b-e8567f600bf6" class="">我们可以发现在BufferedInputStream中还存在一个专门用于缓存的数组：</p><pre id="70392be2-26c9-4bc5-8726-40414cee7044" class="code code-wrap"><code>/** * The internal buffer array where the data is stored. When necessary, * it may be replaced by another array of * a different size. */protected volatile byte buf[];</code></pre><p id="c06aec6c-5595-4906-9876-1c37e9f620e4" class="">I/O操作一般不能重复读取内容（比如键盘发送的信号，主机接收了就没了），而缓冲流提供了缓冲机制，一部分内容可以被暂时保存，BufferedInputStream支持<code>reset()</code>和<code>mark()</code>操作，首先我们来看看<code>mark()</code>方法的介绍：</p><pre id="7eadd349-47ac-404c-a513-d1a8243a8687" class="code code-wrap"><code>/** * Marks the current position in this input stream. A subsequent * call to the &lt;code&gt;reset&lt;/code&gt; method repositions this stream at * the last marked position so that subsequent reads re-read the same bytes. * &lt;p&gt; * The &lt;code&gt;readlimit&lt;/code&gt; argument tells this input stream to * allow that many bytes to be read before the mark position gets * invalidated. * &lt;p&gt; * This method simply performs &lt;code&gt;in.mark(readlimit)&lt;/code&gt;. * * @param   readlimit   the maximum limit of bytes that can be read before *                      the mark position becomes invalid. * @see     java.io.FilterInputStream#in * @see     java.io.FilterInputStream#reset() */public synchronized void mark(int readlimit) {    in.mark(readlimit);}</code></pre><p id="793e8ef7-6e1e-4841-a731-543115522c53" class="">当调用<code>mark()</code>之后，输入流会以某种方式保留之后读取的<code>readlimit</code>数量的内容，当读取的内容数量超过<code>readlimit</code>则之后的内容不会被保留，当调用<code>reset()</code>之后，会使得当前的读取位置回到<code>mark()</code>调用时的位置。</p><pre id="ba9c4359-e49c-43b8-aac5-69f85a277d71" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(&quot;test.txt&quot;))){        bufferedInputStream.mark(1);   //只保留之后的1个字符        System.out.println((char) bufferedInputStream.read());        System.out.println((char) bufferedInputStream.read());        bufferedInputStream.reset();   //回到mark时的位置        System.out.println((char) bufferedInputStream.read());        System.out.println((char) bufferedInputStream.read());    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="5f91d939-08ba-41bf-a073-e785b1f9a308" class="">我们发现虽然后面的部分没有保存，但是依然能够正常读取，其实<code>mark()</code>后保存的读取内容是取<code>readlimit</code>和BufferedInputStream类的缓冲区大小两者中的最大值，而并非完全由<code>readlimit</code>确定。因此我们限制一下缓冲区大小，再来观察一下结果：</p><pre id="8e2e3540-a097-4c02-86a5-3009bef8f2ea" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(&quot;test.txt&quot;), 1)){  //将缓冲区大小设置为1        bufferedInputStream.mark(1);   //只保留之后的1个字符        System.out.println((char) bufferedInputStream.read());        System.out.println((char) bufferedInputStream.read());   //已经超过了readlimit，继续读取会导致mark失效        bufferedInputStream.reset();   //mark已经失效，无法reset()        System.out.println((char) bufferedInputStream.read());        System.out.println((char) bufferedInputStream.read());    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="232cc169-fdb1-43e6-8b75-e114a67a053d" class="">了解完了BufferedInputStream之后，我们再来看看BufferedOutputStream，其实和BufferedInputStream原理差不多，只是反向操作：</p><pre id="864d5da7-a996-49ac-8a79-e3079e90d644" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(&quot;output.txt&quot;))){        outputStream.write(&quot;lbwnb&quot;.getBytes());        outputStream.flush();    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="895fc3c4-08f2-4e7c-8c80-4443ec2f904f" class="">操作和FileOutputStream一致，这里就不多做介绍了。</p><p id="ea06bd45-6307-47e8-9ca1-ec8a25baec78" class="">既然有缓冲字节流，那么肯定也有缓冲字符流，缓冲字符流和缓冲字节流一样，也有一个专门的缓冲区，BufferedReader构造时需要传入一个Reader对象：</p><pre id="95742d7c-d9a3-444f-9bdd-fc9fcac21a7a" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedReader reader = new BufferedReader(new FileReader(&quot;test.txt&quot;))){        System.out.println((char) reader.read());    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="f43ffc48-7a59-466d-900f-dbd237e04109" class="">使用和reader也是一样的，内部也包含一个缓存数组：</p><pre id="27a9e225-ad22-4531-94ae-c7494bb00838" class="code code-wrap"><code>private char cb[];</code></pre><p id="c3dbf82c-cf3c-44cb-8ea0-8465815e9b8d" class="">相比Reader更方便的是，它支持按行读取：</p><pre id="9fa411d5-f0fa-44fd-a44c-16eedd0ed6f4" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedReader reader = new BufferedReader(new FileReader(&quot;test.txt&quot;))){        System.out.println(reader.readLine());   //按行读取    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="37cfa358-8b52-4a45-a979-7638208ae143" class="">读取后直接得到一个字符串，当然，它还能把每一行内容依次转换为集合类提到的Stream流：</p><pre id="431cbe39-49d7-483d-bacb-2a64277970d3" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedReader reader = new BufferedReader(new FileReader(&quot;test.txt&quot;))){        reader                .lines()                .limit(2)                .distinct()                .sorted()                .forEach(System.out::println);    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="439e253f-90eb-4bd0-b40c-d721e8d39ab5" class="">它同样也支持<code>mark()</code>和<code>reset()</code>操作：</p><pre id="b2c351f6-a8e1-4135-b3ed-c73fdb6b45f8" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedReader reader = new BufferedReader(new FileReader(&quot;test.txt&quot;))){        reader.mark(1);        System.out.println((char) reader.read());        reader.reset();        System.out.println((char) reader.read());    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="ee075feb-38c0-49a5-b587-94ad5f294877" class="">BufferedReader处理纯文本文件时就更加方便了，BufferedWriter在处理时也同样方便：</p><pre id="11968bd3-dd42-483c-a124-039c2d4406b2" class="code code-wrap"><code>public static void main(String[] args) {    try (BufferedWriter reader = new BufferedWriter(new FileWriter(&quot;output.txt&quot;))){        reader.newLine();   //使用newLine进行换行        reader.write(&quot;汉堡做滴彳亍不彳亍&quot;);   //可以直接写入一个字符串        reader.flush();   //清空缓冲区    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="d287070e-9280-43e4-b3bf-3df0fab292b6" class="">合理使用缓冲流，可以大大提高我们程序的运行效率，只不过现在初学阶段，很少会有机会接触到实际的应用场景。</p><h3 id="62990dbf-8589-4902-8d2b-8c8c8577aa3d" class="">转换流</h3><p id="b6639f66-e3db-4e81-8a75-4734e456baa0" class="">有时会遇到这样一个很麻烦的问题：我这里读取的是一个字符串或是一个个字符，但是我只能往一个OutputStream里输出，但是OutputStream又只支持byte类型，如果要往里面写入内容，进行数据转换就会很麻烦，那么能否有更加简便的方式来做这样的事情呢？</p><pre id="53e5178d-a094-4f96-ac4d-7a46abd60f9a" class="code code-wrap"><code>public static void main(String[] args) {    try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(&quot;test.txt&quot;))){  //虽然给定的是FileOutputStream，但是现在支持以Writer的方式进行写入        writer.write(&quot;lbwnb&quot;);   //以操作Writer的样子写入OutputStream    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="b5db2cff-3779-4d9a-8a79-1e5e86158d82" class="">同样的，我们现在只拿到了一个InputStream，但是我们希望能够按字符的方式读取，我们就可以使用InputStreamReader来帮助我们实现：</p><pre id="d69095ac-85a6-437a-8f98-364c8921d66e" class="code code-wrap"><code>public static void main(String[] args) {    try(InputStreamReader reader = new InputStreamReader(new FileInputStream(&quot;test.txt&quot;))){  //虽然给定的是FileInputStream，但是现在支持以Reader的方式进行读取        System.out.println((char) reader.read());    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="83c5231e-62cd-4e70-b04c-6da866075539" class="">InputStreamReader和OutputStreamWriter本质也是Reader和Writer，因此可以直接放入BufferedReader来实现更加方便的操作。</p><h3 id="90164dc7-b49a-4e10-8442-9b90988d7fd5" class="">打印流</h3><p id="2db9cebe-99fb-40b7-89ec-679cd87abc7e" class="">打印流其实我们从一开始就在使用了，比如<code>System.out</code>就是一个PrintStream，PrintStream也继承自FilterOutputStream类因此依然是装饰我们传入的输出流，但是它存在自动刷新机制，例如当向PrintStream流中写入一个字节数组后自动调用<code>flush()</code>方法。PrintStream也永远不会抛出异常，而是使用内部检查机制<code>checkError()</code>方法进行错误检查。最方便的是，它能够格式化任意的类型，将它们以字符串的形式写入到输出流。</p><pre id="94c69800-7fb2-4698-9cef-11c4572ec8d9" class="code code-wrap"><code>public final static PrintStream out = null;</code></pre><p id="d2235df1-f673-44a1-82b0-fedcf8a467e5" class="">可以看到<code>System.out</code>也是PrintStream，不过默认是向控制台打印，我们也可以让它向文件中打印：</p><pre id="ef01fccf-81c1-4b62-9ee4-2462792c8d7a" class="code code-wrap"><code>public static void main(String[] args) {    try(PrintStream stream = new PrintStream(new FileOutputStream(&quot;test.txt&quot;))){        stream.println(&quot;lbwnb&quot;);   //其实System.out就是一个PrintStream    }catch (IOException e){        e.printStackTrace();    }}</code></pre><p id="c250cf1a-4aed-495b-ac71-b4eaa392f510" class="">我们平时使用的<code>println</code>方法就是PrintStream中的方法，它会直接打印基本数据类型或是调用对象的<code>toString()</code>方法得到一个字符串，并将字符串转换为字符，放入缓冲区再经过转换流输出到给定的输出流上。</p><figure id="aaa48384-93d7-4c45-9e84-b2808e1b23bd" class="image"><a href="https://s2.loli.net/2022/10/04/w8RKJxLm6Ik5usn.png"><img src="https://s2.loli.net/2022/10/04/w8RKJxLm6Ik5usn.png"/></a></figure><p id="35568de8-382f-47a8-af2b-af588d50796b" class="">img</p><p id="71a7c049-bb5e-47ba-b985-179c4bff8db7" class="">因此实际上内部还包含这两个内容：</p><pre id="1edf398f-4c6b-40cc-a492-b75ec055515d" class="code code-wrap"><code>/** * Track both the text- and character-output streams, so that their buffers * can be flushed without flushing the entire stream. */private BufferedWriter textOut;private OutputStreamWriter charOut;</code></pre><p id="1cf13bd3-36ad-4e57-93be-4dd2c20bce50" class="">与此相同的还有一个PrintWriter，不过他们的功能基本一致，PrintWriter的构造方法可以接受一个Writer作为参数，这里就不再做过多阐述了。</p><p id="bfedaab4-0aef-4bfa-9eb1-d2c7b41e7733" class="">而我们之前使用的Scanner，使用的是系统提供的输入流：</p><pre id="cb76b425-0368-4f38-b928-f046fbf35068" class="code code-wrap"><code>public static void main(String[] args) {    Scanner scanner = new Scanner(System.in);   //系统输入流，默认是接收控制台输入}</code></pre><p id="3351ad2b-dd0a-42b3-86e2-ee308fb6d2e4" class="">我们也可以使用Scanner来扫描其他的输入流：</p><pre id="cefcb4dc-e693-4255-9bad-0e14b2938d80" class="code code-wrap"><code>public static void main(String[] args) throws FileNotFoundException {    Scanner scanner = new Scanner(new FileInputStream(&quot;秘制小汉堡.txt&quot;));  //将文件内容作为输入流进行扫描}</code></pre><p id="69651083-a5be-4ea5-a3b0-185d25877e9b" class="">相当于直接扫描文件中编写的内容，同样可以读取。</p><h3 id="4801768d-dde9-46fe-b13f-457a066102a5" class="">数据流</h3><p id="0e63d31d-312d-4e85-95d5-93559c158634" class="">数据流DataInputStream也是FilterInputStream的子类，同样采用装饰者模式，最大的不同是它支持基本数据类型的直接读取：</p><pre id="786b28c7-ae67-4a97-b042-fd21660ff7c9" class="code code-wrap"><code>public static void main(String[] args) {    try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(&quot;test.txt&quot;))){        System.out.println(dataInputStream.readBoolean());   //直接将数据读取为任意基本数据类型    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="485f7f8d-a73f-4a89-90cd-5a569e979a79" class="">用于写入基本数据类型：</p><pre id="ea2cee26-5b0e-4293-ae66-85efb20ab1d9" class="code code-wrap"><code>public static void main(String[] args) {    try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(&quot;output.txt&quot;))){        dataOutputStream.writeBoolean(false);    }catch (IOException e) {        e.printStackTrace();    }}</code></pre><p id="3d6f029c-3ff3-48e7-994c-ec146bffce8b" class="">注意，写入的是二进制数据，并不是写入的字符串，使用DataInputStream可以读取，一般他们是配合一起使用的。</p><h3 id="b0c26657-7abc-4bf0-bcb3-915f81bc5283" class="">对象流</h3><p id="1189a8b3-a2c1-4dcb-bd4e-9a7c37f4b8d5" class="">既然基本数据类型能够读取和写入基本数据类型，那么能否将对象也支持呢？ObjectOutputStream不仅支持基本数据类型，通过对对象的序列化操作，以某种格式保存对象，来支持对象类型的IO，注意：它不是继承自FilterInputStream的。</p><pre id="a33bba00-1e9d-4bb3-8606-99422e9724dd" class="code code-wrap"><code>public static void main(String[] args) {    try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(&quot;output.txt&quot;));         ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(&quot;output.txt&quot;))){        People people = new People(&quot;lbw&quot;);        outputStream.writeObject(people);        outputStream.flush();        people = (People) inputStream.readObject();        System.out.println(people.name);    }catch (IOException | ClassNotFoundException e) {        e.printStackTrace();    }}static class People implements Serializable{   //必须实现Serializable接口才能被序列化    String name;    public People(String name){        this.name = name;    }}</code></pre><p id="d584af9d-f9f2-4143-9e9f-06f06cb25e98" class="">在我们后续的操作中，有可能会使得这个类的一些结构发生变化，而原来保存的数据只适用于之前版本的这个类，因此我们需要一种方法来区分类的不同版本：</p><pre id="be1c5347-6714-426b-9d35-29989a6643ea" class="code code-wrap"><code>static class People implements Serializable{    private static final long serialVersionUID = 123456;   //在序列化时，会被自动添加这个属性，它代表当前类的版本，我们也可以手动指定版本。    String name;    public People(String name){        this.name = name;    }}</code></pre><p id="7644539d-f8d7-4221-a39f-e4a16ed4d9c8" class="">当发生版本不匹配时，会无法反序列化为对象：</p><pre id="5662024b-27e8-4114-abe2-47a9da9f08f0" class="code code-wrap"><code>java.io.InvalidClassException: com.test.Main$People; local class incompatible: stream classdesc serialVersionUID = 123456, local class serialVersionUID = 1234567    at java.io.ObjectStreamClass.initNonProxy(ObjectStreamClass.java:699)    at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:2003)    at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1850)    at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2160)    at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1667)    at java.io.ObjectInputStream.readObject(ObjectInputStream.java:503)    at java.io.ObjectInputStream.readObject(ObjectInputStream.java:461)    at com.test.Main.main(Main.java:27)</code></pre><p id="b7a45608-03a8-471b-9e0e-3e6b55ba1c3f" class="">如果我们不希望某些属性参与到序列化中进行保存，我们可以添加<code>transient</code>关键字：</p><pre id="f42e1a3c-7918-4fe1-9893-c940ea35060b" class="code code-wrap"><code>public static void main(String[] args) {    try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(&quot;output.txt&quot;));         ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(&quot;output.txt&quot;))){        People people = new People(&quot;lbw&quot;);        outputStream.writeObject(people);        outputStream.flush();        people = (People) inputStream.readObject();        System.out.println(people.name);  //虽然能得到对象，但是name属性并没有保存，因此为null    }catch (IOException | ClassNotFoundException e) {        e.printStackTrace();    }}static class People implements Serializable{    private static final long serialVersionUID = 1234567;    transient String name;    public People(String name){        this.name = name;    }}</code></pre><p id="74439013-dcba-42f6-a813-c6795c9d126d" class="">其实我们可以看到，在一些JDK内部的源码中，也存在大量的transient关键字，使得某些属性不参与序列化，取消这些不必要保存的属性，可以节省数据空间占用以及减少序列化时间。</p><hr id="f89dea3f-220e-4d35-a216-17ee8522c2b5"/><h2 id="8f9f7848-8d23-4e7b-b198-363d74326e0d" class="">实战：图书管理系统</h2><p id="71c99464-54e2-4921-8669-bdf351831f6b" class="">要求实现一个图书管理系统（控制台），支持以下功能：保存书籍信息（要求持久化），查询、添加、删除、修改书籍信息。</p></div></article></body></html>
