@@ -1,0 +1,698 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>JavaSE 笔记（七）多线程与反射</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="fbbb3ea9-74cf-4d35-8584-50e3c0efcdb4" class="page mono"><header><h1 class="page-title">JavaSE 笔记（七）多线程与反射</h1><p class="page-description"></p></header><div class="page-body"><figure id="7559f6a4-b17a-449e-a41e-c9f1238de5cd" class="image"><a href="https://s2.loli.net/2022/10/04/aRsN9WoS7BcC3uY.png"><img src="https://s2.loli.net/2022/10/04/aRsN9WoS7BcC3uY.png"/></a></figure><p id="031f473a-2808-49c4-a665-8a02165e1200" class="">image-20221004132312588</p><h1 id="90119475-0400-48d2-b255-8981fb19215f" class="">多线程与反射</h1><p id="2e870cd8-a8e3-49ea-86c2-0b3b0ac60a02" class="">前面我们已经讲解了JavaSE的大部分核心内容，最后一章，我们还将继续学习JavaSE中提供的各种高级特性。这些高级特性对于我们之后的学习，会有着举足轻重的作用。</p><h2 id="559db983-8264-4a4c-9775-01370c217832" class="">多线程</h2><p id="aa45dd19-bc8f-44fa-85c3-41cf79a015b3" class=""><strong>注意：</strong>本章节会涉及到 <strong>操作系统</strong> 相关知识。</p><p id="ced3cec5-93da-4f80-abcc-54cdf9e228bd" class="">在了解多线程之前，让我们回顾一下<code>操作系统</code>中提到的进程概念：</p><figure id="c253fd93-eab1-4db2-8690-219a7d4580d0" class="image"><a href="https://s2.loli.net/2022/10/04/GhrSTfNRsc2jFZM.jpg"><img src="https://s2.loli.net/2022/10/04/GhrSTfNRsc2jFZM.jpg"/></a></figure><p id="cb3a279b-ccd5-48e3-b249-e1f493209222" class="">b040eadb-8aa1-4b2a-b587-2c0a6b4efa0b</p><p id="70af35cb-d7be-469b-83fd-832d7a1b1ba0" class="">进程是程序执行的实体，每一个进程都是一个应用程序（比如我们运行QQ、浏览器、LOL、网易云音乐等软件），都有自己的内存空间，CPU一个核心同时只能处理一件事情，当出现多个进程需要同时运行时，CPU一般通过<code>时间片轮转调度</code>算法，来实现多个进程的同时运行。</p><figure id="e78cecc2-8ac9-426f-9114-cb64b15fd851" class="image"><a href="https://s2.loli.net/2022/10/04/hUkGafu7vztB4qR.png"><img src="https://s2.loli.net/2022/10/04/hUkGafu7vztB4qR.png"/></a></figure><p id="bae6d2f4-3c8e-48f0-9daf-4dec61912372" class="">image-20221004132729868</p><p id="0ecf2e3a-eeee-4225-b06b-cbf8fc455039" class="">在早期的计算机中，进程是拥有资源和独立运行的最小单位，也是程序执行的最小单位。但是，如果我希望两个任务同时进行，就必须运行两个进程，由于每个进程都有一个自己的内存空间，进程之间的通信就变得非常麻烦（比如要共享某些数据）而且执行不同进程会产生上下文切换，非常耗时，那么能否实现在一个进程中就能够执行多个任务呢？</p><figure id="60438f8d-17b0-4ce2-ba08-9efc6ac6e8de" class="image"><a href="https://s2.loli.net/2022/10/04/okgq3HEKGn6jBVw.png"><img src="https://s2.loli.net/2022/10/04/okgq3HEKGn6jBVw.png"/></a></figure><p id="d50b3e1b-ef87-46e1-8c3c-9917deb28d59" class="">image-20221004132700554</p><p id="11424566-a1e0-4295-b81c-6782dc08b669" class="">后来，线程横空出世，一个进程可以有多个线程，线程是程序执行中一个单一的顺序控制流程，现在线程才是程序执行流的最小单元，各个线程之间共享程序的内存空间（也就是所在进程的内存空间），上下文切换速度也高于进程。</p><p id="59d4ba52-1047-41b5-ae35-dfa99cb5a938" class="">在Java中，我们从开始，一直以来编写的都是单线程应用程序（运行<code>main()</code>方法的内容），也就是说只能同时执行一个任务（无论你是调用方法、还是进行计算，始终都是依次进行的，也就是同步的），而如果我们希望同时执行多个任务（两个方法<strong>同时</strong>在运行或者是两个计算同时在进行，也就是异步的），就需要用到Java多线程框架。实际上一个Java程序启动后，会创建很多线程，不仅仅只运行一个主线程：</p><pre id="39ec038a-b819-4ef5-86fc-e5db99aae308" class="code code-wrap"><code>public static void main(String[] args) {    ThreadMXBean bean = ManagementFactory.getThreadMXBean();    long[] ids = bean.getAllThreadIds();    ThreadInfo[] infos = bean.getThreadInfo(ids);    for (ThreadInfo info : infos) {        System.out.println(info.getThreadName());    }}</code></pre><p id="d58c1d64-8a01-40e1-8d82-8691dcbb958f" class="">关于除了main线程默认以外的线程，涉及到JVM相关底层原理，在这里不做讲解，了解就行。</p><h3 id="2c3942e1-a10a-4ae2-93be-e556c6b093b0" class="">线程的创建和启动</h3><p id="20df80db-661a-439d-9cb2-74e7369ba045" class="">通过创建Thread对象来创建一个新的线程，Thread构造方法中需要传入一个Runnable接口的实现（其实就是编写要在另一个线程执行的内容逻辑）同时Runnable只有一个未实现方法，因此可以直接使用lambda表达式：</p><pre id="d6c0b8f0-2545-4039-9fa1-21f35e106ec2" class="code code-wrap"><code>@FunctionalInterfacepublic interface Runnable {    /**     * When an object implementing interface &lt;code&gt;Runnable&lt;/code&gt; is used     * to create a thread, starting the thread causes the object&#x27;s     * &lt;code&gt;run&lt;/code&gt; method to be called in that separately executing     * thread.     * &lt;p&gt;     * The general contract of the method &lt;code&gt;run&lt;/code&gt; is that it may     * take any action whatsoever.     *     * @see     java.lang.Thread#run()     */    public abstract void run();}</code></pre><p id="ea98de9e-ec96-49b5-a5f1-636e9395ff80" class="">创建好后，通过调用<code>start()</code>方法来运行此线程：</p><pre id="798e1c64-5ade-49be-8235-82004ca391b6" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {    //直接编写逻辑        System.out.println(&quot;我是另一个线程！&quot;);    });    t.start();   //调用此方法来开始执行此线程}</code></pre><p id="7c5b399a-69e2-40a7-84b1-b02c9c8b5608" class="">可能上面的例子看起来和普通的单线程没两样，那我们先来看看下面这段代码的运行结果：</p><pre id="28edc251-d014-4f17-b789-c131218927a9" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        System.out.println(&quot;我是线程：&quot;+Thread.currentThread().getName());        System.out.println(&quot;我正在计算 0-10000 之间所有数的和...&quot;);        int sum = 0;        for (int i = 0; i &lt;= 10000; i++) {            sum += i;        }        System.out.println(&quot;结果：&quot;+sum);    });    t.start();    System.out.println(&quot;我是主线程！&quot;);}</code></pre><p id="ee423cdf-bde9-4ee5-a02c-33bf4f6056b2" class="">我们发现，这段代码执行输出结果并不是按照从上往下的顺序了，因为他们分别位于两个线程，他们是同时进行的！如果你还是觉得很疑惑，我们接着来看下面的代码运行结果：</p><pre id="c21ed494-1718-4fbb-8fa3-0e0dc1330682" class="code code-wrap"><code>public static void main(String[] args) {    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;我是一号线程：&quot;+i);        }    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;我是二号线程：&quot;+i);        }    });    t1.start();    t2.start();}</code></pre><p id="1a8a2900-13fa-4eee-94e2-96e193b3e2e7" class="">我们可以看到打印实际上是在交替进行的，也证明了他们是在同时运行！</p><p id="de0cb7d5-263a-439f-945f-0fcbc620ca10" class=""><strong>注意</strong>：我们发现还有一个run方法，也能执行线程里面定义的内容，但是run是直接在当前线程执行，并不是创建一个线程执行！</p><figure id="48dd0101-2a0f-476c-9c7d-e6e3d2531766" class="image"><a href="https://s2.loli.net/2022/10/04/Srx4H8YyRWqXofc.png"><img src="https://s2.loli.net/2022/10/04/Srx4H8YyRWqXofc.png"/></a></figure><p id="819976ff-9414-4a59-bbad-61ad6d92d73b" class="">image-20221004133119997</p><p id="292e8932-c583-4579-9039-3ac3c9392fe4" class="">实际上，线程和进程差不多，也会等待获取CPU资源，一旦获取到，就开始按顺序执行我们给定的程序，当需要等待外部IO操作（比如Scanner获取输入的文本），就会暂时处于休眠状态，等待通知，或是调用<code>sleep()</code>方法来让当前线程休眠一段时间：</p><pre id="b2ba12e0-67f2-4469-90dc-b56c88825a67" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    System.out.println(&quot;l&quot;);    Thread.sleep(1000);    //休眠时间，以毫秒为单位，1000ms = 1s    System.out.println(&quot;b&quot;);    Thread.sleep(1000);    System.out.println(&quot;w&quot;);    Thread.sleep(1000);    System.out.println(&quot;nb!&quot;);}</code></pre><p id="5925e3ba-2cfd-4be6-88b2-6efe1d0a5c6b" class="">我们也可以使用<code>stop()</code>方法来强行终止此线程：</p><pre id="69ef2788-a66a-4de9-bdd1-56b42965df73" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    Thread t = new Thread(() -&gt; {        Thread me = Thread.currentThread();   //获取当前线程对象        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;打印:&quot;+i);            if(i == 20) me.stop();  //此方法会直接终止此线程        }    });    t.start();}</code></pre><p id="decd66e4-1b1f-43d6-863b-e69e99dd9b3c" class="">虽然<code>stop()</code>方法能够终止此线程，但是并不是所推荐的做法，有关线程中断相关问题，我们会在后面继续了解。</p><p id="e5d06733-e1ee-4f77-9939-b88a16c85620" class=""><strong>思考</strong>：猜猜以下程序输出结果：</p><pre id="be04e575-c84f-4963-bde3-a3451e9c8826" class="code code-wrap"><code>private static int value = 0;public static void main(String[] args) throws InterruptedException {    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) value++;        System.out.println(&quot;线程1完成&quot;);    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) value++;        System.out.println(&quot;线程2完成&quot;);    });    t1.start();    t2.start();    Thread.sleep(1000);  //主线程停止1秒，保证两个线程执行完成    System.out.println(value);}</code></pre><p id="6f75eb88-b01d-4f12-8441-dadb21fff3e7" class="">我们发现，value最后的值并不是我们理想的结果，有关为什么会出现这种问题，在我们学习到线程锁的时候，再来探讨。</p><h3 id="dc84cf35-0841-4e43-909c-cdef4dbbd658" class="">线程的休眠和中断</h3><p id="3a0b5dc0-49d4-48b6-a448-88bce95eb17c" class="">我们前面提到，一个线程处于运行状态下，线程的下一个状态会出现以下情况：</p><ul id="53061260-2773-4ff8-890e-0cd78ff0ee42" class="bulleted-list"><li style="list-style-type:disc">当CPU给予的运行时间结束时，会从运行状态回到就绪（可运行）状态，等待下一次获得CPU资源。</li></ul><ul id="ffc19586-f6cd-4585-97a4-8fc2edcae03f" class="bulleted-list"><li style="list-style-type:disc">当线程进入休眠 / 阻塞(如等待IO请求) / 手动调用<code>wait()</code>方法时，会使得线程处于等待状态，当等待状态结束后会回到就绪状态。</li></ul><ul id="2c1c6f20-9174-4b71-8e7f-22e22e749740" class="bulleted-list"><li style="list-style-type:disc">当线程出现异常或错误 / 被<code>stop()</code> 方法强行停止 / 所有代码执行结束时，会使得线程的运行终止。</li></ul><p id="a0897907-153b-447d-8d36-e907126bf0ba" class="">而这个部分我们着重了解一下线程的休眠和中断，首先我们来了解一下如何使得线程进如休眠状态：</p><pre id="50d8f8cf-09fe-4c10-8fe8-c4929f991802" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        try {            System.out.println(&quot;l&quot;);            Thread.sleep(1000);   //sleep方法是Thread的静态方法，它只作用于当前线程（它知道当前线程是哪个）            System.out.println(&quot;b&quot;);    //调用sleep后，线程会直接进入到等待状态，直到时间结束        } catch (InterruptedException e) {            e.printStackTrace();        }    });    t.start();}</code></pre><p id="fcd0e0a3-22c0-4ef5-b35a-ba9162cf6879" class="">通过调用<code>sleep()</code>方法来将当前线程进入休眠，使得线程处于等待状态一段时间。我们发现，此方法显示声明了会抛出一个InterruptedException异常，那么这个异常在什么时候会发生呢？</p><pre id="00688dea-6f30-4e9f-8080-dda9eb566690" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        try {            Thread.sleep(10000);  //休眠10秒        } catch (InterruptedException e) {            e.printStackTrace();        }    });    t.start();    try {        Thread.sleep(3000);   //休眠3秒，一定比线程t先醒来        t.interrupt();   //调用t的interrupt方法    } catch (InterruptedException e) {        e.printStackTrace();    }}</code></pre><p id="c3f6d7e0-5b4e-4ab2-aaee-a0ad3fac8a07" class="">我们发现，每一个Thread对象中，都有一个<code>interrupt()</code>方法，调用此方法后，会给指定线程添加一个中断标记以告知线程需要立即停止运行或是进行其他操作，由线程来响应此中断并进行相应的处理，我们前面提到的<code>stop()</code>方法是强制终止线程，这样的做法虽然简单粗暴，但是很有可能导致资源不能完全释放，而类似这样的发送通知来告知线程需要中断，让线程自行处理后续，会更加合理一些，也是更加推荐的做法。我们来看看interrupt的用法：</p><pre id="fda5a212-3008-4e58-9ea4-48f5c2db65ce" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        System.out.println(&quot;线程开始运行！&quot;);        while (true){   //无限循环            if(Thread.currentThread().isInterrupted()){   //判断是否存在中断标志                break;   //响应中断            }        }        System.out.println(&quot;线程被中断了！&quot;);    });    t.start();    try {        Thread.sleep(3000);   //休眠3秒，一定比线程t先醒来        t.interrupt();   //调用t的interrupt方法    } catch (InterruptedException e) {        e.printStackTrace();    }}</code></pre><p id="43c3a13b-6f51-4571-8c40-129bcf9d7754" class="">通过<code>isInterrupted()</code>可以判断线程是否存在中断标志，如果存在，说明外部希望当前线程立即停止，也有可能是给当前线程发送一个其他的信号，如果我们并不是希望收到中断信号就是结束程序，而是通知程序做其他事情，我们可以在收到中断信号后，复位中断标记，然后继续做我们的事情：</p><pre id="245692ff-99f1-4cee-87ee-bfb81eb66a13" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        System.out.println(&quot;线程开始运行！&quot;);        while (true){            if(Thread.currentThread().isInterrupted()){   //判断是否存在中断标志                System.out.println(&quot;发现中断信号，复位，继续运行...&quot;);                Thread.interrupted();  //复位中断标记（返回值是当前是否有中断标记，这里不用管）            }        }    });    t.start();    try {        Thread.sleep(3000);   //休眠3秒，一定比线程t先醒来        t.interrupt();   //调用t的interrupt方法    } catch (InterruptedException e) {        e.printStackTrace();    }}</code></pre><p id="b5c6d03b-c073-4873-8547-4421725cc43a" class="">复位中断标记后，会立即清除中断标记。那么，如果现在我们想暂停线程呢？我们希望线程暂时停下，比如等待其他线程执行完成后，再继续运行，那这样的操作怎么实现呢？</p><pre id="0c18c7d7-5adc-492e-897d-2a00ee6fe91c" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        System.out.println(&quot;线程开始运行！&quot;);        Thread.currentThread().suspend();   //暂停此线程        System.out.println(&quot;线程继续运行！&quot;);    });    t.start();    try {        Thread.sleep(3000);   //休眠3秒，一定比线程t先醒来        t.resume();   //恢复此线程    } catch (InterruptedException e) {        e.printStackTrace();    }}</code></pre><p id="05ec16de-e8d5-4def-870f-c4c386502bf7" class="">虽然这样很方便地控制了线程的暂停状态，但是这两个方法我们发现实际上也是不推荐的做法，它很容易导致死锁！有关为什么被弃用的原因，我们会在线程锁继续探讨。</p><h3 id="c2f3e080-2af6-42f9-a035-081afbff1bb8" class="">线程的优先级</h3><p id="e93708db-caa9-47d0-84b9-a7e45f82dabd" class="">实际上，Java程序中的每个线程并不是平均分配CPU时间的，为了使得线程资源分配更加合理，Java采用的是抢占式调度方式，优先级越高的线程，优先使用CPU资源！我们希望CPU花费更多的时间去处理更重要的任务，而不太重要的任务，则可以先让出一部分资源。线程的优先级一般分为以下三种：</p><ul id="c7166a75-0566-4719-a92d-3473f3f88ece" class="bulleted-list"><li style="list-style-type:disc">MIN_PRIORITY 最低优先级</li></ul><ul id="9d481674-9cf9-4da7-8ac0-808732e611f4" class="bulleted-list"><li style="list-style-type:disc">MAX_PRIORITY 最高优先级</li></ul><ul id="0aa84194-9c5a-4c3f-b733-8e5c3b8f78a3" class="bulleted-list"><li style="list-style-type:disc">NOM_PRIORITY 常规优先级</li></ul><pre id="b5d6e270-a79a-4105-b6ed-7b9a8dc372b8" class="code code-wrap"><code>public static void main(String[] args) {    Thread t = new Thread(() -&gt; {        System.out.println(&quot;线程开始运行！&quot;);    });    t.start();    t.setPriority(Thread.MIN_PRIORITY);  //通过使用setPriority方法来设定优先级}</code></pre><p id="d2a6e238-06c1-4481-91b3-82d62174a681" class="">优先级越高的线程，获得CPU资源的概率会越大，并不是说一定优先级越高的线程越先执行！</p><h3 id="10d68837-38db-458b-882e-ff047e13f026" class="">线程的礼让和加入</h3><p id="7e15f6ad-7e38-4cf3-a543-bdf2d7cecf4f" class="">我们还可以在当前线程的工作不重要时，将CPU资源让位给其他线程，通过使用<code>yield()</code>方法来将当前资源让位给其他同优先级线程：</p><pre id="4a86533c-0dd9-4295-be85-0c138934fa7e" class="code code-wrap"><code>public static void main(String[] args) {    Thread t1 = new Thread(() -&gt; {        System.out.println(&quot;线程1开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            if(i % 5 == 0) {                System.out.println(&quot;让位！&quot;);                Thread.yield();            }            System.out.println(&quot;1打印：&quot;+i);        }        System.out.println(&quot;线程1结束！&quot;);    });    Thread t2 = new Thread(() -&gt; {        System.out.println(&quot;线程2开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;2打印：&quot;+i);        }    });    t1.start();    t2.start();}</code></pre><p id="10512aae-d2c6-4904-ae15-468e35d25eda" class="">观察结果，我们发现，在让位之后，尽可能多的在执行线程2的内容。</p><p id="b7841069-b9c7-4951-86e6-dc2ed8b83524" class="">当我们希望一个线程等待另一个线程执行完成后再继续进行，我们可以使用<code>join()</code>方法来实现线程的加入：</p><pre id="c5c12670-866e-4bb1-9fef-dced2c0f3b66" class="code code-wrap"><code>public static void main(String[] args) {    Thread t1 = new Thread(() -&gt; {        System.out.println(&quot;线程1开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;1打印：&quot;+i);        }        System.out.println(&quot;线程1结束！&quot;);    });    Thread t2 = new Thread(() -&gt; {        System.out.println(&quot;线程2开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;2打印：&quot;+i);            if(i == 10){                try {                    System.out.println(&quot;线程1加入到此线程！&quot;);                    t1.join();    //在i==10时，让线程1加入，先完成线程1的内容，在继续当前内容                } catch (InterruptedException e) {                    e.printStackTrace();                }            }        }    });    t1.start();    t2.start();}</code></pre><p id="5f95e386-aec2-4dba-a534-03305e38c7ac" class="">我们发现，线程1加入后，线程2等待线程1待执行的内容全部执行完成之后，再继续执行的线程2内容。注意，线程的加入只是等待另一个线程的完成，并不是将另一个线程和当前线程合并！我们来看看：</p><pre id="03c254c0-54ae-435b-ba69-8085e08be805" class="code code-wrap"><code>public static void main(String[] args) {    Thread t1 = new Thread(() -&gt; {        System.out.println(Thread.currentThread().getName()+&quot;开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            System.out.println(Thread.currentThread().getName()+&quot;打印：&quot;+i);        }        System.out.println(&quot;线程1结束！&quot;);    });    Thread t2 = new Thread(() -&gt; {        System.out.println(&quot;线程2开始运行！&quot;);        for (int i = 0; i &lt; 50; i++) {            System.out.println(&quot;2打印：&quot;+i);            if(i == 10){                try {                    System.out.println(&quot;线程1加入到此线程！&quot;);                    t1.join();    //在i==10时，让线程1加入，先完成线程1的内容，在继续当前内容                } catch (InterruptedException e) {                    e.printStackTrace();                }            }        }    });    t1.start();    t2.start();}</code></pre><p id="7022925f-90ba-4932-90c6-677d8559503b" class="">实际上，t2线程只是暂时处于等待状态，当t1执行结束时，t2才开始继续执行，只是在效果上看起来好像是两个线程合并为一个线程在执行而已。</p><h3 id="47a40ff6-64aa-488f-b7b0-9702a945d629" class="">线程锁和线程同步</h3><p id="531b4322-fe91-4026-95e1-631a7850c5b8" class="">在开始讲解线程同步之前，我们需要先了解一下多线程情况下Java的内存管理：</p><figure id="9f81a00b-1ae0-4284-ba84-74da4d8acb2b" class="image"><a href="https://s2.loli.net/2022/10/04/ZvI8neF3tdGJwS4.png"><img src="https://s2.loli.net/2022/10/04/ZvI8neF3tdGJwS4.png"/></a></figure><p id="734c6f37-3e87-4004-9203-6d053799c786" class="">image-20221004203914215</p><p id="6eaa17c5-28c7-475b-9122-f45b45b3c2d9" class="">线程之间的共享变量（比如之前悬念中的value变量）存储在主内存（main memory）中，每个线程都有一个私有的工作内存（本地内存），工作内存中存储了该线程以读/写共享变量的副本。它类似于我们在<code>计算机组成原理</code>中学习的多核心处理器高速缓存机制：</p><figure id="21d309c0-05e3-446b-92a8-25c26b565345" class="image"><a href="https://s2.loli.net/2022/10/04/SKlbIZyvxMnauLJ.png"><img src="https://s2.loli.net/2022/10/04/SKlbIZyvxMnauLJ.png"/></a></figure><p id="c81a0ef9-93ed-4f5e-a67c-97c5aea577e3" class="">image-20221004204209038</p><p id="f1fea111-2e67-490d-92ac-143f2633713c" class="">高速缓存通过保存内存中数据的副本来提供更加快速的数据访问，但是如果多个处理器的运算任务都涉及同一块内存区域，就可能导致各自的高速缓存数据不一致，在写回主内存时就会发生冲突，这就是引入高速缓存引发的新问题，称之为：缓存一致性。</p><p id="3b675d85-5af9-4be6-87b0-a6596e440fb8" class="">实际上，Java的内存模型也是这样类似设计的，当我们同时去操作一个共享变量时，如果仅仅是读取还好，但是如果同时写入内容，就会出现问题！好比说一个银行，如果我和我的朋友同时在银行取我账户里面的钱，难道取1000还可能吐2000出来吗？我们需要一种更加安全的机制来维持秩序，保证数据的安全性！</p><p id="d693ea5a-e268-4ba2-acae-57ea54c8224c" class="">比如我们可以来看看下面这个问题：</p><pre id="220e16ae-de71-458a-96c9-654e3313d684" class="code code-wrap"><code>private static int value = 0;public static void main(String[] args) throws InterruptedException {    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) value++;        System.out.println(&quot;线程1完成&quot;);    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) value++;        System.out.println(&quot;线程2完成&quot;);    });    t1.start();    t2.start();    Thread.sleep(1000);  //主线程停止1秒，保证两个线程执行完成    System.out.println(value);}</code></pre><p id="b781659c-9bf1-4613-8ab5-6890e8144932" class="">实际上，当两个线程同时读取value的时候，可能会同时拿到同样的值，而进行自增操作之后，也是同样的值，再写回主内存后，本来应该进行2次自增操作，实际上只执行了一次！</p><figure id="7e92171a-20a3-4a10-b716-464e9c1a671c" class="image"><a href="https://s2.loli.net/2022/10/04/T2l3xfIP17Gr5dw.png"><img src="https://s2.loli.net/2022/10/04/T2l3xfIP17Gr5dw.png"/></a></figure><p id="70efdcf8-e78e-480d-9366-d7de8a9c6db0" class="">image-20221004204439553</p><p id="15a11233-34c6-4753-8abd-a8166d5333c7" class="">通过synchronized关键字来创造一个线程锁，首先我们来认识一下synchronized代码块，它需要在括号中填入一个内容，必须是一个对象或是一个类，我们在value自增操作外套上同步代码块：</p><pre id="4f429975-3b72-4af5-95a8-fd900499dadf" class="code code-wrap"><code>private static int value = 0;public static void main(String[] args) throws InterruptedException {    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) {            synchronized (Main.class){  //使用synchronized关键字创建同步代码块                value++;            }        }        System.out.println(&quot;线程1完成&quot;);    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) {            synchronized (Main.class){                value++;            }        }        System.out.println(&quot;线程2完成&quot;);    });    t1.start();    t2.start();    Thread.sleep(1000);  //主线程停止1秒，保证两个线程执行完成    System.out.println(value);}</code></pre><p id="c246078c-d26a-4fc8-932b-1fbf97f10b34" class="">我们发现，现在得到的结果就是我们想要的内容了，因为在同步代码块执行过程中，拿到了我们传入对象或类的锁（传入的如果是对象，就是对象锁，不同的对象代表不同的对象锁，如果是类，就是类锁，类锁只有一个，实际上类锁也是对象锁，是Class类实例，但是Class类实例同样的类无论怎么获取都是同一个），但是注意两个线程必须使用同一把锁！</p><p id="8188463d-a1b8-49c1-beec-5eedb17a2628" class="">当一个线程进入到同步代码块时，会获取到当前的锁，而这时如果其他使用同样的锁的同步代码块也想执行内容，就必须等待当前同步代码块的内容执行完毕，在执行完毕后会自动释放这把锁，而其他的线程才能拿到这把锁并开始执行同步代码块里面的内容（实际上synchronized是一种悲观锁，随时都认为有其他线程在对数据进行修改，后面在JUC篇视频教程中我们还会讲到乐观锁，如CAS算法）</p><p id="dcbe562a-a219-4e4a-b2a9-fb5fcc2863ff" class="">那么我们来看看，如果使用的是不同对象的锁，那么还能顺利进行吗？</p><pre id="a8b3b19c-7978-48a9-982f-5381259d251b" class="code code-wrap"><code>private static int value = 0;public static void main(String[] args) throws InterruptedException {    Main main1 = new Main();    Main main2 = new Main();    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) {            synchronized (main1){                value++;            }        }        System.out.println(&quot;线程1完成&quot;);    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) {            synchronized (main2){                value++;            }        }        System.out.println(&quot;线程2完成&quot;);    });    t1.start();    t2.start();    Thread.sleep(1000);  //主线程停止1秒，保证两个线程执行完成    System.out.println(value);}</code></pre><p id="f88d6805-8c22-4193-b97c-7fbd446d6451" class="">当对象不同时，获取到的是不同的锁，因此并不能保证自增操作的原子性，最后也得不到我们想要的结果。</p><p id="4caa1b01-0a77-4d08-93c8-b2dc75c40afd" class="">synchronized关键字也可以作用于方法上，调用此方法时也会获取锁：</p><pre id="0629944b-dfe8-4542-9987-e3ddfedf1a93" class="code code-wrap"><code>private static int value = 0;private static synchronized void add(){    value++;}public static void main(String[] args) throws InterruptedException {    Thread t1 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) add();        System.out.println(&quot;线程1完成&quot;);    });    Thread t2 = new Thread(() -&gt; {        for (int i = 0; i &lt; 10000; i++) add();        System.out.println(&quot;线程2完成&quot;);    });    t1.start();    t2.start();    Thread.sleep(1000);  //主线程停止1秒，保证两个线程执行完成    System.out.println(value);}</code></pre><p id="f17f83b1-97c5-483f-9641-d48cff61609a" class="">我们发现实际上效果是相同的，只不过这个锁不用你去给，如果是静态方法，就是使用的类锁，而如果是普通成员方法，就是使用的对象锁。通过灵活的使用synchronized就能很好地解决我们之前提到的问题了。</p><h3 id="2ebc80dc-dac2-4ebd-b57b-4a5b472c5619" class="">死锁</h3><p id="27b7f9b1-9593-4b23-bc1a-924da556407a" class="">其实死锁的概念在<code>操作系统</code>中也有提及，它是指两个线程相互持有对方需要的锁，但是又迟迟不释放，导致程序卡住：</p><figure id="8e4c042f-bce3-4297-a578-0b30213918ff" class="image"><a href="https://s2.loli.net/2022/10/04/Ja6TPO23wCI8pvn.png"><img src="https://s2.loli.net/2022/10/04/Ja6TPO23wCI8pvn.png"/></a></figure><p id="efd6d315-3216-47f2-b74b-e574e409fc0a" class="">image-20221004205058223</p><p id="c640cae9-f99c-4a5e-b08b-4d5109e48501" class="">我们发现，线程A和线程B都需要对方的锁，但是又被对方牢牢把握，由于线程被无限期地阻塞，因此程序不可能正常终止。我们来看看以下这段代码会得到什么结果：</p><pre id="e7068345-99fb-4148-af8d-0349dc4da963" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    Object o1 = new Object();    Object o2 = new Object();    Thread t1 = new Thread(() -&gt; {        synchronized (o1){            try {                Thread.sleep(1000);                synchronized (o2){                    System.out.println(&quot;线程1&quot;);                }            } catch (InterruptedException e) {                e.printStackTrace();            }        }    });    Thread t2 = new Thread(() -&gt; {        synchronized (o2){            try {                Thread.sleep(1000);                synchronized (o1){                    System.out.println(&quot;线程2&quot;);                }            } catch (InterruptedException e) {                e.printStackTrace();            }        }    });    t1.start();    t2.start();}</code></pre><p id="8c985cc5-6c51-4a93-8e89-626334c0745c" class="">所以，我们在编写程序时，一定要注意，不要出现这种死锁的情况。那么我们如何去检测死锁呢？我们可以利用jstack命令来检测死锁，首先利用jps找到我们的java进程：</p><pre id="a6425631-8499-46ea-ad44-cf36ddd35e39" class="code code-wrap"><code>nagocoler@NagodeMacBook-Pro ~ % jps
+51592 Launcher
+51690 Jps
+14955
+51693 Main
+nagocoler@NagodeMacBook-Pro ~ % jstack 51693
+...
+Java stack information for the threads listed above:
+===================================================
+&quot;Thread-1&quot;:
+    at com.test.Main.lambda$main$1(Main.java:46)
+    - waiting to lock &lt;0x000000076ad27fc0&gt; (a java.lang.Object)
+    - locked &lt;0x000000076ad27fd0&gt; (a java.lang.Object)
+    at com.test.Main$$Lambda$2/1867750575.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:748)
+&quot;Thread-0&quot;:
+    at com.test.Main.lambda$main$0(Main.java:34)
+    - waiting to lock &lt;0x000000076ad27fd0&gt; (a java.lang.Object)
+    - locked &lt;0x000000076ad27fc0&gt; (a java.lang.Object)
+    at com.test.Main$$Lambda$1/396873410.run(Unknown Source)
+    at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.</code></pre><p id="f7bfbee5-dfcc-4ef6-a89a-05887eb82def" class="">jstack自动帮助我们找到了一个死锁，并打印出了相关线程的栈追踪信息，同样的，使用<code>jconsole</code>也可以进行监测。</p><p id="b22b0015-59af-4232-a80a-f28284567e16" class="">因此，前面说不推荐使用 <code>suspend()</code>去挂起线程的原因，是因为<code>suspend()</code>在使线程暂停的同时，并不会去释放任何锁资源。其他线程都无法访问被它占用的锁。直到对应的线程执行<code>resume()</code>方法后，被挂起的线程才能继续，从而其它被阻塞在这个锁的线程才可以继续执行。但是，如果<code>resume()</code>操作出现在<code>suspend()</code>之前执行，那么线程将一直处于挂起状态，同时一直占用锁，这就产生了死锁。</p><h3 id="8c98e1f6-b024-43a4-97e5-3efbb87b17e9" class="">wait和notify方法</h3><p id="6218bc0d-78bf-4bcc-a50e-c443b68e042b" class="">其实我们之前可能就发现了，Object类还有三个方法我们从来没有使用过，分别是<code>wait()</code>、<code>notify()</code>以及<code>notifyAll()</code>，他们其实是需要配合synchronized来使用的（实际上锁就是依附于对象存在的，每个对象都应该有针对于锁的一些操作，所以说就这样设计了）当然，只有在同步代码块中才能使用这些方法，正常情况下会报错，我们来看看他们的作用是什么：</p><pre id="18b497df-97a5-45d5-9340-282834afabc6" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    Object o1 = new Object();    Thread t1 = new Thread(() -&gt; {        synchronized (o1){            try {                System.out.println(&quot;开始等待&quot;);                o1.wait();     //进入等待状态并释放锁                System.out.println(&quot;等待结束！&quot;);            } catch (InterruptedException e) {                e.printStackTrace();            }        }    });    Thread t2 = new Thread(() -&gt; {        synchronized (o1){            System.out.println(&quot;开始唤醒！&quot;);            o1.notify();     //唤醒处于等待状态的线程            for (int i = 0; i &lt; 50; i++) {                System.out.println(i);            }            //唤醒后依然需要等待这里的锁释放之前等待的线程才能继续        }    });    t1.start();    Thread.sleep(1000);    t2.start();}</code></pre><p id="adc22e7e-08f9-4a4c-90c8-1dc740a51234" class="">我们可以发现，对象的<code>wait()</code>方法会暂时使得此线程进入等待状态，同时会释放当前代码块持有的锁，这时其他线程可以获取到此对象的锁，当其他线程调用对象的<code>notify()</code>方法后，会唤醒刚才变成等待状态的线程（这时并没有立即释放锁）。注意，必须是在持有锁（同步代码块内部）的情况下使用，否则会抛出异常！</p><p id="f9bd448d-f9f5-47c3-85b6-f889da4ad223" class="">notifyAll其实和notify一样，也是用于唤醒，但是前者是唤醒所有调用<code>wait()</code>后处于等待的线程，而后者是看运气随机选择一个。</p><h3 id="1e3138af-54cb-4013-8124-dc656975d541" class="">ThreadLocal的使用</h3><p id="0565d881-a139-43a0-be3f-fc2dd923db07" class="">既然每个线程都有一个自己的工作内存，那么能否只在自己的工作内存中创建变量仅供线程自己使用呢？</p><figure id="cab2197c-36aa-46a9-819d-6463e5b510de" class="image"><a href="https://img2018.cnblogs.com/blog/1368768/201906/1368768-20190613220434628-1803630402.png"><img src="https://img2018.cnblogs.com/blog/1368768/201906/1368768-20190613220434628-1803630402.png"/></a></figure><p id="44542b79-a274-4500-9826-c18028914f5b" class="">img</p><p id="55be0448-1d93-4fea-9ccc-b43b85a97e98" class="">我们可以使用ThreadLocal类，来创建工作内存中的变量，它将我们的变量值存储在内部（只能存储一个变量），不同的线程访问到ThreadLocal对象时，都只能获取到当前线程所属的变量。</p><pre id="2cbf3bb2-4bbd-42ab-940d-4ab657d1bfaf" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    ThreadLocal&lt;String&gt; local = new ThreadLocal&lt;&gt;();  //注意这是一个泛型类，存储类型为我们要存放的变量类型    Thread t1 = new Thread(() -&gt; {        local.set(&quot;lbwnb&quot;);   //将变量的值给予ThreadLocal        System.out.println(&quot;变量值已设定！&quot;);        System.out.println(local.get());   //尝试获取ThreadLocal中存放的变量    });    Thread t2 = new Thread(() -&gt; {        System.out.println(local.get());   //尝试获取ThreadLocal中存放的变量    });    t1.start();    Thread.sleep(3000);    //间隔三秒    t2.start();}</code></pre><p id="633f6861-dab9-4aa8-9050-c97f971fe620" class="">上面的例子中，我们开启两个线程分别去访问ThreadLocal对象，我们发现，第一个线程存放的内容，第一个线程可以获取，但是第二个线程无法获取，我们再来看看第一个线程存入后，第二个线程也存放，是否会覆盖第一个线程存放的内容：</p><pre id="b57d4f5a-9b2d-41eb-b8b3-354a5b2c8fb9" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    ThreadLocal&lt;String&gt; local = new ThreadLocal&lt;&gt;();  //注意这是一个泛型类，存储类型为我们要存放的变量类型    Thread t1 = new Thread(() -&gt; {        local.set(&quot;lbwnb&quot;);   //将变量的值给予ThreadLocal        System.out.println(&quot;线程1变量值已设定！&quot;);        try {            Thread.sleep(2000);    //间隔2秒        } catch (InterruptedException e) {            e.printStackTrace();        }        System.out.println(&quot;线程1读取变量值：&quot;);        System.out.println(local.get());   //尝试获取ThreadLocal中存放的变量    });    Thread t2 = new Thread(() -&gt; {        local.set(&quot;yyds&quot;);   //将变量的值给予ThreadLocal        System.out.println(&quot;线程2变量值已设定！&quot;);    });    t1.start();    Thread.sleep(1000);    //间隔1秒    t2.start();}</code></pre><p id="cd198185-036c-4f9c-a35e-3e5184607b99" class="">我们发现，即使线程2重新设定了值，也没有影响到线程1存放的值，所以说，不同线程向ThreadLocal存放数据，只会存放在线程自己的工作空间中，而不会直接存放到主内存中，因此各个线程直接存放的内容互不干扰。</p><p id="f6244ec0-7415-473c-acb8-68d40b15b9ec" class="">我们发现在线程中创建的子线程，无法获得父线程工作内存中的变量：</p><pre id="886308b7-5e55-49db-8fb2-4a87528aeda9" class="code code-wrap"><code>public static void main(String[] args) {    ThreadLocal&lt;String&gt; local = new ThreadLocal&lt;&gt;();    Thread t = new Thread(() -&gt; {       local.set(&quot;lbwnb&quot;);        new Thread(() -&gt; {            System.out.println(local.get());        }).start();    });    t.start();}</code></pre><p id="2db6da61-f988-40f9-bc70-1125510ccf05" class="">我们可以使用InheritableThreadLocal来解决：</p><pre id="6cf1164a-ac7d-4ac9-be4e-78a27dde232e" class="code code-wrap"><code>public static void main(String[] args) {    ThreadLocal&lt;String&gt; local = new InheritableThreadLocal&lt;&gt;();    Thread t = new Thread(() -&gt; {       local.set(&quot;lbwnb&quot;);        new Thread(() -&gt; {            System.out.println(local.get());        }).start();    });    t.start();}</code></pre><p id="cd3beda0-a10a-49d3-b1b8-1415b4036840" class="">在InheritableThreadLocal存放的内容，会自动向子线程传递。</p><h3 id="e57863dc-d154-40fd-a90e-20d67c769075" class="">定时器</h3><p id="8cb1e72d-4617-4d39-86fa-7208c313bd4f" class="">我们有时候会有这样的需求，我希望定时执行任务，比如3秒后执行，其实我们可以通过使用<code>Thread.sleep()</code>来实现：</p><pre id="6dce3275-e71a-405a-a77c-1f7f696f902d" class="code code-wrap"><code>public static void main(String[] args) {    new TimerTask(() -&gt; System.out.println(&quot;我是定时任务！&quot;), 3000).start();   //创建并启动此定时任务}static class TimerTask{    Runnable task;    long time;    public TimerTask(Runnable runnable, long time){        this.task = runnable;        this.time = time;    }    public void start(){        new Thread(() -&gt; {            try {                Thread.sleep(time);                task.run();   //休眠后再运行            } catch (InterruptedException e) {                e.printStackTrace();            }        }).start();    }}</code></pre><p id="5c6ac474-b373-4d5c-8500-770faaf715cd" class="">我们通过自行封装一个TimerTask类，并在启动时，先休眠3秒钟，再执行我们传入的内容。那么现在我们希望，能否循环执行一个任务呢？比如我希望每隔1秒钟执行一次代码，这样该怎么做呢？</p><pre id="4d32daa4-2201-436c-ab82-b54ac27f0245" class="code code-wrap"><code>public static void main(String[] args) {    new TimerLoopTask(() -&gt; System.out.println(&quot;我是定时任务！&quot;), 3000).start();   //创建并启动此定时任务}static class TimerLoopTask{    Runnable task;    long loopTime;    public TimerLoopTask(Runnable runnable, long loopTime){        this.task = runnable;        this.loopTime = loopTime;    }    public void start(){        new Thread(() -&gt; {            try {                while (true){   //无限循环执行                    Thread.sleep(loopTime);                    task.run();   //休眠后再运行                }            } catch (InterruptedException e) {                e.printStackTrace();            }        }).start();    }}</code></pre><p id="30ee2fdc-67c3-46e7-bdc5-811fd684658e" class="">现在我们将单次执行放入到一个无限循环中，这样就能一直执行了，并且按照我们的间隔时间进行。</p><p id="5edf43f0-c351-4c38-9b06-40fe7c9f27ea" class="">但是终究是我们自己实现，可能很多方面还没考虑到，Java也为我们提供了一套自己的框架用于处理定时任务：</p><pre id="72e4fcd5-29f4-441c-a66a-652891131553" class="code code-wrap"><code>public static void main(String[] args) {    Timer timer = new Timer();    //创建定时器对象    timer.schedule(new TimerTask() {   //注意这个是一个抽象类，不是接口，无法使用lambda表达式简化，只能使用匿名内部类        @Override        public void run() {            System.out.println(Thread.currentThread().getName());    //打印当前线程名称        }    }, 1000);    //执行一个延时任务}</code></pre><p id="0c4fac8b-cdcb-4456-ba88-136e21d8d1d5" class="">我们可以通过创建一个Timer类来让它进行定时任务调度，我们可以通过此对象来创建任意类型的定时任务，包延时任务、循环定时任务等。我们发现，虽然任务执行完成了，但是我们的程序并没有停止，这是因为Timer内存维护了一个任务队列和一个工作线程：</p><pre id="f61641aa-f1a8-4e3b-ba52-955f6ebd25b0" class="code code-wrap"><code>public class Timer {    /**     * The timer task queue.  This data structure is shared with the timer     * thread.  The timer produces tasks, via its various schedule calls,     * and the timer thread consumes, executing timer tasks as appropriate,     * and removing them from the queue when they&#x27;re obsolete.     */    private final TaskQueue queue = new TaskQueue();    /**     * The timer thread.     */    private final TimerThread thread = new TimerThread(queue);        ...}</code></pre><p id="392e32a7-d196-4378-8eb2-44b42b9bef36" class="">TimerThread继承自Thread，是一个新创建的线程，在构造时自动启动：</p><pre id="20ead3e3-cecc-4d5b-ad38-e415fea93f12" class="code code-wrap"><code>public Timer(String name) {    thread.setName(name);    thread.start();}</code></pre><p id="e43ecaa8-899e-47f7-8064-cc1b25c582cd" class="">而它的run方法会循环地读取队列中是否还有任务，如果有任务依次执行，没有的话就暂时处于休眠状态：</p><pre id="364a467e-d169-465e-9f03-2fb8381f53c0" class="code code-wrap"><code>public void run() {    try {        mainLoop();    } finally {        // Someone killed this Thread, behave as if Timer cancelled        synchronized(queue) {            newTasksMayBeScheduled = false;            queue.clear();  // Eliminate obsolete references        }    }}/** * The main timer loop.  (See class comment.) */private void mainLoop() {  try {       TimerTask task;       boolean taskFired;       synchronized(queue) {            // Wait for queue to become non-empty          while (queue.isEmpty() &amp;&amp; newTasksMayBeScheduled)   //当队列为空同时没有被关闭时，会调用wait()方法暂时处于等待状态，当有新的任务时，会被唤醒。                queue.wait();          if (queue.isEmpty())             break;    //当被唤醒后都没有任务时，就会结束循环，也就是结束工作线程                      ...}</code></pre><p id="bb850c64-73b8-4f54-af6c-ab864dc6434d" class=""><code>newTasksMayBeScheduled</code>实际上就是标记当前定时器是否关闭，当它为false时，表示已经不会再有新的任务到来，也就是关闭，我们可以通过调用<code>cancel()</code>方法来关闭它的工作线程：</p><pre id="42f44751-0b07-4430-98c4-255cdb7c2d4f" class="code code-wrap"><code>public void cancel() {    synchronized(queue) {        thread.newTasksMayBeScheduled = false;        queue.clear();        queue.notify();  //唤醒wait使得工作线程结束    }}</code></pre><p id="992d6285-d95c-438c-b1fd-5bfa38449201" class="">因此，我们可以在使用完成后，调用Timer的<code>cancel()</code>方法以正常退出我们的程序：</p><pre id="f1865346-471c-4f29-b00f-ebc21b19785f" class="code code-wrap"><code>public static void main(String[] args) {    Timer timer = new Timer();    timer.schedule(new TimerTask() {        @Override        public void run() {            System.out.println(Thread.currentThread().getName());            timer.cancel();  //结束        }    }, 1000);}</code></pre><h3 id="78507a53-8f69-4cf0-ac9b-eb9f4011358f" class="">守护线程</h3><p id="3a9a976a-6d32-4785-a610-af6b965c0622" class="">不要把操作系统重的守护进程和守护线程相提并论！</p><p id="3b252568-8d2a-40cf-b7ef-7dcb63646d3d" class="">守护进程在后台运行运行，不需要和用户交互，本质和普通进程类似。而守护线程就不一样了，当其他所有的非守护线程结束之后，守护线程自动结束，也就是说，Java中所有的线程都执行完毕后，守护线程自动结束，因此守护线程不适合进行IO操作，只适合打打杂：</p><pre id="ddd393e8-c389-4f72-bbd0-1c35538bbee7" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException{    Thread t = new Thread(() -&gt; {        while (true){            try {                System.out.println(&quot;程序正常运行中...&quot;);                Thread.sleep(1000);            } catch (InterruptedException e) {                e.printStackTrace();            }        }    });    t.setDaemon(true);   //设置为守护线程（必须在开始之前，中途是不允许转换的）    t.start();    for (int i = 0; i &lt; 5; i++) {        Thread.sleep(1000);    }}</code></pre><p id="a973edf3-01bd-473d-bf52-6c0f7a51614a" class="">在守护线程中产生的新线程也是守护的：</p><pre id="d4dcb19a-5e69-4847-a8df-d7661d4b9826" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException{    Thread t = new Thread(() -&gt; {        Thread it = new Thread(() -&gt; {            while (true){                try {                    System.out.println(&quot;程序正常运行中...&quot;);                    Thread.sleep(1000);                } catch (InterruptedException e) {                    e.printStackTrace();                }            }        });        it.start();    });    t.setDaemon(true);   //设置为守护线程（必须在开始之前，中途是不允许转换的）    t.start();    for (int i = 0; i &lt; 5; i++) {        Thread.sleep(1000);    }}</code></pre><h3 id="28d16ccf-e746-4d51-82ec-5e1507588fca" class="">再谈集合类</h3><p id="6a90ceb4-199b-4478-afc9-84fcfe378743" class="">集合类中有一个东西是Java8新增的Spliterator接口，翻译过来就是：可拆分迭代器（Splitable Iterator）和Iterator一样，Spliterator也用于遍历数据源中的元素，但它是为了并行执行而设计的。Java 8已经为集合框架中包含的所有数据结构提供了一个默认的Spliterator实现。在集合跟接口Collection中提供了一个<code>spliterator()</code>方法用于获取可拆分迭代器。</p><p id="5e862cf1-f28f-484d-aa79-b49c334a8947" class="">其实我们之前在讲解集合类的根接口时，就发现有这样一个方法：</p><pre id="680d60f3-d282-4e6e-ae20-19d46e336454" class="code code-wrap"><code>default Stream&lt;E&gt; parallelStream() {    return StreamSupport.stream(spliterator(), true); //parallelStream就是利用了可拆分迭代器进行多线程操作}</code></pre><p id="45d1a026-7365-420b-9f85-d69a4ecd1001" class="">并行流，其实就是一个多线程执行的流，它通过默认的ForkJoinPool实现（这里不讲解原理），它可以提高你的多线程任务的速度。</p><pre id="1f9b8ea1-81d8-4229-960d-a26bfb8de7ea" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;(Arrays.asList(1, 4, 5, 2, 9, 3, 6, 0));    list            .parallelStream()    //获得并行流            .forEach(i -&gt; System.out.println(Thread.currentThread().getName()+&quot; -&gt; &quot;+i));}</code></pre><p id="c9393a1c-0e2b-4ba1-b732-1c7816e11f18" class="">我们发现，forEach操作的顺序，并不是我们实际List中的顺序，同时每次打印也是不同的线程在执行！我们可以通过调用<code>forEachOrdered()</code>方法来使用单线程维持原本的顺序：</p><pre id="9ee40c2a-edaf-46ea-87b4-31b688604c64" class="code code-wrap"><code>public static void main(String[] args) {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;(Arrays.asList(1, 4, 5, 2, 9, 3, 6, 0));    list            .parallelStream()    //获得并行流            .forEachOrdered(System.out::println);}</code></pre><p id="7ae0eb08-6ebd-4e9e-a1de-3bbb37ed8e8e" class="">我们之前还发现，在Arrays数组工具类中，也包含大量的并行方法：</p><pre id="21745ad3-8d22-4a95-a423-5832077e1b87" class="code code-wrap"><code>public static void main(String[] args) {    int[] arr = new int[]{1, 4, 5, 2, 9, 3, 6, 0};    Arrays.parallelSort(arr);   //使用多线程进行并行排序，效率更高    System.out.println(Arrays.toString(arr));}</code></pre><p id="cbd9ce52-3ba3-48b4-9562-4bc22b00100f" class="">更多地使用并行方法，可以更加充分地发挥现代计算机多核心的优势，但是同时需要注意多线程产生的异步问题！</p><pre id="bbcdcbba-707a-44c7-a04c-2d28f2c1fab6" class="code code-wrap"><code>public static void main(String[] args) {    int[] arr = new int[]{1, 4, 5, 2, 9, 3, 6, 0};    Arrays.parallelSetAll(arr, i -&gt; {        System.out.println(Thread.currentThread().getName());        return arr[i];    });    System.out.println(Arrays.toString(arr));}</code></pre><p id="1602b488-85c0-4504-a134-bdf92370cbf0" class="">因为多线程的加入，我们之前认识的集合类都废掉了：</p><pre id="05f6fea0-aa52-4e68-aeaf-7a3cc54fe208" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    List&lt;Integer&gt; list = new ArrayList&lt;&gt;();    new Thread(() -&gt; {        for (int i = 0; i &lt; 1000; i++) {            list.add(i);   //两个线程同时操作集合类进行插入操作        }    }).start();    new Thread(() -&gt; {        for (int i = 1000; i &lt; 2000; i++) {            list.add(i);        }    }).start();    Thread.sleep(2000);    System.out.println(list.size());}</code></pre><p id="6ef8c93b-6c59-4896-b791-3611fbeecf98" class="">我们发现，有些时候运气不好，得到的结果并不是2000个元素，而是：</p><figure id="b2d25382-a196-4daa-bbab-2e126d668d4f" class="image"><a href="https://s2.loli.net/2022/10/04/m1nZfG4wPCOQx8V.png"><img src="https://s2.loli.net/2022/10/04/m1nZfG4wPCOQx8V.png"/></a></figure><p id="a023904e-8ce6-45f7-b2f7-fb346774c0aa" class="">image-20221004212332535</p><p id="9c0abbb8-1c88-41a6-a26b-fa6977674d8a" class="">因为之前的集合类，并没有考虑到多线程运行的情况，如果两个线程同时执行，那么有可能两个线程同一时间都执行同一个方法，这种情况下就很容易出问题：</p><pre id="43ed9323-8edb-48d0-bc83-330b822c7cce" class="code code-wrap"><code>public boolean add(E e) {    ensureCapacityInternal(size + 1);  // 当数组容量更好还差一个满的时候，这个时候两个线程同时走到了这里，因为都判断为没满，所以说没有进行扩容，但是实际上两个线程都要插入一个元素进来    elementData[size++] = e;   //当两个线程同时在这里插入元素，直接导致越界访问    return true;}</code></pre><p id="a4d06930-86bb-4df2-bc24-2d6c21d8dbd0" class="">当然，在Java早期的时候，还有一些老的集合类，这些集合类都是线程安全的：</p><pre id="d1b8de0a-2363-46cc-b28b-ee4ebfdfa6ce" class="code code-wrap"><code>public static void main(String[] args) throws InterruptedException {    Vector&lt;Integer&gt; list = new Vector&lt;&gt;();   //我们可以使用Vector代替List使用    //Hashtable&lt;Integer, String&gt;   也可以使用Hashtable来代替Map    new Thread(() -&gt; {        for (int i = 0; i &lt; 1000; i++) {            list.add(i);        }    }).start();    new Thread(() -&gt; {        for (int i = 1000; i &lt; 2000; i++) {            list.add(i);        }    }).start();    Thread.sleep(1000);    System.out.println(list.size());}</code></pre><p id="77c96bd6-1072-46b9-83e6-48634f621363" class="">因为这些集合类中的每一个方法都加了锁，所以说不会出现多线程问题，但是这些老的集合类现在已经不再使用了，我们会在JUC篇视频教程中介绍专用于并发编程的集合类。</p><p id="4f3f3bcb-9c44-4eb5-974b-0f661b517959" class="">通过对Java多线程的了解，我们就具备了利用多线程解决问题的思维！</p><h3 id="e5b4d945-e65d-4f0f-9eb9-7b311ca6bea7" class="">实战：生产者与消费者</h3><p id="aaeba70e-e19c-478f-a2c9-f3ded27451f7" class="">所谓的生产者消费者模型，是通过一个容器来解决生产者和消费者的强耦合问题。通俗的讲，就是生产者在不断的生产，消费者也在不断的消费，可是消费者消费的产品是生产者生产的，这就必然存在一个中间容器，我们可以把这个容器想象成是一个货架，当货架空的时候，生产者要生产产品，此时消费者在等待生产者往货架上生产产品，而当货架有货物的时候，消费者可以从货架上拿走商品，生产者此时等待货架出现空位，进而补货，这样不断的循环。</p><p id="cd39c5d6-536f-4622-b5a4-a5bc7c20deec" class="">通过多线程编程，来模拟一个餐厅的2个厨师和3个顾客，假设厨师炒出一个菜的时间为3秒，顾客吃掉菜品的时间为4秒。</p><hr id="283c198f-4c51-4fa7-9cd0-7f0793f85f44"/><h2 id="f920598d-6b85-4313-bd78-081d970f7f87" class="">反射</h2><p id="f68a96e3-c54c-469e-a516-5f2294abd21b" class=""><strong>注意：</strong>本章节涉及到JVM相关底层原理，难度会有一些大。</p><p id="cf920f11-09fc-4a38-9dfb-f193f06324a8" class="">反射就是把Java类中的各个成分映射成一个个的Java对象。即在运行状态中，对于任意一个类，都能够知道这个类所有的属性和方法，对于任意一个对象，都能调用它的任意一个方法和属性。这种动态获取信息及动态调用对象方法的功能叫Java的反射机制。</p><p id="a3bed597-6720-40e5-8f70-78ed7074652a" class="">简而言之，我们可以通过反射机制，获取到类的一些属性，包括类里面有哪些字段，有哪些方法，继承自哪个类，甚至还能获取到泛型！它的权限非常高，慎重使用！</p><h3 id="5a8a6ba1-cf2c-4108-88a9-963600736901" class="">Java类加载机制</h3><p id="caa70b84-d77a-4091-a4f0-a7d181ce59ac" class="">在学习Java的反射机制之前，我们需要先了解一下类的加载机制，一个类是如何被加载和使用的：</p><figure id="2d1c736f-f042-4488-aa27-0dbb05c75c38" class="image"><a href="https://s2.loli.net/2022/10/04/vZ4onhuJWcALHNP.png"><img src="https://s2.loli.net/2022/10/04/vZ4onhuJWcALHNP.png"/></a></figure><p id="6934a74f-902c-4588-855a-0ecc6e629ba7" class="">image-20221004213335479</p><p id="67bd640c-bf46-4758-81fc-e638d3908dd5" class="">在Java程序启动时，JVM会将一部分类（class文件）先加载（并不是所有的类都会在一开始加载），通过ClassLoader将类加载，在加载过程中，会将类的信息提取出来（存放在元空间中，JDK1.8之前存放在永久代），同时也会生成一个Class对象存放在内存（堆内存），注意此Class对象只会存在一个，与加载的类唯一对应！</p><p id="0f849587-aadb-4457-86cb-119ad8447e89" class="">为了方便各位小伙伴理解，你们就直接理解为默认情况下（仅使用默认类加载器）每个类都有且只有一个唯一的Class对象存放在JVM中，我们无论通过什么方式访问，都是始终是那一个对象。Class对象中包含我们类的一些信息，包括类里面有哪些方法、哪些变量等等。</p><h3 id="e45e22a5-db93-4865-a07f-aad3a0577399" class="">Class类详解</h3><p id="901637b9-27fb-420a-9910-62a477aa52a7" class="">通过前面，我们了解了类的加载，同时会提取一个类的信息生成Class对象存放在内存中，而反射机制其实就是利用这些存放的类信息，来获取类的信息和操作类。那么如何获取到每个类对应的Class对象呢，我们可以通过以下方式：</p><pre id="6cf0bab4-be3c-4028-a886-e1f42e34c5c1" class="code code-wrap"><code>public static void main(String[] args) throws ClassNotFoundException {    Class&lt;String&gt; clazz = String.class;   //使用class关键字，通过类名获取    Class&lt;?&gt; clazz2 = Class.forName(&quot;java.lang.String&quot;);   //使用Class类静态方法forName()，通过包名.类名获取，注意返回值是Class&lt;?&gt;    Class&lt;?&gt; clazz3 = new String(&quot;cpdd&quot;).getClass();  //通过实例对象获取}</code></pre><p id="2637955e-4532-413f-a5f1-42fbd8fa4ef3" class="">注意Class类也是一个泛型类，只有第一种方法，能够直接获取到对应类型的Class对象，而以下两种方法使用了<code>?</code>通配符作为返回值，但是实际上都和第一个返回的是同一个对象：</p><pre id="4f071cfc-2039-4b2e-9f86-952ec5c93990" class="code code-wrap"><code>Class&lt;String&gt; clazz = String.class;   //使用class关键字，通过类名获取Class&lt;?&gt; clazz2 = Class.forName(&quot;java.lang.String&quot;);   //使用Class类静态方法forName()，通过包名.类名获取，注意返回值是Class&lt;?&gt;Class&lt;?&gt; clazz3 = new String(&quot;cpdd&quot;).getClass();System.out.println(clazz == clazz2);System.out.println(clazz == clazz3);</code></pre><p id="ff3757b5-baad-4ecd-96f8-1c3cd665e6d1" class="">通过比较，验证了我们一开始的结论，在JVM中每个类始终只存在一个Class对象，无论通过什么方法获取，都是一样的。现在我们再来看看这个问题：</p><pre id="6d06361e-13d4-4c51-bca2-fe9f12c27ff0" class="code code-wrap"><code>public static void main(String[] args) {    Class&lt;?&gt; clazz = int.class;   //基本数据类型有Class对象吗？    System.out.println(clazz);}</code></pre><p id="95dd9a58-61dc-40a0-9436-9a2ee9c7e91f" class="">迷了，不是每个类才有Class对象吗，基本数据类型又不是类，这也行吗？实际上，基本数据类型也有对应的Class对象（反射操作可能需要用到），而且我们不仅可以通过class关键字获取，其实本质上是定义在对应的包装类中的：</p><pre id="9909ee69-4aaa-4d66-a75f-51a5981d5975" class="code code-wrap"><code>/** * The {@code Class} instance representing the primitive type * {@code int}. * * @since   JDK1.1 */@SuppressWarnings(&quot;unchecked&quot;)public static final Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(&quot;int&quot;);/* * Return the Virtual Machine&#x27;s Class object for the named * primitive type */static native Class&lt;?&gt; getPrimitiveClass(String name);   //C++实现，并非Java定义</code></pre><p id="ddcad677-92a5-42e6-ba07-7c211e0c9c06" class="">每个包装类中（包括Void），都有一个获取原始类型Class方法，注意，getPrimitiveClass获取的是原始类型，并不是包装类型，只是可以使用包装类来表示。</p><pre id="18e44bad-9f38-4ada-b8cd-374f8fd96538" class="code code-wrap"><code>public static void main(String[] args) {    Class&lt;?&gt; clazz = int.class;    System.out.println(Integer.TYPE == int.class);}</code></pre><p id="a9eecca3-59f6-43be-9576-d4f5c1b4aab0" class="">通过对比，我们发现实际上包装类型都有一个TYPE，其实也就是基本类型的Class，那么包装类的Class和基本类的Class一样吗？</p><pre id="5c3ebdbe-6d34-496b-8e34-2b8c51a0de04" class="code code-wrap"><code>public static void main(String[] args) {    System.out.println(Integer.TYPE == Integer.class);}</code></pre><p id="0a05ec52-8d40-491a-a550-4820e211fdbc" class="">我们发现，包装类型的Class对象并不是基本类型Class对象。数组类型也是一种类型，只是编程不可见，因此我们可以直接获取数组的Class对象：</p><pre id="761d5e6d-514d-4310-b1e3-c34a4ba0882f" class="code code-wrap"><code>public static void main(String[] args) {    Class&lt;String[]&gt; clazz = String[].class;    System.out.println(clazz.getName());  //获取类名称（得到的是包名+类名的完整名称）    System.out.println(clazz.getSimpleName());    System.out.println(clazz.getTypeName());    System.out.println(clazz.getClassLoader());   //获取它的类加载器    System.out.println(clazz.cast(new Integer(&quot;10&quot;)));   //强制类型转换}</code></pre><p id="41ffb931-bdd1-4e4b-96a3-ddeb765e20df" class="">下节课，我们将开始对Class对象的使用进行讲解。</p><h3 id="f8442cb0-37a3-4deb-b33d-acf21759e50f" class="">Class对象与多态</h3><p id="d50c258e-5c40-4390-8a3d-877906ec5aa3" class="">正常情况下，我们使用instanceof进行类型比较：</p><pre id="808b230c-f255-48af-921d-15dd64823963" class="code code-wrap"><code>public static void main(String[] args) {    String str = &quot;&quot;;    System.out.println(str instanceof String);}</code></pre><p id="bf731539-5660-4651-bc6a-de596b9aff40" class="">它可以判断一个对象是否为此接口或是类的实现或是子类，而现在我们有了更多的方式去判断类型：</p><pre id="e63a9011-0c20-43e0-8006-f1c4b2004467" class="code code-wrap"><code>public static void main(String[] args) {    String str = &quot;&quot;;    System.out.println(str.getClass() == String.class);   //直接判断是否为这个类型}</code></pre><p id="88f5eaca-18f9-4817-8138-95c5410cf78f" class="">如果需要判断是否为子类或是接口/抽象类的实现，我们可以使用<code>asSubClass()</code>方法：</p><pre id="23f1b076-5a08-4994-886b-43ad50990b96" class="code code-wrap"><code>public static void main(String[] args) {    Integer i = 10;    i.getClass().asSubclass(Number.class);   //当Integer不是Number的子类时，会产生异常}</code></pre><p id="d0d6e77d-910c-45a2-ad32-3e6d43e17e1c" class="">通过<code>getSuperclass()</code>方法，我们可以获取到父类的Class对象：</p><pre id="284aeb6d-b2a7-4550-8abd-1202016cbc51" class="code code-wrap"><code>public static void main(String[] args) {    Integer i = 10;    System.out.println(i.getClass().getSuperclass());}</code></pre><p id="e676abe7-5a77-4966-b603-9a2a6c18b03a" class="">也可以通过<code>getGenericSuperclass()</code>获取父类的原始类型的Type：</p><pre id="0bcedd8d-0158-4639-b259-b739925fc4ac" class="code code-wrap"><code>public static void main(String[] args) {    Integer i = 10;    Type type = i.getClass().getGenericSuperclass();    System.out.println(type);    System.out.println(type instanceof Class);}</code></pre><p id="a8a584b3-ebf6-465f-a033-c22d676b0fa1" class="">我们发现Type实际上是Class类的父接口，但是获取到的Type的实现并不一定是Class。</p><p id="c8a6a7fa-83f0-4ea5-b3df-d3e3df4856ae" class="">同理，我们也可以像上面这样获取父接口：</p><pre id="bc9ca5d1-67ca-4359-b5eb-e7ff3b40b981" class="code code-wrap"><code>public static void main(String[] args) {    Integer i = 10;    for (Class&lt;?&gt; anInterface : i.getClass().getInterfaces()) {        System.out.println(anInterface.getName());    }    for (Type genericInterface : i.getClass().getGenericInterfaces()) {        System.out.println(genericInterface.getTypeName());    }}</code></pre><p id="4b7201dc-22fa-4f9f-a286-6560c9127f66" class="">是不是感觉反射功能很强大？几乎类的所有信息都可以通过反射获得。</p><h3 id="ecf03bda-e2f3-470d-870d-d906c579a774" class="">创建类对象</h3><p id="fe1dd308-80eb-483e-a4fa-1a4edea3a3dc" class="">既然我们拿到了类的定义，那么是否可以通过Class对象来创建对象、调用方法、修改变量呢？当然是可以的，那我们首先来探讨一下如何创建一个类的对象：</p><pre id="dcada2e3-0b85-4bca-a0ed-997cbd0fb70e" class="code code-wrap"><code>public static void main(String[] args) throws InstantiationException, IllegalAccessException {    Class&lt;Student&gt; clazz = Student.class;    Student student = clazz.newInstance();    student.test();}static class Student{    public void test(){        System.out.println(&quot;萨日朗&quot;);    }}</code></pre><p id="bc92a722-8c16-466b-ac2f-c998b3fda403" class="">通过使用<code>newInstance()</code>方法来创建对应类型的实例，返回泛型T，注意它会抛出InstantiationException和IllegalAccessException异常，那么什么情况下会出现异常呢？</p><pre id="96145c3b-90e0-42a2-95f6-98b86143fb02" class="code code-wrap"><code>public static void main(String[] args) throws InstantiationException, IllegalAccessException {    Class&lt;Student&gt; clazz = Student.class;    Student student = clazz.newInstance();    student.test();}static class Student{    public Student(String text){    }    public void test(){        System.out.println(&quot;萨日朗&quot;);    }}</code></pre><p id="3e88ec27-4bfb-4989-bc91-c25450a4ddf1" class="">当类默认的构造方法被带参构造覆盖时，会出现InstantiationException异常，因为<code>newInstance()</code>只适用于默认无参构造。</p><pre id="07ae8527-eba1-468d-bd0c-6e6719b8813e" class="code code-wrap"><code>public static void main(String[] args) throws InstantiationException, IllegalAccessException {    Class&lt;Student&gt; clazz = Student.class;    Student student = clazz.newInstance();    student.test();}static class Student{    private Student(){}    public void test(){        System.out.println(&quot;萨日朗&quot;);    }}</code></pre><p id="1e54b78c-c904-497e-a7d5-b34e3f37f0e0" class="">当默认无参构造的权限不是<code>public</code>时，会出现IllegalAccessException异常，表示我们无权去调用默认构造方法。在JDK9之后，不再推荐使用<code>newInstance()</code>方法了，而是使用我们接下来要介绍到的，通过获取构造器，来实例化对象：</p><pre id="b6d1b357-052c-4b08-bd43-2491ecafb2cb" class="code code-wrap"><code>public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {    Class&lt;Student&gt; clazz = Student.class;    Student student = clazz.getConstructor(String.class).newInstance(&quot;what&#x27;s up&quot;);    student.test();}static class Student{    public Student(String str){}    public void test(){        System.out.println(&quot;萨日朗&quot;);    }}</code></pre><p id="56325f21-587b-4d72-bcfc-6779c19ade2c" class="">通过获取类的构造方法（构造器）来创建对象实例，会更加合理，我们可以使用<code>getConstructor()</code>方法来获取类的构造方法，同时我们需要向其中填入参数，也就是构造方法需要的类型，当然我们这里只演示了。那么，当访问权限不是public的时候呢？</p><pre id="00b0be02-81e2-4906-94df-82614b4b878f" class="code code-wrap"><code>public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {    Class&lt;Student&gt; clazz = Student.class;    Student student = clazz.getConstructor(String.class).newInstance(&quot;what&#x27;s up&quot;);    student.test();}static class Student{    private Student(String str){}    public void test(){        System.out.println(&quot;萨日朗&quot;);    }}</code></pre><p id="32fe0679-2a18-4ba8-b792-09dc1d6b63c7" class="">我们发现，当访问权限不足时，会无法找到此构造方法，那么如何找到非public的构造方法呢？</p><pre id="ac12293f-1ca2-44ca-b540-ca1d1eb27a62" class="code code-wrap"><code>Class&lt;Student&gt; clazz = Student.class;Constructor&lt;Student&gt; constructor = clazz.getDeclaredConstructor(String.class);constructor.setAccessible(true);   //修改访问权限Student student = constructor.newInstance(&quot;what&#x27;s up&quot;);student.test();</code></pre><p id="0b372282-239d-4c74-82c6-b169c17cf577" class="">使用<code>getDeclaredConstructor()</code>方法可以找到类中的非public构造方法，但是在使用之前，我们需要先修改访问权限，在修改访问权限之后，就可以使用非public方法了（这意味着，反射可以无视权限修饰符访问类的内容）</p><h3 id="7d1df6ce-a7df-4313-aceb-1d272248b250" class="">调用类方法</h3><p id="0b358903-10e0-467d-a91d-2e73443c4f9b" class="">我们可以通过反射来调用类的方法（本质上还是类的实例进行调用）只是利用反射机制实现了方法的调用，我们在包下创建一个新的类：</p><pre id="b4322dea-e543-44fd-bbf9-78e3328c48a1" class="code code-wrap"><code>package com.test;public class Student {    public void test(String str){        System.out.println(&quot;萨日朗&quot;+str);    }}</code></pre><p id="e1c372be-7e9c-4fb5-aa0e-18a9280a8d03" class="">这次我们通过<code>forName(String)</code>来找到这个类并创建一个新的对象：</p><pre id="5593d173-8ee1-4245-9332-430a3f26ce33" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Class&lt;?&gt; clazz = Class.forName(&quot;com.test.Student&quot;);    Object instance = clazz.newInstance();   //创建出学生对象    Method method = clazz.getMethod(&quot;test&quot;, String.class);   //通过方法名和形参类型获取类中的方法    method.invoke(instance, &quot;what&#x27;s up&quot;);   //通过Method对象的invoke方法来调用方法}</code></pre><p id="d65770fb-b457-41ff-91df-5b3fd8a5d358" class="">通过调用<code>getMethod()</code>方法，我们可以获取到类中所有声明为public的方法，得到一个Method对象，我们可以通过Method对象的<code>invoke()</code>方法（返回值就是方法的返回值，因为这里是void，返回值为null）来调用已经获取到的方法，注意传参。</p><p id="963793ba-f983-4805-b6e3-140b615a1b4a" class="">我们发现，利用反射之后，在一个对象从构造到方法调用，没有任何一处需要引用到对象的实际类型，我们也没有导入Student类，整个过程都是反射在代替进行操作，使得整个过程被模糊了，过多的使用反射，会极大地降低后期维护性。</p><p id="25f7e14d-1381-4a60-96e0-526de431f7e5" class="">同构造方法一样，当出现非public方法时，我们可以通过反射来无视权限修饰符，获取非public方法并调用，现在我们将<code>test()</code>方法的权限修饰符改为private：</p><pre id="b12c8961-c224-469e-8c68-ec157692b73a" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Class&lt;?&gt; clazz = Class.forName(&quot;com.test.Student&quot;);    Object instance = clazz.newInstance();   //创建出学生对象    Method method = clazz.getDeclaredMethod(&quot;test&quot;, String.class);   //通过方法名和形参类型获取类中的方法    method.setAccessible(true);    method.invoke(instance, &quot;what&#x27;s up&quot;);   //通过Method对象的invoke方法来调用方法}</code></pre><p id="f3e79ffa-ef5d-44a4-b4b0-489a3b0fc211" class="">Method和Constructor都和Class一样，他们存储了方法的信息，包括方法的形式参数列表，返回值，方法的名称等内容，我们可以直接通过Method对象来获取这些信息：</p><pre id="e63c0036-d85f-40ef-98cf-e9e06d865cae" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Class&lt;?&gt; clazz = Class.forName(&quot;com.test.Student&quot;);    Method method = clazz.getDeclaredMethod(&quot;test&quot;, String.class);   //通过方法名和形参类型获取类中的方法    System.out.println(method.getName());   //获取方法名称    System.out.println(method.getReturnType());   //获取返回值类型}</code></pre><p id="086fb90e-35ec-443c-80f8-0eab23584452" class="">当方法的参数为可变参数时，我们该如何获取方法呢？实际上，我们在之前就已经提到过，可变参数实际上就是一个数组，因此我们可以直接使用数组的class对象表示：</p><pre id="ec51aa22-f710-424b-aaad-2e00714c973e" class="code code-wrap"><code>Method method = clazz.getDeclaredMethod(&quot;test&quot;, String[].class);</code></pre><p id="b0411134-c314-4ffc-9542-05c6cd96793b" class="">反射非常强大，尤其是我们提到的越权访问，但是请一定谨慎使用，别人将某个方法设置为private一定有他的理由，如果实在是需要使用别人定义为private的方法，就必须确保这样做是安全的，在没有了解别人代码的整个过程就强行越权访问，可能会出现无法预知的错误。</p><h3 id="6b3ece34-d4a0-414c-8fcb-ba555480b692" class="">修改类的属性</h3><p id="2e748e44-0285-4a7f-b247-5712ec5a904a" class="">我们还可以通过反射访问一个类中定义的成员字段也可以修改一个类的对象中的成员字段值，通过<code>getField()</code>方法来获取一个类定义的指定字段：</p><pre id="a43a2977-f9f0-49eb-893b-98aed51662db" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Class&lt;?&gt; clazz = Class.forName(&quot;com.test.Student&quot;);    Object instance = clazz.newInstance();    Field field = clazz.getField(&quot;i&quot;);   //获取类的成员字段i    field.set(instance, 100);   //将类实例instance的成员字段i设置为100    Method method = clazz.getMethod(&quot;test&quot;);    method.invoke(instance);}</code></pre><p id="d220eeb4-ef46-4d18-a5ed-4ba2d51ff2ce" class="">在得到Field之后，我们就可以直接通过<code>set()</code>方法为某个对象，设定此属性的值，比如上面，我们就为instance对象设定值为100，当访问private字段时，同样可以按照上面的操作进行越权访问：</p><pre id="3fd495a7-864d-40da-855f-b36ffe21adc5" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Class&lt;?&gt; clazz = Class.forName(&quot;com.test.Student&quot;);    Object instance = clazz.newInstance();    Field field = clazz.getDeclaredField(&quot;i&quot;);   //获取类的成员字段i    field.setAccessible(true);    field.set(instance, 100);   //将类实例instance的成员字段i设置为100    Method method = clazz.getMethod(&quot;test&quot;);    method.invoke(instance);}</code></pre><p id="26cad924-0159-4159-bdfb-c2c814dec8a9" class="">现在我们已经知道，反射几乎可以把一个类的老底都给扒出来，任何属性，任何内容，都可以被反射修改，无论权限修饰符是什么，那么，如果我的字段被标记为final呢？现在在字段<code>i</code>前面添加<code>final</code>关键字，我们再来看看效果：</p><pre id="6ca834f1-0de1-4d4d-b5df-3d6ca0ed73e7" class="code code-wrap"><code>private final int i = 10;</code></pre><p id="90b6aed4-3417-43ed-8c1e-e31c5b9096b9" class="">这时，当字段为final时，就修改失败了！当然，通过反射可以直接将final修饰符直接去除，去除后，就可以随意修改内容了，我们来尝试修改Integer的value值：</p><pre id="90f859bb-8d39-41b1-a791-e59b4af44f02" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    Integer i = 10;    Field field = Integer.class.getDeclaredField(&quot;value&quot;);    Field modifiersField = Field.class.getDeclaredField(&quot;modifiers&quot;);  //这里要获取Field类的modifiers字段进行修改    modifiersField.setAccessible(true);    modifiersField.setInt(field,field.getModifiers()&amp;~Modifier.FINAL);  //去除final标记    field.setAccessible(true);    field.set(i, 100);   //强行设置值    System.out.println(i);}</code></pre><p id="392447f9-3db1-4120-9e5c-c1fb0761b6db" class="">我们可以发现，反射非常暴力，就连被定义为final字段的值都能强行修改，几乎能够无视一切阻拦。我们来试试看修改一些其他的类型：</p><pre id="a6c4e967-83c6-4ad5-a432-742cf3fb6a12" class="code code-wrap"><code>public static void main(String[] args) throws ReflectiveOperationException {    List&lt;String&gt; i = new ArrayList&lt;&gt;();    Field field = ArrayList.class.getDeclaredField(&quot;size&quot;);    field.setAccessible(true);    field.set(i, 10);    i.add(&quot;测试&quot;);   //只添加一个元素    System.out.println(i.size());  //大小直接变成11    i.remove(10);   //瞎移除都不带报错的，淦}</code></pre><p id="db931c68-16ca-4744-a16e-6e20b3c18116" class="">实际上，整个ArrayList体系由于我们的反射操作，导致被破坏，因此它已经无法正常工作了！</p><p id="963446a6-3f93-4e34-9691-71197e716105" class="">再次强调，在进行反射操作时，必须注意是否安全，虽然拥有了创世主的能力，但是我们不能滥用，我们只能把它当做一个不得已才去使用的工具！</p><h3 id="386a4064-3acd-4e72-a019-701ff91a6dde" class="">类加载器</h3><p id="3f4c66d4-baf8-4648-a03f-9e5653775fde" class="">我们接着来介绍一下类加载器，实际上类加载器就是用于加载一个类的，但是类加载器并不是只有一个。</p><p id="08a4925a-6c59-44c0-b798-827812a83a26" class=""><strong>思考：</strong>既然说Class对象和加载的类唯一对应，那如果我们手动创建一个与JDK包名一样，同时类名也保持一致，JVM会加载这个类吗？</p><pre id="17fbae45-ecb3-409b-aa1c-b7fe32a3eee1" class="code code-wrap"><code>package java.lang;public class String {    //JDK提供的String类也是    public static void main(String[] args) {        System.out.println(&quot;我姓🐴，我叫🐴nb&quot;);    }}</code></pre><p id="dad7b042-3efd-4f54-bd1b-004c81fb9982" class="">我们发现，会出现以下报错：</p><pre id="5f66a4ee-ba02-4231-87b2-902a3522dbc4" class="code code-wrap"><code>错误: 在类 java.lang.String 中找不到 main 方法, 请将 main 方法定义为:   public static void main(String[] args)</code></pre><p id="04804422-686d-4c8d-aef7-d842197b9394" class="">但是我们明明在自己写的String类中定义了main方法啊，为什么会找不到此方法呢？实际上这是ClassLoader的<code>双亲委派机制</code>在保护Java程序的正常运行：</p><figure id="1adb86c7-95c6-4e9c-82e7-cfe709350bcc" class="image"><a href="https://s2.loli.net/2022/10/04/5p6jdXDA8VtCEfN.png"><img src="https://s2.loli.net/2022/10/04/5p6jdXDA8VtCEfN.png"/></a></figure><p id="c71ace31-0f8b-4eab-accb-6808da6949cc" class="">img</p><p id="387c12b9-f3c5-4afa-9227-bbf01ac8a2e0" class="">实际上类最开始是由BootstarpClassLoader进行加载，BootstarpClassLoader用于加载JDK提供的类，而我们自己编写的类实际上是AppClassLoader加载的，只有BootstarpClassLoader都没有加载的类，才会让AppClassLoader来加载，因此我们自己编写的同名包同名类不会被加载，而实际要去启动的是真正的String类，也就自然找不到<code>main</code>方法了。</p><pre id="f6c9d378-16c5-4ed0-9433-d893d1dafb00" class="code code-wrap"><code>public class Main {    public static void main(String[] args) {        System.out.println(Main.class.getClassLoader());   //查看当前类的类加载器        System.out.println(Main.class.getClassLoader().getParent());  //父加载器        System.out.println(Main.class.getClassLoader().getParent().getParent());  //爷爷加载器        System.out.println(String.class.getClassLoader());   //String类的加载器    }}</code></pre><p id="c4c9cf1e-dfb4-4cbf-b22d-5ab78b561f90" class="">由于BootstarpClassLoader是C++编写的，我们在Java中是获取不到的。</p><p id="9a3d61b1-eefc-443c-991c-051700e8a5b8" class="">既然通过ClassLoader就可以加载类，那么我们可以自己手动将class文件加载到JVM中吗？先写好我们定义的类：</p><pre id="3f40430b-b117-4a50-a298-85253e3648a1" class="code code-wrap"><code>package com.test;public class Test {    public String text;    public void test(String str){        System.out.println(text+&quot; &gt; 我是测试方法！&quot;+str);    }}</code></pre><p id="d07aa2b9-1615-43c4-9d18-96c8dca0740b" class="">通过javac命令，手动编译一个.class文件：</p><pre id="e3b894ef-d08e-4b9a-bf06-125471ccfd17" class="code code-wrap"><code>nagocoler@NagodeMacBook-Pro HelloWorld % javac src/main/java/com/test/Test.java</code></pre><p id="e23101f1-f795-4143-91ac-bef16c383862" class="">编译后，得到一个class文件，我们把它放到根目录下，然后编写一个我们自己的ClassLoader，因为普通的ClassLoader无法加载二进制文件，因此我们编写一个自定义的来让它支持：</p><pre id="5b933033-9c74-4ef5-b78f-0aef12f000ad" class="code code-wrap"><code>//定义一个自己的ClassLoaderstatic class MyClassLoader extends ClassLoader{    public Class&lt;?&gt; defineClass(String name, byte[] b){        return defineClass(name, b, 0, b.length);   //调用protected方法，支持载入外部class文件    }}public static void main(String[] args) throws IOException {    MyClassLoader classLoader = new MyClassLoader();    FileInputStream stream = new FileInputStream(&quot;Test.class&quot;);    byte[] bytes = new byte[stream.available()];    stream.read(bytes);    Class&lt;?&gt; clazz = classLoader.defineClass(&quot;com.test.Test&quot;, bytes);   //类名必须和我们定义的保持一致    System.out.println(clazz.getName());   //成功加载外部class文件}</code></pre><p id="4d1cdafb-860b-44da-8a17-37af547315a8" class="">现在，我们就将此class文件读取并解析为Class了，现在我们就可以对此类进行操作了（注意，我们无法在代码中直接使用此类型，因为它是我们直接加载的），我们来试试看创建一个此类的对象并调用其方法：</p><pre id="d7c384bd-b089-40f6-8b98-1a8f123c2135" class="code code-wrap"><code>try {    Object obj = clazz.newInstance();    Method method = clazz.getMethod(&quot;test&quot;, String.class);   //获取我们定义的test(String str)方法    method.invoke(obj, &quot;哥们这瓜多少钱一斤？&quot;);}catch (Exception e){    e.printStackTrace();}</code></pre><p id="23eae85a-6ed5-4957-8dd4-3885b01619b0" class="">我们来试试看修改成员字段之后，再来调用此方法：</p><pre id="740d46ea-d7e1-4cbf-9a9c-36ee5bfe14dc" class="code code-wrap"><code>try {    Object obj = clazz.newInstance();    Field field = clazz.getField(&quot;text&quot;);   //获取成员变量 String text;    field.set(obj, &quot;华强&quot;);    Method method = clazz.getMethod(&quot;test&quot;, String.class);   //获取我们定义的test(String str)方法    method.invoke(obj, &quot;哥们这瓜多少钱一斤？&quot;);}catch (Exception e){    e.printStackTrace();}</code></pre><p id="36460a5d-8f48-436a-990d-3519b92cdea1" class="">通过这种方式，我们就可以实现外部加载甚至是网络加载一个类，只需要把类文件传递即可，这样就无需再将代码写在本地，而是动态进行传递，不仅可以一定程度上防止源代码被反编译（只是一定程度上，想破解你代码有的是方法），而且在更多情况下，我们还可以对byte[]进行加密，保证在传输过程中的安全性。</p><hr id="c01ca39d-244d-43d9-b064-cfd6e2cdcf37"/><h2 id="d9254828-5c9b-4b9a-af8f-7d6640f214df" class="">注解</h2><p id="c73837f5-701d-4d58-a087-3b6fee9b74c7" class=""><strong>注意：</strong>注解跟我们之前讲解的注释完全不是一个概念，不要搞混了。</p><p id="1e52d79f-7bf7-4461-a919-01dd7872ee7e" class="">其实我们在之前就接触到注解了，比如<code>@Override</code>表示重写父类方法（当然不加效果也是一样的，此注解在编译时会被自动丢弃）注解本质上也是一个类，只不过它的用法比较特殊。</p><p id="018f02cb-b59e-4c14-a975-d2af56bdf1a5" class="">注解可以被标注在任意地方，包括方法上、类名上、参数上、成员属性上、注解定义上等，就像注释一样，它相当于我们对某样东西的一个标记。而与注释不同的是，注解可以通过反射在运行时获取，注解也可以选择是否保留到运行时。</p><h3 id="3a9db954-7b4b-484a-a07c-13224e43214e" class="">预设注解</h3><p id="b12ea98e-6c02-488f-b1e9-68ca9abe9f58" class="">JDK预设了以下注解，作用于代码：</p><ul id="b0511418-64c9-4b24-b7c5-561d55fe05a2" class="bulleted-list"><li style="list-style-type:disc">[@Override ]()- 检查（仅仅是检查，不保留到运行时）该方法是否是重写方法。如果发现其父类，或者是引用的接口中并没有该方法时，会报编译错误。</li></ul><ul id="1f30ff0e-3aa6-48c4-8479-25266d730c61" class="bulleted-list"><li style="list-style-type:disc">[@Deprecated ]()- 标记过时方法。如果使用该方法，会报编译警告。</li></ul><ul id="a4e75ebc-c40f-400a-b556-cf48048bf389" class="bulleted-list"><li style="list-style-type:disc">[@SuppressWarnings ]()- 指示编译器去忽略注解中声明的警告（仅仅编译器阶段，不保留到运行时）</li></ul><ul id="d50b45eb-c752-4fe2-b687-f65630090496" class="bulleted-list"><li style="list-style-type:disc">[@FunctionalInterface ]()- Java 8 开始支持，标识一个匿名函数或函数式接口。</li></ul><ul id="8f6cbedb-d6d9-4022-b4c2-45202032b20b" class="bulleted-list"><li style="list-style-type:disc">[@SafeVarargs ]()- Java 7 开始支持，忽略任何使用参数为泛型变量的方法或构造函数调用产生的警告。</li></ul><h3 id="cf80425c-e5a4-4fb6-8a56-e0ba7e937c9d" class="">元注解</h3><p id="826c057e-f263-43b4-b22f-0b866b74a686" class="">元注解是作用于注解上的注解，用于我们编写自定义的注解：</p><ul id="e98e7db6-1409-47d6-be6f-eba5f70ba0bf" class="bulleted-list"><li style="list-style-type:disc">[@Retention ]()- 标识这个注解怎么保存，是只在代码中，还是编入class文件中，或者是在运行时可以通过反射访问。</li></ul><ul id="3154a90c-e19d-4baa-9598-9a26086d0351" class="bulleted-list"><li style="list-style-type:disc">[@Documented ]()- 标记这些注解是否包含在用户文档中。</li></ul><ul id="f3f204fd-ba9d-4c26-aa37-eb8e35518b4c" class="bulleted-list"><li style="list-style-type:disc">[@Target ]()- 标记这个注解应该是哪种 Java 成员。</li></ul><ul id="d4b4920e-2eb1-47af-bd89-c0b59001feff" class="bulleted-list"><li style="list-style-type:disc">[@Inherited ]()- 标记这个注解是继承于哪个注解类(默认 注解并没有继承于任何子类)</li></ul><ul id="b214a8ba-94c6-4bd7-818d-41e6138ff39b" class="bulleted-list"><li style="list-style-type:disc">[@Repeatable ]()- Java 8 开始支持，标识某注解可以在同一个声明上使用多次。</li></ul><p id="1537081b-912d-4f3a-8ec9-5826fe39111a" class="">看了这么多预设的注解，你们肯定眼花缭乱了，那我们来看看<code>@Override</code>是如何定义的：</p><pre id="ca3cf525-beb0-4ce5-b85e-a0b299d9125a" class="code code-wrap"><code>@Target(ElementType.METHOD)@Retention(RetentionPolicy.SOURCE)public @interface Override {}</code></pre><p id="7aef91c5-1685-47da-9207-3e007e789b29" class="">该注解由<code>@Target</code>限定为只能作用于方法上，ElementType是一个枚举类型，用于表示此枚举的作用域，一个注解可以有很多个作用域。<code>@Retention</code>表示此注解的保留策略，包括三种策略，在上述中有写到，而这里定义为只在代码中。一般情况下，自定义的注解需要定义1个<code>@Retention</code>和1-n个<code>@Target</code>。</p><p id="bde2ba7b-d61b-4ba6-b0d8-7913885206fa" class="">既然了解了元注解的使用和注解的定义方式，我们就来尝试定义一个自己的注解：</p><pre id="a8d2d676-7b5c-4886-8573-4bddc7e3ff21" class="code code-wrap"><code>@Target(ElementType.METHOD)@Retention(RetentionPolicy.RUNTIME)public @interface Test {}</code></pre><p id="76236238-08b8-4c6a-9e07-1d9bde214dd5" class="">这里我们定义一个Test注解，并将其保留到运行时，同时此注解可以作用于方法或是类上：</p><pre id="e774b95e-4d47-48a2-8618-cdb7faa11565" class="code code-wrap"><code>@Testpublic class Main {    @Test    public static void main(String[] args) {    }}</code></pre><p id="4d7c1ad2-9c6c-4ae7-b9a8-7c9dbd485692" class="">这样，一个最简单的注解就被我们创建了。</p><h3 id="f9f706c0-d7e6-4d4f-941a-a94ae4738a0b" class="">注解的使用</h3><p id="1c9a29c1-70a3-4717-9c64-33e5cc3714ce" class="">我们还可以在注解中定义一些属性，注解的属性也叫做成员变量，注解只有成员变量，没有方法。注解的成员变量在注解的定义中以“无形参的方法”形式来声明，其方法名定义了该成员变量的名字，其返回值定义了该成员变量的类型：</p><pre id="f16c784a-7336-49d1-a43d-ae7249483b53" class="code code-wrap"><code>@Target({ElementType.METHOD, ElementType.TYPE})@Retention(RetentionPolicy.RUNTIME)public @interface Test {    String value();}</code></pre><p id="1ca91be4-246f-4fb6-9e73-1631689beffd" class="">默认只有一个属性时，我们可以将其名字设定为value，否则，我们需要在使用时手动指定注解的属性名称，使用value则无需填入：</p><pre id="79327fd7-4c3e-4947-8e58-ba20d22e7bfd" class="code code-wrap"><code>@Target({ElementType.METHOD, ElementType.TYPE})@Retention(RetentionPolicy.RUNTIME)public @interface Test {    String test();}</code></pre><pre id="9c41a03d-90b7-4e49-92f4-bb9a6fa372a6" class="code code-wrap"><code>public class Main {    @Test(test = &quot;&quot;)    public static void main(String[] args) {    }}</code></pre><p id="409eeb3b-d764-4441-8121-1f2e320c86d1" class="">我们也可以使用default关键字来为这些属性指定默认值：</p><pre id="9c39cbc8-6861-400c-83c3-2d15adbc5dcf" class="code code-wrap"><code>@Target({ElementType.METHOD, ElementType.TYPE})@Retention(RetentionPolicy.RUNTIME)public @interface Test {    String value() default &quot;都看到这里了，给个三连吧！&quot;;}</code></pre><p id="00d5b75c-44db-4a99-931d-b33578585f13" class="">当属性存在默认值时，使用注解的时候可以不用传入属性值。当属性为数组时呢？</p><pre id="21fc9518-de6c-4e17-9ff4-001c16ba0f95" class="code code-wrap"><code>@Target({ElementType.METHOD, ElementType.TYPE})@Retention(RetentionPolicy.RUNTIME)public @interface Test {    String[] value();}</code></pre><p id="43955288-1107-4a8e-8ee4-b9cf95bda234" class="">当属性为数组，我们在使用注解传参时，如果数组里面只有一个内容，我们可以直接传入一个值，而不是创建一个数组：</p><pre id="3fae86ac-0114-4f65-9c70-ca3605b07395" class="code code-wrap"><code>@Test(&quot;关注点了吗&quot;)public static void main(String[] args) {}</code></pre><pre id="465bcd04-87ee-44bd-9c90-25f7a9951bcd" class="code code-wrap"><code>public class Main {    @Test({&quot;value1&quot;, &quot;value2&quot;})   //多个值时就使用花括号括起来    public static void main(String[] args) {    }}</code></pre><h3 id="fc185671-5a6b-4168-b16a-40ee9af09e1b" class="">反射获取注解</h3><p id="2a41449b-a727-48d6-bb50-76b19236b3b0" class="">既然我们的注解可以保留到运行时，那么我们来看看，如何获取我们编写的注解，我们需要用到反射机制：</p><pre id="6a183e00-a6fc-44d7-b43a-b228dfc9f0f4" class="code code-wrap"><code>public static void main(String[] args) {    Class&lt;Student&gt; clazz = Student.class;    for (Annotation annotation : clazz.getAnnotations()) {        System.out.println(annotation.annotationType());   //获取类型        System.out.println(annotation instanceof Test);   //直接判断是否为Test        Test test = (Test) annotation;        System.out.println(test.value());   //获取我们在注解中写入的内容    }}</code></pre><p id="10e9c1eb-4de7-4c7c-9070-cd4f0eeb022b" class="">通过反射机制，我们可以快速获取到我们标记的注解，同时还能获取到注解中填入的值，那么我们来看看，方法上的标记是不是也可以通过这种方式获取注解：</p><pre id="ce867832-6996-4a3e-89cd-bcf1668bb698" class="code code-wrap"><code>public static void main(String[] args) throws NoSuchMethodException {    Class&lt;Student&gt; clazz = Student.class;    for (Annotation annotation : clazz.getMethod(&quot;test&quot;).getAnnotations()) {        System.out.println(annotation.annotationType());   //获取类型        System.out.println(annotation instanceof Test);   //直接判断是否为Test        Test test = (Test) annotation;        System.out.println(test.value());   //获取我们在注解中写入的内容    }}</code></pre><p id="455b4633-42d9-4494-a8b3-4f49363ae668" class="">无论是方法、类、还是字段，都可以使用<code>getAnnotations()</code>方法（还有几个同名的）来快速获取我们标记的注解。</p><p id="e33add65-2e20-4232-85c7-193b27c26a08" class="">所以说呢，这玩意学来有啥用？丝毫get不到这玩意的用处。其实不是，现阶段作为初学者，还体会不到注解带来的快乐，在接触到Spring和SpringBoot等大型框架后，相信各位就能感受到注解带来的魅力了。</p><hr id="31686bc1-8a5a-4c69-815c-0b0aa42b33e2"/><h2 id="5761e9d3-b681-4857-ad3d-f53e3cbae8d3" class="">结束语</h2><p id="33594db7-a107-435b-a06d-951854b9bcc8" class="">Java的学习对你来说可能是枯燥的，可能是漫长的，也有可能是有趣的，无论如何，你终于是完成了全部内容的学习，可喜可贺。</p><p id="48ac8acb-5e38-4533-90bb-14f1ca676549" class="">实际上很多人一开始跟着你们一起在进行学习，但是他们因为各种原因，最后还是没有走完这条路。坚持不一定会成功，但坚持到别人坚持不下去，那么你至少已经成功了一半了，坚持到最后的人运气往往都不会太差。</p><p id="a445084c-5d1b-4324-852b-7f886cb3f3dc" class="">希望各位小伙伴能够在之后的学习中砥砺前行！</p></div></article></body></html>

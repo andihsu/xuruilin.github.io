@@ -1,0 +1,676 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>JavaSE 笔记（八）GUI程序开发</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="85ce9094-a350-4e78-876b-cae6c2643407" class="page mono"><header><h1 class="page-title">JavaSE 笔记（八）GUI程序开发</h1><p class="page-description"></p></header><div class="page-body"><figure id="418bcb84-65f6-44d4-b715-2354ec57a582" class="image"><a href="https://s2.loli.net/2022/10/26/Mu6qwoA9fc7THbQ.png"><img src="https://s2.loli.net/2022/10/26/Mu6qwoA9fc7THbQ.png"/></a></figure><p id="e1a6cd75-b0c8-4f40-a453-59c4dca2ed58" class="">image-20221026154454258</p><h1 id="57c11005-e567-4174-8141-5c31bc17ec8f" class="">GUI程序开发</h1><p id="8db2448e-9ce7-4672-92df-afe1ce5eb57c" class="">注意：开始学习之前请确保你完成了《Java SE》篇视频教程。</p><p id="91970354-fab3-44ca-9b87-eafec23465e8" class="">前面我们已经完成了JavaSE部分的全部内容学习，只不过我们在初学阶段一直都是开发的控制台程序，也就是最原始的命令窗口形式的程序，而Java也可以开发桌面图形化程序，所以我们接着来学习一下Java的图形化界面的开发。</p><h2 id="69dc623b-d319-4bef-bcad-3b942756cac2" class="">AWT组件介绍</h2><p id="bdc6d728-ff9a-4b4e-8578-1b5e5fca6892" class="">在Java正式推出的时候，它还包含一个用于基本GUI程序设计的类库，名字叫 Abstract Window Toolkit，简称AWT，抽象窗口工具包，我们可以直接使用Java为我们提供的工具包来进行桌面应用程序的开发。只不过这套工具包依附于操作系统提供的UI，具体样式会根据不同操作系统提供的界面元素进行展示。</p><p id="74936568-11e0-4dd9-a0b6-1984476ae2f8" class="">实际上我们现代操作系统都是图形化界面，应用程序都是以一个窗口的形式展示出来的，我们可以直接使用鼠标点击窗口内的元素来使用应用程序，相比传统的命令行形式，可方便太多了，比如在Windows和MacOS这两种操作系统下：</p><figure id="e17873d9-c865-4b01-9563-9ffbdbe4b4a9" class="image"><a href="https://s2.loli.net/2022/10/26/fMQDFCmyqIvJeTl.png"><img src="https://s2.loli.net/2022/10/26/fMQDFCmyqIvJeTl.png"/></a></figure><p id="afc5dfea-01f9-4deb-bcac-9a6f598ee60c" class="">image-20221026164200924</p><p id="06607c93-3dda-4a44-9f45-b5fca5965d7a" class="">可以看到，不同的操作系统的窗口样式稍微有一些不一样，但是大致的使用方式是差不多的，我们接着来看一下如何使用Java编写简单的桌面图形化程序。</p><h3 id="dfa91f4c-c377-4185-b73f-bae0159981a3" class="">基本框架</h3><p id="0391e497-f1da-47ab-b2ca-f9827fa2f149" class="">既然我们要编写一个桌面程序，那么肯定是需要窗口来展示我们程序的内容的，所以说，我们可以使用AWT为我们提供的组件来创建窗口：</p><pre id="782f0deb-e7c6-424c-9458-0c89dfc53ad1" class="code code-wrap"><code>public static void main(String[] args) {    Frame frame = new Frame();   //Frame是窗体，我们只需要创建这样一个对象就可以了，这样就会直接创建一个新的窗口    frame.setSize(500, 300);   //可以使用setSize方法设定窗体大小    frame.setVisible(true);    //默认情况下窗体是不可见的，我们如果要展示出来，还需要设置窗体可见性}</code></pre><p id="f95a8951-16be-4f84-8044-145c48ce12c3" class="">可以看到，桌面的左上角已经展示出我们的窗口了：</p><figure id="f1a62480-f367-4abd-be8b-8fd153df822f" class="image"><a href="https://s2.loli.net/2022/10/26/ZSQs1NhWlJeyMmi.png"><img src="https://s2.loli.net/2022/10/26/ZSQs1NhWlJeyMmi.png"/></a></figure><p id="370695fa-f169-4ecc-8174-4796a316bfb8" class="">image-20221026165600076</p><p id="d0f02d09-61b0-473d-9097-375ca5562a7b" class="">在不同的操作系统下，窗口的样式会不同。</p><p id="80682b3d-f3ce-4cf1-8406-4e3c9cd77951" class="">我们可以通过Frame的各种方法来设置窗口的各项属性：</p><pre id="d29d3d55-2d5c-493d-b256-21dc3a847d88" class="code code-wrap"><code>public static void main(String[] args) {    Frame frame = new Frame();    frame.setTitle(&quot;我是标题&quot;);   //设置窗口标题    frame.setSize(500, 300);    //设置窗口大小    frame.setBackground(Color.BLACK);   //设置窗口背景颜色    frame.setResizable(false);    //设置窗口大小是否固定    frame.setAlwaysOnTop(true);    //设置窗口是否始终展示在最前面    frame.setVisible(true);    //注意，只有将可见性变为true时才会展示出这个窗口，否则窗口是隐藏的}</code></pre><p id="8cc5cd5e-0114-4164-9e06-275c864e8e04" class="">实际上当我们创建一个窗口之后，会在其他线程中进行处理，包括窗口的绘制、窗口事件的监听等，所以说我们的主线程不会卡住。</p><p id="3ac0ea98-5af6-4e0b-bdce-4b8726444b38" class="">实际上我们的程序打开都是默认居中显示的，所以说我们可以调整一下窗口的位置：</p><pre id="ec5bdb95-7551-4e8b-ae4e-44a35d8ab7e7" class="code code-wrap"><code>frame.setLocation(100, 200);   //setLocation可以调整窗口位置</code></pre><p id="45f089cc-4ac1-46c5-bff4-ec99ec1710b6" class="">注意，这里的窗口位置以及窗口大小都是以像素为单位。整个屏幕有多少个像素，是根据各位小伙伴电脑的显示器屏幕分辨率来决定的，比如我们的电脑显示器屏幕分辨率为 1920 x 1080，那么我们显示器就可以显示长为1920个像素，宽1080个像素的矩形，只要是在这个范围内的窗口，都可以显示到屏幕上：</p><figure id="11b68b3c-ff79-421d-af32-c07145adb632" class="image"><a href="https://s2.loli.net/2022/10/26/CknumyFjpz659Ya.png"><img src="https://s2.loli.net/2022/10/26/CknumyFjpz659Ya.png"/></a></figure><p id="4b20abb3-0b35-462a-8130-0555992395ef" class="">image-20221026170449235</p><p id="6cbcb02c-51a7-43d5-9bb1-24493c5c8cad" class="">那么问题就来了，如果现在我们希望将这个窗口居中，就需要手动调整位置，但我们是要去适配各种分辨率的显示器才可以，不然到其他分辨率下，就无法居中了，我们可以动态获取分辨率来进行位置计算：</p><pre id="48b5fa8e-2769-4f8f-a1f2-84e3889bdbef" class="code code-wrap"><code>public static void main(String[] args) {    Frame frame = new Frame(&quot;我是标题&quot;);    frame.setSize(500, 300);    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();  //获取到屏幕尺寸    int x = (int) ((screenSize.getWidth() - frame.getWidth()) / 2);   //居中位置就是：屏幕尺寸/2 - 窗口尺寸/2    int y = (int) ((screenSize.getHeight() - frame.getHeight()) / 2);    frame.setLocation(x, y);   //位置设置好了之后再展示出来    frame.setVisible(true);}</code></pre><p id="faa86301-ed13-4a57-b1be-08f1870c1533" class="">这样我们的窗口打开之后默认就是居中放置的了，是不是感觉用Java开发图形界面好像也不是那么难？</p><p id="4cab00ad-65da-499d-8f12-a88753bc527b" class="">得益于Java已经为我们封装好了各种方法，所以说要实现什么功能直接调用对应的方法即可，比如我们想要个性化光标，我们可以使用<code>setCursor</code>方法来实现，JDK已经为我们提供了一些预设的光标样式：</p><figure id="48e2134c-57c8-44e3-92a2-780793d2f63d" class="image"><a href="https://s2.loli.net/2022/10/27/drC1nx2NSK9Ewaf.png"><img src="https://s2.loli.net/2022/10/27/drC1nx2NSK9Ewaf.png"/></a></figure><p id="85e9e57b-4b0d-412a-8ca2-ad6f35ff15f4" class="">image-20221027151713661</p><p id="041b5272-6004-430c-8f22-00da8c98d2cf" class="">设定光标样式后，当我们的鼠标移动到这个窗口内部时，就会变成我们设定好的光标样式了。</p><p id="e4110c82-e92a-4ce1-a632-2126ef495323" class="">有关其他方法，这里暂时不进行介绍。</p><h3 id="69018ce5-d535-447f-ae58-e1c83a340782" class="">监听器</h3><p id="603969c8-fb79-42e4-8888-79c05763348f" class="">我们可以为窗口添加一系列的监听器，监听器会监听窗口中发生的一些事件，比如我们点击关闭窗口、移动鼠标、鼠标点击等，当发生对应的事件时，就会通知到对应的监听器进行处理，从而我们能够在发生对应事件时进行对应处理。</p><figure id="6d31636e-4126-4184-833a-4f93c75044ed" class="image"><a href="https://s2.loli.net/2022/10/27/DAz1hnUekV6RNqd.png"><img src="https://s2.loli.net/2022/10/27/DAz1hnUekV6RNqd.png"/></a></figure><p id="c5b8f0d1-8099-4259-82b4-1fdb968e61f5" class="">image-20221027161611050</p><p id="bd65043b-bbb8-4ccb-bf48-e6d9b5f33c1c" class="">比如我们现在希望点击关闭按钮关闭当前的窗口，但是我们发现默认情况下实际上是关不掉的，因为我们并没有对关闭事件进行处理，默认情况下对于这种点击时没有设定任何动作的，万一我们点了之后并不是要关闭窗口呢。要实现关闭窗口，我们可以使用<code>addXXXListener</code>来添加对应的事件监听器，比如窗口相关的操作那么就是WindowListener：</p><figure id="091a1fbe-c211-4cc9-b22f-0f11c0a29f4d" class="image"><a href="https://s2.loli.net/2022/10/27/IiwomHF7YWe8Vuh.png"><img src="https://s2.loli.net/2022/10/27/IiwomHF7YWe8Vuh.png"/></a></figure><p id="5faa2b2f-a2e0-41e9-8ea5-987b5b75e5fc" class="">image-20221027155830335</p><p id="3eb13b64-3a72-4a55-82bc-6ee87010ef6c" class="">这里我们可以给一个接口实现，或是使用对应的适配器（适配器模式是设计模式中的一种写法，因为接口中要实现的方法太多，但是实际上我们并不需要实现那么多，只需要实现对应的即可，所以说就可以使用适配器）我们只需要重写对应的方法，当发生对应事件时就会自动调用我们已经实现好的方法：</p><pre id="53b7b5ea-a5ef-4697-97fa-7982a1a57546" class="code code-wrap"><code>frame.addWindowListener(new WindowAdapter() {    @Override    public void windowClosing(WindowEvent e) {   //windowClosing方法对应的就是窗口关闭事件        frame.dispose();    //当我们点击X号关闭窗口时，就会自动执行此方法了        //使用dispose方法来关闭当前窗口    }    @Override    public void windowClosed(WindowEvent e) {   //对应窗口已关闭事件        System.out.println(&quot;窗口已关闭！&quot;);   //当窗口成功关闭后，会执行这里重写的内容        System.exit(0);    //窗口关闭后退出当前Java程序    }});</code></pre><p id="354a4e82-b30b-4253-94b1-25e4f9a836e0" class="">我们可以来看看效果，现在我们点击X号关闭窗口就可以成功执行了，并且窗口关闭后我们的Java程序就结束了。当然，监听器可以添加多个，并不是只能有一个。</p><p id="9f204e92-fa58-4786-8f3b-be81eb72610f" class="">这里总结一下窗口常用的事件：</p><pre id="06b16ddc-c25c-40e4-9a2b-933ce9dec2b0" class="code code-wrap"><code>public interface WindowListener extends EventListener {    public void windowOpened(WindowEvent e);   //当窗口的可见性首次变成true时会被调用    public void windowClosing(WindowEvent e);   //当以后企图关闭窗口（也就是点击X号）时被调用    public void windowClosed(WindowEvent e);   //窗口被我们成功关闭之后被调用    public void windowIconified(WindowEvent e);    //窗口最小化时被调用    public void windowDeiconified(WindowEvent e);   //窗口从最小化状态变成普通状态时调用    public void windowActivated(WindowEvent e);    //当窗口变成活跃状态时被调用    public void windowDeactivated(WindowEvent e);   //当窗口变成不活跃时被调用}</code></pre><p id="9f4524f2-7640-45c7-bc4e-d788f6fe3ed8" class="">除了监听窗口相关的动作之外，我们也可以监听鼠标、键盘等操作的事件，比如键盘事件：</p><pre id="167ac5fb-08a4-488a-8875-228caeee80b7" class="code code-wrap"><code>frame.addKeyListener(new KeyAdapter() {    @Override    public void keyTyped(KeyEvent e) {    //监听键盘输入事件，当我们在窗口中敲击键盘输入时会触发        System.out.print(e.getKeyChar());   //可以通过KeyEvent对象来获取当前事件输入的对应字符    }});</code></pre><p id="307437c9-f278-45f7-85c9-d4f23925cafc" class="">键盘事件甚至可以细致到键盘按键的几种状态：</p><pre id="c87a6093-f5c1-46bf-adbb-9e873595e708" class="code code-wrap"><code>public interface KeyListener extends EventListener {    public void keyTyped(KeyEvent e);   //当一个按键按下之后触发（感觉跟下面这个没啥区别）    public void keyPressed(KeyEvent e);   //当一个按键按下后触发（按下之后如果不松开会连续触发此事件）    public void keyReleased(KeyEvent e);   //当一个按键按下然后松开后触发}</code></pre><p id="f647db59-0ce3-4ffb-975e-c4d054674e35" class="">我们也可以监听鼠标相关的事件，比如当鼠标点击我们界面上某一个位置时，我们就可以获取一下：</p><pre id="7ef487fb-fcd1-4ca2-b17c-446883557f7f" class="code code-wrap"><code>frame.addMouseListener(new MouseAdapter() {    @Override    public void mouseClicked(MouseEvent e) {   //mouseClicked是监听鼠标点击事件（必须要用真的鼠标点击，不知道为啥，笔记本的触摸板不行，可能是MacOS的BUG吧）        System.out.println(&quot;鼠标点击：&quot;+e.getX()+&quot;,&quot;+e.getY());    }});</code></pre><p id="fcde26d2-6c2f-44ba-ae8d-3f140bd6c86f" class="">这样，当我们点击窗口中的某个位置时，就可以获取对应的坐标并打印出来：</p><figure id="7e522661-47a1-4a95-8fcc-0133f2c25946" class="image"><a href="https://s2.loli.net/2022/10/27/VQm7FjSNidLhI1r.png"><img src="https://s2.loli.net/2022/10/27/VQm7FjSNidLhI1r.png"/></a></figure><p id="0196a421-5210-44e9-9240-537438bdcb24" class="">image-20221027164500070</p><p id="b69bcbe1-7fef-4419-a50c-62e68dcbdb7d" class="">注意这里的坐标并不是按照我们在数学中学习的平面直角坐标系来的，它的X轴是从左往右，但是Y轴是从上往下，原点也不是整个屏幕开始，而是我们的窗口左上角。所以说当我们点击右下角时，就会得到一个接近于窗口大小的坐标了。</p><p id="66fb505d-0717-41f3-b8dd-fd851219b923" class="">我们也可以获取鼠标是使用哪个键点击的，我们的鼠标一般情况下有三个按键：</p><ul id="111d268d-0ec5-4dc7-a736-ffdb1224084b" class="bulleted-list"><li style="list-style-type:disc">BUTTON1 - 鼠标左键，也是我们用的最多的键</li></ul><ul id="7670c4b1-a530-497e-8350-d165206a2e27" class="bulleted-list"><li style="list-style-type:disc">BUTTON2 - 鼠标中键，一般是鼠标滚轮，也是是可以点击的（不会有人以为鼠标滚轮只能滚不能按吧）</li></ul><ul id="ef377561-db65-4ede-bea7-2c400d80c201" class="bulleted-list"><li style="list-style-type:disc">BUTTON3 - 鼠标右键，右键一般就是辅助点按，展开各种选项等</li></ul><p id="0359b4d3-7398-4582-bbc4-e75950f1a068" class="">如果是游戏鼠标，也许能监听到一些其他的按键，这里我们就不测试了，我们来尝试监听一下：</p><pre id="c2cefa82-8021-49d6-bfce-9442abdbc25c" class="code code-wrap"><code>frame.addMouseListener(new MouseAdapter() {    @Override    public void mouseClicked(MouseEvent e) {        System.out.println(&quot;鼠标点击：&quot;+e.getButton());    }});</code></pre><p id="44296f39-ebd7-4194-a376-38e7868ba201" class="">鼠标滚动事件也可以进行监听：</p><pre id="419e6a05-33c5-48a1-a6eb-57e6b5013a7b" class="code code-wrap"><code>frame.addMouseWheelListener(new MouseAdapter() {    @Override    public void mouseWheelMoved(MouseWheelEvent e) {        System.out.println(e.getScrollAmount());    //获取滚动数量    }});</code></pre><p id="8db9bf70-4a01-4654-a77a-d99822b9781d" class="">MacOS下的鼠标滚动是平滑滚动，会触发很多次，不像Windows下是一格一格的僵硬滚动。</p><p id="ec8ff8a9-deba-467f-9cca-97ece1c8a902" class="">通过使用这些监听器，我们就可以更好的控制我们的GUI程序了。</p><h3 id="0ca2c386-e812-4a02-bf6a-3ee33e59bc7c" class="">常用组件</h3><p id="42f97975-78c3-4c7e-9426-3a08ffd90353" class="">前面我们介绍了监听器，我们接着来看看常用的一些组件，那么什么是组件呢？</p><p id="0c6abbe0-51d0-456a-b3fd-432153a0667c" class="">组件实际上是AWT为我们预设好的一些可以直接使用的界面元素，比如按钮、文本框、标签等等，我们可以使用这些已经帮我们写好的组件来快速拼凑出一个好看且功能强大的程序：</p><figure id="e83ffd36-f37b-4e67-979c-3d4e0631173d" class="image"><a href="https://s2.loli.net/2022/10/27/D6hslN2pHybmVdF.png"><img src="https://s2.loli.net/2022/10/27/D6hslN2pHybmVdF.png"/></a></figure><p id="e487dda0-efc7-455c-ab3a-5807a636c83a" class="">image-20221027170224462</p><p id="c0f6e408-3383-4ab1-bee3-de57610b0d21" class="">在开始学习组件之前，我们先将布局设定为<code>null</code>（因为默认情况下会采用BorderLayout作为布局）有关布局我们会在下一部分中进行介绍，这节课我们先介绍没有布局的情况下如何使用这些组件。</p><pre id="2c16a0f5-2008-4a16-bb77-7e35b9e29241" class="code code-wrap"><code>frame.setLayout(null);</code></pre><p id="c150d429-ff45-4c26-8c45-d8193b8f87ae" class="">首先我们来介绍一下最简单的组件，标签组件相当于一个普通的文本内容，我们可以将自己的标签添加到窗口中：</p><pre id="79f987cc-db7a-405e-b0e4-a2d91c593561" class="code code-wrap"><code>Label label = new Label(&quot;我是标签&quot;);   //添加标签只需要创建一个Label对象即可label.setLocation(20, 50);   //注意，必须设定标签的位置和大小，否则无法展示出来label.setSize(100, 20);frame.add(label);    //使用add方法添加组件到窗口中</code></pre><p id="7c117d1e-08bb-4617-a765-4b8659aca23f" class="">注意，组件的位置是以整个窗口的左上角为原点开始的（整个窗口指的是包括标题栏在内）所以说我们如果想要设置组件的位置，我们还得注意加上标题栏的高度，否则会被标题栏遮挡：</p><figure id="5bf22620-a503-43e0-bf20-6ac178830934" class="image"><a href="https://s2.loli.net/2022/10/27/VjCdNbAUIi5R61Z.png"><img src="https://s2.loli.net/2022/10/27/VjCdNbAUIi5R61Z.png"/></a></figure><p id="84536421-54f0-4199-bb4f-b656469f52c6" class="">image-20221027175842110</p><p id="e0162486-e1f6-491e-9fc8-0426f6dfa534" class="">我们可以自由修改文本的字体和大小：</p><pre id="565b7bd3-0a98-4ca8-b6dd-a36382088dd4" class="code code-wrap"><code>//直接构造并传入一个Font对象即可label.setFont(new Font(&quot;SimSong&quot;, Font.BOLD, 15));   //Font构造方法需要字体名称、字体样式（加粗、斜体）、字体大小</code></pre><p id="d9084a41-6aa3-418c-9437-f405455d5def" class="">注意必须是操作系统已经安装的字体才支持展示，如果各位小伙伴不知道操作系统有哪些字体，可以使用：</p><pre id="76d28e39-26c8-49ab-898d-34ee86822a68" class="code code-wrap"><code>GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()</code></pre><p id="3442c273-6770-4a3a-82f7-ed06096169f3" class="">来获取所有的系统字体：</p><figure id="52277214-c7fb-4eed-be6a-cfa70101a37a" class="image"><a href="https://s2.loli.net/2022/10/27/Fsj8PqHryUYdgeC.png"><img src="https://s2.loli.net/2022/10/27/Fsj8PqHryUYdgeC.png"/></a></figure><p id="66cc4e3c-8f36-4238-b99f-89fa8efc2236" class="">image-20221027181909908</p><p id="b73dd4e7-2818-490d-bd76-49820f482916" class="">这里我们直接使用前面的<code>family</code>即可，比如我们要使用宋体，那么就输入其名称：</p><pre id="0d353b76-f13e-44af-8949-6f26bcf44895" class="code code-wrap"><code>label.setFont(new Font(&quot;Songti SC&quot;, Font.BOLD, 15));</code></pre><figure id="16c101ae-72e2-4dcf-a344-1ef4024563d5" class="image"><a href="https://s2.loli.net/2022/10/27/zy4L2T67rGQe3HI.png"><img src="https://s2.loli.net/2022/10/27/zy4L2T67rGQe3HI.png"/></a></figure><p id="7cc2f66d-dd2e-438e-a684-7ef5cd58e3fd" class="">image-20221027182010485</p><p id="43ab43fd-c8c3-4d2f-97e0-f93ac26d77bf" class="">可以看到字体已经成功修改了，当然，为了方便，如果我们的窗口中有很多的标签都想统一使用某一个字体，我们可以直接对窗口设定字体，那么只要是添加到窗口中的组件都会默认使用这个字体，除非单独指定组件字体。</p><p id="57289479-029d-46c1-bcb6-1229e8e498c8" class="">要修改字体的颜色也很简单，我们可以使用：</p><pre id="e8be8d18-1da0-46bf-b946-cf78f8d96470" class="code code-wrap"><code>label.setBackground(Color.BLACK);    //setBackground依然是背景颜色，注意背景填充就是我们之前设定的大小label.setForeground(Color.WHITE);    //setForeground是设定字体颜色</code></pre><figure id="f4ad4ec7-450e-4032-a2eb-558c8b0d8a49" class="image"><a href="https://s2.loli.net/2022/10/27/R5cDrYxoKtpCJk6.png"><img src="https://s2.loli.net/2022/10/27/R5cDrYxoKtpCJk6.png"/></a></figure><p id="17a71e34-b3ad-402a-8a55-df4303023832" class="">image-20221027183745934</p><p id="542f3580-e5ff-4680-92ca-33735f332464" class="">我们接着来认识一下下一个组件，这个组件的名字叫做按钮，实际上按钮也是我们经常会使用的一个组件：</p><pre id="85292d16-7dd6-41ec-a370-dd90f5b65d8d" class="code code-wrap"><code>Button button = new Button(&quot;点击充值&quot;);   //Button是按钮组件button.setBounds(20, 50, 100, 50);frame.add(button);</code></pre><p id="52510f18-0439-426f-afc5-2b80bd85426d" class="">这样就可以添加一个按钮到我们的窗口中了：</p><figure id="6bf996d5-db9f-4cb1-9a06-5401199360cf" class="image"><a href="https://s2.loli.net/2022/10/27/gArLdNTI1ClWh5K.png"><img src="https://s2.loli.net/2022/10/27/gArLdNTI1ClWh5K.png"/></a></figure><p id="e812d6a2-5438-49ab-b256-83c9f3d12082" class="">image-20221027182903783</p><p id="843477d4-04d9-4f67-a8cf-fca1dce38742" class="">只不过，既然是按钮，那么肯定要添加一些点击动作才可以，比如点击按钮之后打印充值成功：</p><pre id="faca3ba0-bf51-45f9-91cd-ac1fe2c4032c" class="code code-wrap"><code>button.addActionListener(e -&gt; System.out.println(&quot;充值成功&quot;));  //addActionListener就是按钮点击监听器</code></pre><p id="11e1a5ec-13af-4d70-bf1b-311d3b05b39a" class="">是不是感觉还是很简单？当然，如果要修改按钮的字体或是颜色，依然使用之前的方式即可。</p><p id="5f75c69d-38fe-46ca-accd-ac77be517b7e" class="">只不过光有按钮似乎太单调了一点，我们接着来认识下一个组件：</p><pre id="41339311-015f-48d7-818e-4d540f5bb8a7" class="code code-wrap"><code>TextField field = new TextField();   //TextField是文本框field.setBounds(20, 50, 100, 25);frame.add(field);</code></pre><figure id="bf149bcb-cb75-40a3-b0e2-5330196be574" class="image"><a href="https://s2.loli.net/2022/10/27/ZhpojvR6u5DTmVP.png"><img src="https://s2.loli.net/2022/10/27/ZhpojvR6u5DTmVP.png"/></a></figure><p id="b0b71ce4-1a96-41f7-a837-d4b6ec94cf1c" class="">image-20221027184138604</p><p id="4b12368b-7e6a-432b-863d-fbc832099969" class="">我们经常要在一些软件上登录，那么就要输入我们的用户名和密码，所以说文本框的作用还是非常明显的，我们也可以通过AWT组件来实现这些功能，我们可以来试试看：</p><pre id="4e663305-9359-4a2d-b78c-474aa4f22458" class="code code-wrap"><code>TextField field = new TextField();field.setBounds(20, 50, 200, 25);frame.add(field);Button button = new Button(&quot;点击登录&quot;);button.setBounds(20, 80, 100, 50);//点击按钮直接获取文本框中的文本内容，只需要调用getText方法即可button.addActionListener(e -&gt; System.out.println(&quot;输入的用户名是：&quot;+field.getText()));frame.add(button);</code></pre><p id="98c1c536-aaa3-4dc7-9628-9734bc0fb02b" class="">我们来试试看吧：</p><figure id="b7129937-5d9b-4f38-94bd-f28ff4448fde" class="image"><a href="https://s2.loli.net/2022/10/27/7re3aBis2jW9wvP.png"><img src="https://s2.loli.net/2022/10/27/7re3aBis2jW9wvP.png"/></a></figure><p id="613e57a0-fa31-4016-a41d-4c6a0e8ee926" class="">image-20221027184618359</p><figure id="c934bb33-b859-4244-a51e-8f4c5ede9403" class="image"><a href="https://s2.loli.net/2022/10/27/Erb6npLZqsCPGzQ.png"><img src="https://s2.loli.net/2022/10/27/Erb6npLZqsCPGzQ.png"/></a></figure><p id="5d193a0a-2e9b-41ab-8d41-d3fecd8b8296" class="">image-20221027184627653</p><p id="cf9864f7-a110-4a07-849d-92bcf4e3ab00" class="">是不是感觉有内味了？当然，可能会有小伙伴觉得如果我们输入密码的话，不应该将展示的文字隐藏起来吗？我们可以这样：</p><pre id="e35261c5-b6f9-4f78-b23c-f85aca87fbf0" class="code code-wrap"><code>field.setEchoChar(&#x27;*&#x27;);   //setEchoChar设定展示字符，无论我们输入的是什么，最终展示出来的都是我们指定的字符</code></pre><figure id="02a8a2a7-a347-47fe-9ced-9a7dfcf09095" class="image"><a href="https://s2.loli.net/2022/10/27/Er4wqYUNfAy2HBS.png"><img src="https://s2.loli.net/2022/10/27/Er4wqYUNfAy2HBS.png"/></a></figure><p id="37b72df3-e7dc-4502-b526-28d0069ca382" class="">image-20221027184814288</p><p id="d5fb7243-bcff-4717-b9fe-f51e4de7f123" class="">当然，我们在获取输入的文本时还是输入的文本本身，不会变成展示的文本，只是一个视觉效果而已。这样，我们就可以将密码框做出来了。各位小伙伴可以尝试做一个登录界面。</p><p id="180b4dc7-b02c-44e9-903a-15a4393d8745" class="">但是肯定有小伙伴疑问，不是还有一个记住密码的勾选框吗？安排：</p><pre id="7b75f88a-4e80-409c-8729-b228180a49e2" class="code code-wrap"><code>Checkbox checkbox = new Checkbox(&quot;记住密码&quot;);checkbox.setBounds(20, 50, 100, 30);   //这个大小并不是勾选框的大小，具体的勾选框大小要根据操作系统决定，跟Label一样，是展示的空间大小frame.add(checkbox);</code></pre><p id="1a660aa5-464c-4c56-9057-4141cc0f455a" class="">最终展示出来的效果就是：</p><figure id="cc677893-22f0-4a88-8d0f-eed0eb3a41f6" class="image"><a href="https://s2.loli.net/2022/10/27/pErwuKAGOa3dQ5l.png"><img src="https://s2.loli.net/2022/10/27/pErwuKAGOa3dQ5l.png"/></a></figure><p id="bfe86d47-7543-4b20-9a74-cf6e4d7e096c" class="">image-20221027185748324</p><p id="fa54f4fb-1cd8-412e-be92-3dfe575c41b4" class="">效果还是挺不错的，我们也可以设定一个多选框：</p><pre id="6cc028fa-2ea3-41d0-94c1-f48e4a3761cb" class="code code-wrap"><code>CheckboxGroup group = new CheckboxGroup();   //创建勾选框组Checkbox c1 = new Checkbox(&quot;选我&quot;);c1.setBounds(20, 50, 100, 30);frame.add(c1);Checkbox c2 = new Checkbox(&quot;你干嘛&quot;);c2.setBounds(20, 80, 100, 30);frame.add(c2);c1.setCheckboxGroup(group);    //多个勾选框都可以添加到勾选框组中c2.setCheckboxGroup(group);</code></pre><figure id="323e6beb-87fa-43b1-aba0-4881ec42f33a" class="image"><a href="https://s2.loli.net/2022/10/27/y8713x9VBlCaQm6.png"><img src="https://s2.loli.net/2022/10/27/y8713x9VBlCaQm6.png"/></a></figure><p id="b9b5b2c7-bad0-4ae4-baa9-9652c3fa1f4c" class="">image-20221027190207441</p><p id="2cada72c-c180-48e8-9fed-96a4a7861a7b" class="">我们可以使用<code>getSelectedCheckbox</code>方法来获取已经被选中的勾选框：</p><pre id="43786c24-c48e-4058-8ae6-8ca1dec6e44d" class="code code-wrap"><code>System.out.println(group.getSelectedCheckbox());</code></pre><p id="88f67b69-b574-4019-afd5-560b9f9f6079" class="">常用组件就暂时介绍到这里。</p><h3 id="77960224-3a49-4eea-a591-8b88a2d7cd19" class="">布局和面板</h3><p id="6843e556-b954-4eb3-9288-c79fc1407731" class="">前面我们介绍了各种各样的组件，现在我们就可以利用这些组件来拼凑一个好看的程序了。</p><p id="a12e024a-d5d8-44c2-a280-2d559b787f1e" class="">只不过，如果不使用布局，那么我们只能手动设置组件的位置以及大小，这就使得我们的程序在尺寸的设计上很有限，因为一旦窗口的大小发生变化，我们的组件依然是会放置在原本的位置上，要保证我们的设计不被破坏就只能固定窗口大小，但是很多应用都是支持放大和缩小的，并且在不同的大小下组件会自己调整位置：</p><figure id="dd8b7420-4623-404b-a60a-8e57f8efe40c" class="image"><a href="https://s2.loli.net/2022/10/28/ro7Cxi5Oe8wuALv.png"><img src="https://s2.loli.net/2022/10/28/ro7Cxi5Oe8wuALv.png"/></a></figure><p id="4789fdd3-8692-4d4d-86c8-6eb6ebda5d64" class="">image-20221028135701447</p><p id="a2e29fd2-9ff0-472a-a24d-e482eb376d98" class="">可以看到窗口的大小可以自由移动并且组件的位置会根据窗口大小自己进行调整。</p><p id="43b2e507-ae15-4585-b8aa-fba54d9e9745" class="">这正是因为使用了布局实现的，布局可以根据自己的一些性质，对容器（这里可以是我们的窗口）内部的组件自动进行调整，包括组件的位置、组件的大小等，Java为我们提供了各种各样的布局管理器，我们来看看吧。</p><p id="3e50b435-c7ff-4893-9754-29e1271f9242" class="">默认情况下，我们的窗口采用的是边界布局（BorderLayout）这种布局方式支持将组件放置到五个区域：</p><pre id="38debf8c-4c33-4d03-8be4-ff52adaa0822" class="code code-wrap"><code>frame.setLayout(new BorderLayout());   //使用边界布局frame.add(new Button(&quot;1号按钮&quot;), BorderLayout.WEST);  //在添加组件时，可以在后面加入约束frame.add(new Button(&quot;2号按钮&quot;), BorderLayout.EAST);frame.add(new Button(&quot;3号按钮&quot;), BorderLayout.SOUTH);frame.add(new Button(&quot;4号按钮&quot;), BorderLayout.NORTH);frame.add(new Button(&quot;5号按钮&quot;), BorderLayout.CENTER);</code></pre><p id="946579c6-d970-432e-8f75-32ca295a7c4b" class="">注意，约束只有在当前容器为对应布局时才可以使用。这里我们采用的是边界布局，边界布局可以将组件设定到五个区域：</p><figure id="368069b2-1ed8-4e8c-8cff-a6c429edd668" class="image"><a href="https://s2.loli.net/2022/10/28/ZigtAkDbrMVqjWz.png"><img src="https://s2.loli.net/2022/10/28/ZigtAkDbrMVqjWz.png"/></a></figure><p id="5944d019-78e2-476b-a502-9b8c1febb72d" class="">image-20221028140816161</p><p id="b58febbf-832c-4090-ba8a-80feaa86a210" class="">可以看到，分别在东、南、西、北、中心位置都可以添加组件，组件的大小会被自动调整，并且随着我们的窗口大小变化，组件的大小也会跟着自动调整，是不是感觉挺方便的？边界布局的性质：</p><ul id="52e1fe02-4de1-4742-9ff3-93523bd12f60" class="bulleted-list"><li style="list-style-type:disc">BorderLayout布局的容器某个位置的某个组件会直接充满整个区域。</li></ul><ul id="a9f83750-55a0-406d-addd-8d8d6730058c" class="bulleted-list"><li style="list-style-type:disc">如果在某个位置重复添加组件，只有最后一个添加的组件可见。</li></ul><ul id="10120112-9156-454a-9083-aa6aefa31e65" class="bulleted-list"><li style="list-style-type:disc">缺少某个位置的组件时，其他位置的组件会延伸到该位置。</li></ul><p id="ac12ffc9-cc8c-4d7c-9199-217ca7ba3257" class="">我们还可以调整组件之间的间距：</p><pre id="a86ed8cc-dcea-4435-a6a0-e2662c60c262" class="code code-wrap"><code>BorderLayout borderLayout = new BorderLayout();borderLayout.setHgap(50);   //Hgap是横向间距borderLayout.setVgap(50);   //Vgap是纵向间距</code></pre><p id="5a182021-f7c8-41e2-be6e-aa06b6a354ac" class="">调整之后，边距就非常明显了：</p><figure id="ed5a75f6-1404-4b55-8194-aee97929f8c4" class="image"><a href="https://s2.loli.net/2022/10/28/XQqnd6GHa7hVOtR.png"><img src="https://s2.loli.net/2022/10/28/XQqnd6GHa7hVOtR.png"/></a></figure><p id="2cf4e7ab-c4a7-4d6e-986d-6c0bbd5eb5a0" class="">image-20221028143042506</p><p id="48655c61-6d48-4d76-9b71-e70d1e2b91aa" class="">我们接着来认识一下下一个布局，FlowLayout 流式布局，流式布局实际上就是按顺序排列的一种布局：</p><pre id="a361d767-e79d-4009-869a-48defc494036" class="code code-wrap"><code>frame.setLayout(new FlowLayout());   //采用流式布局frame.add(new Button(&quot;1号按钮&quot;));frame.add(new Button(&quot;2号按钮&quot;));frame.add(new Button(&quot;3号按钮&quot;));</code></pre><p id="f9e07aa2-c717-4834-a48a-081a92677e04" class="">采用流式布局后，按钮会根据内容大小，自动调整为对应的大小，并且他们之间是有间距的：</p><figure id="10008cdd-97a8-40aa-8f0d-6832983e375f" class="image"><a href="https://s2.loli.net/2022/10/28/471ED3GaefjzHy8.png"><img src="https://s2.loli.net/2022/10/28/471ED3GaefjzHy8.png"/></a></figure><p id="1762c00e-8a3c-4e38-a353-fb0381c03663" class="">image-20221028142144585</p><p id="6308e24f-60e3-4e9c-8637-8e64ae2cc52d" class="">当我们对窗口大小进行调整时，流式布局也会进行自动调整：</p><figure id="bb2b4a56-5e65-49c8-9cb9-bedf5d25b37a" class="image"><a href="https://s2.loli.net/2022/10/28/hJrBtcVj7MDGqfw.png"><img src="https://s2.loli.net/2022/10/28/hJrBtcVj7MDGqfw.png"/></a></figure><p id="32235bba-edea-4718-9bca-341310094132" class="">image-20221028142326191</p><p id="69fcf3dc-2ee1-4ee9-b257-eda475ea2205" class="">我们也可以在设定流式布局时指定对齐模式：</p><pre id="e9f0ec9d-875f-496e-aa19-b1654ed56f93" class="code code-wrap"><code>frame.setLayout(new FlowLayout(FlowLayout.RIGHT));   //指定为右对齐</code></pre><p id="1f2ff92e-65bd-4cd9-bc5b-59943e3563ba" class="">对齐方式会直接决定组件的排列方式：</p><figure id="23cb58a3-9c0e-4a9d-901d-6b1a60394bb3" class="image"><a href="https://s2.loli.net/2022/10/28/QlU8IPoVA2j4E6t.png"><img src="https://s2.loli.net/2022/10/28/QlU8IPoVA2j4E6t.png"/></a></figure><p id="0867e123-8722-46c6-928a-5d28dab70df3" class="">image-20221028142506961</p><p id="76b80fbf-8109-48eb-8592-1fe840214984" class="">我们同样可以使用Hgap和Vgap来调整组件之间的间距：</p><pre id="3a7577eb-97b0-4c89-88a9-ae4a9863cab0" class="code code-wrap"><code>FlowLayout flowLayout = new FlowLayout();flowLayout.setHgap(50);flowLayout.setVgap(0);</code></pre><figure id="2eae1d17-797a-4f7a-aec6-6ea99b90252c" class="image"><a href="https://s2.loli.net/2022/10/28/vVN4O8XynAdW5Jb.png"><img src="https://s2.loli.net/2022/10/28/vVN4O8XynAdW5Jb.png"/></a></figure><p id="8b96cea7-1167-46f2-aa5b-e96ad986414a" class="">image-20221028143230216</p><p id="9c878399-c495-4fde-b7f2-208d44f5b8c7" class="">我们接着来看卡片布局，CardLayout对象将卡片作为一个容器中的每个组件，这个卡片布局怎么说呢，有点像iOS14新出的叠放小组件（安卓应该也有）就像很多张卡片叠在一起，每次只能看到最顶上的这张卡片，但是我们可以将下层的卡片切到顶上来：</p><figure id="b87f6d26-9657-4a55-b43c-840933ef5345" class="image"><a href="https://s2.loli.net/2022/10/28/CqE9FkVSMJXOLY8.png"><img src="https://s2.loli.net/2022/10/28/CqE9FkVSMJXOLY8.png"/></a></figure><p id="666b23a2-f6d1-45b7-ae42-85ffc07c2de5" class="">image-20221028143949323</p><p id="e1a3d65b-b116-4ff6-b394-d901630d9f96" class="">卡片布局就是这样，我们可以添加多个组件：</p><pre id="c4e40af1-7da1-49a9-8aa7-9a6f2bf40b87" class="code code-wrap"><code>CardLayout layout = new CardLayout();frame.setLayout(layout);frame.add(new Label(&quot;我是1号&quot;));frame.add(new Label(&quot;我是2号&quot;));frame.setVisible(true);while (true) {    Thread.sleep(3000);    layout.next(frame);    //我们需要使用CardLayout对象来进行切换}</code></pre><p id="fa9791d6-0432-47a1-a158-e4838e5a556f" class="">这里我们每三秒钟切换一次卡片，可以看到我们添加的标签每三秒就会变化一次，实际上我们可以利用卡片布局来做一个类似跑马灯的效果，是不是感觉很神奇？</p><p id="53887034-16e0-47bc-a0b3-43ee15a23e8b" class="">我们接着来看网格布局，GridLayout以矩形网格的形式对组件进行管理：</p><pre id="cd43e920-d9b1-405f-8bf8-ca374ba2c80e" class="code code-wrap"><code>frame.setLayout(new GridLayout());for (int i = 0; i &lt; 10; i++)    frame.add(new Button(i + &quot;号按钮&quot;));</code></pre><p id="9a6064d2-9976-45da-ae50-75ab09886293" class="">这种布局就很好理解了，默认情况下会生成一行按格子划分的相等区域：</p><figure id="a56a2de2-c70a-4006-bc05-1a70fdfb561f" class="image"><a href="https://s2.loli.net/2022/10/28/joR1s467rFzJqOE.png"><img src="https://s2.loli.net/2022/10/28/joR1s467rFzJqOE.png"/></a></figure><p id="d5d5e1ec-dc09-46da-b6d5-7044e61ebfa6" class="">image-20221028145118733</p><p id="92e58ad4-7e6f-4f44-8738-2718d3388d1a" class="">我们也可以手动指定行数和列数：</p><pre id="f3cc6639-edc4-479e-8e72-bf3a1376e3f2" class="code code-wrap"><code>GridLayout gridLayout = new GridLayout();gridLayout.setRows(2);frame.setLayout(gridLayout);for (int i = 0; i &lt; 10; i++)    frame.add(new Button(i + &quot;号按钮&quot;));</code></pre><figure id="b9a4ddd1-dc30-417b-a813-252c99bafa8f" class="image"><a href="https://s2.loli.net/2022/10/28/DtnRaCJh7qzc4w3.png"><img src="https://s2.loli.net/2022/10/28/DtnRaCJh7qzc4w3.png"/></a></figure><p id="b2ea8f7f-3a87-4a54-bbd2-13b88a528a40" class="">image-20221028145330522</p><p id="cddc188e-f081-46f5-b3b4-5be5ca46b12e" class="">所有的组件都会整齐排列在网格中。</p><p id="131ec1b5-65f0-4276-9c6a-93828a3665c9" class="">最后一种布局是GridBagLayout，是最灵活的布局管理器，它同样是按照网格进行划分，但是一个组件可以同时占据多个网格。这种情况其实也是经常会出现的，比如计算器上的按钮虽然看起来也是按照网格排列的，但是有些按钮同时占据了横向或是纵向的两个网格，这种情况使用GridBagLayout布局就可以很好的处理：</p><figure id="71194846-9807-42a4-a368-8b77e2681f90" class="image"><a href="https://s2.loli.net/2022/10/28/JNmjEVWIG2nkxbf.png"><img src="https://s2.loli.net/2022/10/28/JNmjEVWIG2nkxbf.png"/></a></figure><p id="06ee695a-5f21-49fc-991a-9137b17bbb82" class="">image-20221028145752545</p><p id="b5f3fe6f-f48b-47ad-95e5-a6877b55b184" class="">虽然这个布局很强大，但是用起来也是很麻烦的，所以说这里就不做讲解了，感兴趣的小伙伴可以自行了解。</p><p id="cd04cb40-e4a3-4f75-8bf3-121231d492ca" class="">虽然认识了这么多的布局，但是我们发现，很多应用程序并不只是由单一的布局组成的，而是多种布局相互嵌套的结果，比如我们的IDEA界面，就不仅仅是一个布局完成的（这里只是举个例子）而是多种布局在嵌套使用：</p><figure id="869d5228-33b3-4025-ac0f-3a26e2d90b64" class="image"><a href="https://s2.loli.net/2022/10/28/9ZfvOxThctdPS6N.png"><img src="https://s2.loli.net/2022/10/28/9ZfvOxThctdPS6N.png"/></a></figure><p id="b4d8f1c5-b7b1-463e-9811-23a4362bb856" class="">image-20221028151242522</p><p id="1b041aa0-19ff-47d2-a769-e4861cf1d72e" class="">但是只有我们的窗口才能设置布局啊，总不可能让多个窗口拼接在一起吧？实际上除了窗口可以作为容器之外，我们也可以使用其他的容器，这时，我们就需要用到面板。</p><p id="83b04e64-73de-428a-bee5-8f1e5867aa13" class="">类面板是最简单的容器类，它跟窗口一样，可以提供一个空间，同样可以随意添加组件到面板中，只不过面板本身也是一个组件，所以说面板是可以放到其他容器中的容器，就像：</p><figure id="947480f8-f79a-4674-9a37-4ee9fd615a2d" class="image"><a href="https://s2.loli.net/2022/10/28/jVGTNmd3i2ZRg5h.png"><img src="https://s2.loli.net/2022/10/28/jVGTNmd3i2ZRg5h.png"/></a></figure><p id="58540b5f-10e1-4f82-90f5-887eaf4a9f1d" class="">image-20221028151701189</p><figure id="938a40ec-9f10-42e5-9df6-9181008c1e79" class="image"><a href="https://s2.loli.net/2022/10/28/6PGem8qMrV7NOZS.png"><img src="https://s2.loli.net/2022/10/28/6PGem8qMrV7NOZS.png"/></a></figure><p id="2d141f43-415a-4160-85ae-728f6ae017d9" class="">image-20221028151845514</p><p id="bd0c2c5b-c734-446a-9801-0d0568768c2b" class="">面板本身也是容器，所以说也可以单独设置面板内部的布局，比如现在我们想要分两个区域，上半部分区域是流式布局，下半部分区域采用网格布局，那么我们就可以先将窗口采用网格布局，并在上下各添加一个面板：</p><pre id="9ce698db-45b1-495c-a1ad-476435721bda" class="code code-wrap"><code>GridLayout layout = new GridLayout();   //先设置整个窗口的布局layout.setRows(2);     //设置行数为2，一会就会分成两行了frame.setLayout(layout);Panel top = new Panel();     //接着我们创建一下上半部分的面板和下半部分的面板top.setBackground(Color.PINK);   //添加一个背景颜色方便区分frame.add(top);Panel bottom = new Panel();bottom.setBackground(Color.ORANGE);frame.add(bottom);</code></pre><p id="095945ca-d6f7-4b57-bcb6-ac16b151e7e4" class="">这样，我们的两个面板就按照网格布局，被分成了上下两部分：</p><figure id="c61799b6-8023-4c13-991a-27d61f18e627" class="image"><a href="https://s2.loli.net/2022/10/28/agMjZkqrSGUm9Ld.png"><img src="https://s2.loli.net/2022/10/28/agMjZkqrSGUm9Ld.png"/></a></figure><p id="850737c3-b6a3-4e89-b42f-fa6b16edce93" class="">image-20221028152352861</p><p id="c929410d-0081-4189-82ce-4985ea041967" class="">接着我们就可以分别在上半部分的面板和下半部分的面板中进行单独配置了：</p><pre id="977d8633-d140-4d5b-9591-26e7d2fe6321" class="code code-wrap"><code>Panel top = new Panel();top.setBackground(Color.PINK);top.setLayout(new FlowLayout());    //面板默认会采用FlowLayout，所以说这里指不指定都一样for (int i = 0; i &lt; 5; i++)    //面板就像窗口一样，可以设定布局和添加组件    top.add(new Button(&quot;流式&quot;+i));frame.add(top);Panel bottom = new Panel();bottom.setBackground(Color.ORANGE);bottom.setLayout(new GridLayout());   //下半部分我们采用网格布局for (int i = 0; i &lt; 5; i++)    bottom.add(new Button(&quot;网格&quot;+i));frame.add(bottom);</code></pre><p id="a3326d1a-76c0-4c5e-aaf7-36749bec95a3" class="">这里我们将上半部分面板设定为流式布局，下半部分面板设定为网格布局：</p><figure id="c8cc76be-1bff-4563-b385-4e81e322bace" class="image"><a href="https://s2.loli.net/2022/10/28/RbiFpTDCEaN5fPl.png"><img src="https://s2.loli.net/2022/10/28/RbiFpTDCEaN5fPl.png"/></a></figure><p id="be4a4baa-a951-4fb2-98a2-e90055fcb43d" class="">image-20221028152617119</p><p id="3ac426d9-518f-4085-bab7-b89783e6bf01" class="">利用面板，我们就可以实现各种布局的自由组合，当然，面板在后面还会有更多的用处。</p><h3 id="ac5237f7-d875-42d5-82b4-8d765a508f2a" class="">滚动面板和列表</h3><p id="ab131b09-8a08-4b15-8899-5017010e89c3" class="">有些时候，我们的窗口大小可能并不能完全显示内部的内容，比如出现了一张很大的图片。</p><figure id="bdb38131-c12e-4787-9fb8-f7693ca96173" class="image"><a href="https://s2.loli.net/2022/10/28/7mKakMLhz95VbIp.png"><img src="https://s2.loli.net/2022/10/28/7mKakMLhz95VbIp.png"/></a></figure><p id="6bacaa1a-5192-485c-87b1-70f03045a11b" class="">image-20221028153201386</p><p id="003b1f7a-9ca1-450d-b15d-c48d970f3764" class="">此时就会出现滚动条来让我们进行拖拽，这样就可以向下滑动查看没有完全展示出来的内容了。而我们之前开发的程序都没办法做到这样的滚动，超出部分会直接无法显示。</p><p id="b233c14c-0ffd-448b-8ea1-138960d82350" class="">AWT也为我们提供了滚动面板组件，滚动面板也是一个容器，但是我们无法修改它的布局，它只能容纳单个组件，比如展示一个图片、或者是列表等，我们也可以将其与Panel配合使用，比如：</p><pre id="fd97c8c5-eb84-48b7-9e25-f7beda21777e" class="code code-wrap"><code>ScrollPane scrollPane = new ScrollPane();   //创建滚动面板frame.add(scrollPane);GridLayout layout = new GridLayout();    //创建滚动面板内部的要展示的面板layout.setRows(20);Panel panel = new Panel();panel.setLayout(layout);for (int i = 0; i &lt; 20; i++)    panel.add(new Button(&quot;我是按钮&quot;+i));   //为面板添加按钮scrollPane.add(panel);</code></pre><p id="216b4da0-22be-4e2e-aa73-5cbffe45dae3" class="">可以看到，无法显示的部分会自动变成滚动面板，我们滑动就可以展示了：</p><figure id="dcee41f8-0442-4f8b-9ca9-0a7ee38c388c" class="image"><a href="https://s2.loli.net/2022/10/28/ZDa92CJVf7TbGk4.png"><img src="https://s2.loli.net/2022/10/28/ZDa92CJVf7TbGk4.png"/></a></figure><p id="35c198ce-e04a-4f23-b6e5-3dcad98318b3" class="">image-20221028155050727</p><p id="7158d559-4edd-4ba9-86d4-f320f5088dd4" class="">这里需要特别提一下，我们看到这里的按钮大小采用的是自动生成的大小，但是如果我们希望按钮的大小按照我们喜欢的来怎么办呢？我们知道，使用布局之后，组件的大小实际上是自动决定的，只有未使用布局的情况下才能自由更改组件大小，那么我们怎么才能干预呢？我们可以为组件设定一个建议的大小：</p><pre id="48097cec-fd23-4d4d-9df1-a9f7305a062e" class="code code-wrap"><code>for (int i = 0; i &lt; 20; i++) {    Button button = new Button(&quot;我是按钮&quot; + i);    button.setPreferredSize(new Dimension(100, 50));   //设置首选大小    panel.add(button);}</code></pre><p id="b23d1ca7-1134-49a2-b2ff-f9ea7ef1fa06" class="">当布局管理器在自动调整内部组件大小时，如果不是必须要按照布局大小来展示或者是高度或宽度不确定，那么就会采用我们建议的大小展示，比如这里只能确定宽度，而高度是不确定的，那么就可以使用我们建议的大小来展示：</p><figure id="0ee9dc5d-d03e-490c-b9f8-8e00e976757d" class="image"><a href="https://s2.loli.net/2022/10/28/SQZapDy6vdLkHNx.png"><img src="https://s2.loli.net/2022/10/28/SQZapDy6vdLkHNx.png"/></a></figure><p id="dd24328f-3ee7-4a26-8ad2-6055ae5806f4" class="">image-20221028155443331</p><p id="1b28a49b-b4d4-4a2b-a01c-ce160f25337e" class="">当然，首选大小可能不太好理解，还需要各位小伙伴多多尝试才能理解。</p><p id="68d1ed1c-aa08-4c6f-9388-8fcb8cac20a2" class="">实际上滚动面板的最佳搭档就是List列表（注意这里的列表不是我们集合类里面学习的列表，而是展示出来的列表组件）</p><pre id="dd0a82e6-3cc4-4024-b025-6f615ab67431" class="code code-wrap"><code>List list = new List();   //注意是awt包下的List，别导错了list.add(&quot;小糍粑&quot;);list.add(&quot;锅巴洋芋&quot;);list.add(&quot;手抓饼&quot;);list.add(&quot;凉面&quot;);list.setMultipleMode(true);   //是否开启多选模式</code></pre><p id="83572f25-ff7c-427b-89d9-40275b3a92c1" class="">列表组件就像是一个选择列表一样：</p><figure id="fa2380a9-a102-4883-996c-9531c7ff9c40" class="image"><a href="https://s2.loli.net/2022/10/28/ieDtpQqdkBzhsKF.png"><img src="https://s2.loli.net/2022/10/28/ieDtpQqdkBzhsKF.png"/></a></figure><p id="148baa96-3fb0-4326-b991-7a73f8b48018" class="">image-20221028160340931</p><p id="d247b856-4ad7-4c0a-a964-7b36a3735bd2" class="">列表会将元素依次展示出来，我们可以选择列表中的某一项：</p><pre id="405aa015-d40f-4ac9-b767-4837cf282ebb" class="code code-wrap"><code>list.addItemListener(System.out::println);</code></pre><p id="e3ab4eaa-dafa-4558-8b32-04efe28305b2" class="">列表可以添加监听器，当我们选择某个物品时，就会自动触发：</p><figure id="226e080e-8886-4cdf-b233-8d0320673bc7" class="image"><a href="https://s2.loli.net/2022/10/28/LXIvYhnFVBlQTGt.png"><img src="https://s2.loli.net/2022/10/28/LXIvYhnFVBlQTGt.png"/></a></figure><p id="1ac54b38-5b28-4a38-81f0-d0596b6a633f" class="">image-20221028160611113</p><p id="e4e1fe23-81ae-4067-b812-1c69843c169b" class="">列表就很时候拿来做文件列表。</p><h3 id="bb16e509-2588-4412-a962-10cdcb7d5ff1" class="">菜单栏</h3><p id="207a8a68-3165-4784-ba8d-96acab44b4d5" class="">前面我们认识了各种各样的组件，我们接着来看菜单，实际上各位小伙伴会发现我们的程序上方一般都会有一排菜单：</p><figure id="b37f3f44-7336-4bcc-ac9a-a0c4f272a59d" class="image"><a href="https://s2.loli.net/2022/10/28/Konar26QHWMTwqd.png"><img src="https://s2.loli.net/2022/10/28/Konar26QHWMTwqd.png"/></a></figure><p id="9bd3cf09-a994-40b6-837c-0a1878ea6160" class="">image-20221028161209224</p><p id="b6851055-f043-4140-bd49-7d5bd6b9a7bb" class="">在MacOS下是整合到状态栏中的：</p><figure id="be6d62d2-4845-4681-ab2e-18f689778c8a" class="image"><a href="https://s2.loli.net/2022/10/28/G3NiRaBMkJLneVl.png"><img src="https://s2.loli.net/2022/10/28/G3NiRaBMkJLneVl.png"/></a></figure><p id="bff64726-226a-4437-8b46-fcedded8aa0b" class="">image-20221028161239672</p><p id="ebe794d8-1253-4dcc-bb82-057a3da1ef4e" class="">这些菜单一般都会包含我们程序中的一些基本操作，实际上我们的程序中很多地方都会使用到下拉菜单：</p><figure id="02544ed0-eedc-42c2-b08c-e90d364d359f" class="image"><a href="https://s2.loli.net/2022/10/28/hc354p1ri6NmGgA.png"><img src="https://s2.loli.net/2022/10/28/hc354p1ri6NmGgA.png"/></a></figure><p id="55b2b240-94f4-4758-b836-979ba6f2b508" class="">image-20221028161118028</p><p id="f51eeca9-529f-4aed-b081-bd1af27ba198" class="">而我们编写AWT程序也可以添加这样的菜单，只需要为窗口设定一个菜单栏即可：</p><pre id="1d3c8748-23d8-4345-b68b-2ba697fec3f7" class="code code-wrap"><code>MenuBar bar = new MenuBar();    //创建菜单栏Menu menu = new Menu(&quot;我是1号菜单&quot;);menu.add(new MenuItem(&quot;测试1&quot;));menu.add(new MenuItem(&quot;测试2&quot;));bar.add(menu);frame.setMenuBar(bar);    //为窗口设定刚刚定义好的菜单栏</code></pre><p id="489ddd35-52fc-4dd9-b2db-0acf31b56853" class="">设定好MenuBar之后，我们的程序就有菜单了：</p><figure id="7b126ac7-b70d-41c8-85af-d8e41bf3e74c" class="image"><a href="https://s2.loli.net/2022/10/28/wIWdRo2velTj1VS.png"><img src="https://s2.loli.net/2022/10/28/wIWdRo2velTj1VS.png"/></a></figure><p id="5609e8aa-d6a1-4231-9b73-9c37385af401" class="">image-20221028161741397</p><p id="e3a7d957-ef14-4bf3-9fc9-d13da2c36412" class="">虽然有点丑，但是确实是内味，不过还是MacOS下好看：</p><figure id="4c61b103-c40c-41fa-b8bf-281b9f271e96" class="image"><a href="https://s2.loli.net/2022/10/28/7Dq6L1hbreYIy39.png"><img src="https://s2.loli.net/2022/10/28/7Dq6L1hbreYIy39.png"/></a></figure><p id="f00fbe28-c981-423b-9394-ac3c9443a0e2" class="">image-20221028161910928</p><p id="e68a4a0c-e273-4fca-b78d-c5afc594c921" class="">我们着重来看一下MenuItem，这是我们菜单的每一个选项，我们可以为其添加监听器来监听用户是否点击：</p><pre id="c5340b95-589a-444c-a222-7deac82377c8" class="code code-wrap"><code>MenuItem item = new MenuItem(&quot;测试1&quot;);item.addActionListener(e -&gt; System.out.println(&quot;一号选项被点击了！&quot;));menu.add(item);</code></pre><p id="d6f4d7b8-7112-4c17-a03b-a34b33fb707e" class="">其实跟我们之前学习的按钮是差不多的：</p><figure id="221e9458-6480-4f85-8d1e-8731e3a76081" class="image"><a href="https://s2.loli.net/2022/10/28/KskDE9J2QdRtlvV.png"><img src="https://s2.loli.net/2022/10/28/KskDE9J2QdRtlvV.png"/></a></figure><p id="c871f33f-c312-42be-80cd-746875efcadd" class="">image-20221028162602244</p><p id="a31bcb0a-8017-490d-98fa-3d9550973d87" class="">我们还可以为菜单中的选项设定快捷键：</p><pre id="b89fe7bd-0bb9-4148-b4e3-d8d1736841a8" class="code code-wrap"><code>MenuItem item = new MenuItem(&quot;测试1&quot;);item.setShortcut(new MenuShortcut(&#x27;A&#x27;));   //MenuShortcut就是指定快捷键组合，默认情况下是Ctrl+指定按键//item.setShortcut(new MenuShortcut(&#x27;A&#x27;, true));   //第二个参数指定为true表示需要Ctrl+Shift+指定按键</code></pre><p id="62d61317-056a-46f7-96d1-a6000dee7161" class="">这里的效果就是Ctrl+A触发快捷键：</p><figure id="7bf3258c-5090-43a8-bc52-6fd4d9e97160" class="image"><a href="https://s2.loli.net/2022/10/30/lwrjgRxu46UXHZk.png"><img src="https://s2.loli.net/2022/10/30/lwrjgRxu46UXHZk.png"/></a></figure><p id="6c6f9334-1443-4346-816f-17b8b1fc0553" class="">image-20221030173320786</p><p id="f5021d9f-bd4f-4113-9d41-7e7f1f474cd3" class="">当然，除了这种普通的菜单选项之外，还有可以勾选的：</p><pre id="c89182b6-6e26-41af-b3a0-09c0e41d7b58" class="code code-wrap"><code>menu.add(new CheckboxMenuItem(&quot;测试2&quot;));</code></pre><p id="ecaca98f-ff83-4982-a3d0-d47877643dbf" class="">CheckboxMenuItem是可以勾选的选项，它能够对状态进行记录，我们点击选项之后会变成勾选状态：</p><figure id="0b8a2e85-72c5-4af0-8bc6-2bdf4df066b8" class="image"><a href="https://s2.loli.net/2022/10/28/Q1RgUn7ejZXzH5E.png"><img src="https://s2.loli.net/2022/10/28/Q1RgUn7ejZXzH5E.png"/></a></figure><p id="e348bf3a-5ca2-4007-8f76-4ee1628a699f" class="">image-20221028162655033</p><p id="d48ff9d3-3e38-4ac6-8dd6-19dc69fc7ebb" class="">实际上要添加这样的菜单栏还是挺简单的的，我们接着来看弹出菜单，弹出菜单其实也经常出现，比如我们要新建一个类，我们就可以右键对应的包：</p><figure id="e51c67d5-dfb5-48bc-9e96-d50e3c560dc2" class="image"><a href="https://s2.loli.net/2022/10/28/IKe1NL5wm834WdP.png"><img src="https://s2.loli.net/2022/10/28/IKe1NL5wm834WdP.png"/></a></figure><p id="17fb6efe-9cc5-443a-9c0c-15119fe45007" class="">image-20221028214019648</p><p id="0b5acf59-03d6-4780-abf0-5145271c46c6" class="">弹出一个浮在窗口之上的，并且可以进行选择的菜单，这个就是弹出菜单。</p><p id="8d1767d7-36a5-4d1b-92f9-6bfe7c6f1988" class="">比如我们想要实现右键窗口任意位置都弹出菜单：</p><pre id="1a6bf261-2cd0-4a55-a2fc-4c54e1ab5ff9" class="code code-wrap"><code>PopupMenu menu = new PopupMenu();    //创建弹出菜单menu.add(new MenuItem(&quot;选项1&quot;));   //每一个选项依然是使用MenuItemmenu.add(new MenuItem(&quot;选项2&quot;));frame.add(menu);    //注意，弹出菜单也要作为组件加入到窗口中（但是默认情况下不显示）frame.addMouseListener(new MouseAdapter() {    @Override    public void mousePressed(MouseEvent e) {        if (e.getButton() == MouseEvent.BUTTON3) {  //监听鼠标右键            menu.show(frame, e.getX(), e.getY());   //要展示弹出菜单，我们只需要调用show方法即可            //注意，第一个参数必须是弹出菜单所加入的窗口或是窗口中的任意一个组件            //后面的坐标就是相对于这个窗口或是组件的原点（左上角）这个位置进行弹出            //我们这里写的就是相对于当前窗口的左上角，鼠标点击位置的x、y位置弹出窗口        }    }});</code></pre><p id="0238563d-f08e-4370-9bd9-ac3d7fb2f6e7" class="">我们来看看实际效果吧：</p><figure id="07421f11-21c8-4012-95d8-a00543c6ed18" class="image"><a href="https://s2.loli.net/2022/10/28/tMRbdjE6ZhHuPaQ.png"><img src="https://s2.loli.net/2022/10/28/tMRbdjE6ZhHuPaQ.png"/></a></figure><p id="eee89b85-151f-4bca-b007-8c35dd23108b" class="">image-20221028215651667</p><p id="6bac9a9f-f8f9-4452-a6ee-3daed3485841" class="">这样，我们就可以设计出更加高级的程序了。</p><h3 id="96de6619-6e9b-42f7-a1d8-cb2204a9e49f" class="">对话框</h3><p id="2908f82c-62db-4f33-89ba-754a33236e2a" class="">有些时候，我们点击关闭按钮之后，窗口并不会直接关闭，而是会弹出一个对话框询问我们是否要退出，比如我们使用记事本编辑完之后未保存就关闭记事本，就会提示我们：</p><figure id="cd16279e-403c-4bb6-9d18-48d37f47ffc3" class="image"><a href="https://s2.loli.net/2022/10/28/VUshJzZXxC51gpb.png"><img src="https://s2.loli.net/2022/10/28/VUshJzZXxC51gpb.png"/></a></figure><p id="1134f531-4ce5-42a3-a5c9-3cdbb006e9c4" class="">image-20221028220721666</p><p id="d66d2a0a-c6fa-4182-850f-fd54e1cbb602" class="">实际上像这样弹出的的一个对话框，在很多时候都很关键，我们也可以使用AWT为我们提供的对话框，比如我们现在希望在关闭窗口时询问我们是否真的要关闭：</p><pre id="9f610c4f-4e8b-4844-a18c-de02145da719" class="code code-wrap"><code>Dialog dialog = new Dialog(frame, &quot;我是对话框&quot;, true);//第一个参数是父窗口或是父对话框（没错，对话框也可以由对话框唤起）//最后一个参数是当对话框展示时，是否让父窗口（对话框）无法点击dialog.setSize(200, 80);frame.addWindowListener(new WindowAdapter() {    @Override    public void windowClosing(WindowEvent e) {        dialog.setVisible(true);    }});</code></pre><p id="1385da19-deb9-45c4-a793-24852904eb71" class="">当我们点击关闭时：</p><figure id="11999e65-1631-422b-84e8-e30fc3e88a4d" class="image"><a href="https://s2.loli.net/2022/10/28/VmajcUlSD6GPsrv.png"><img src="https://s2.loli.net/2022/10/28/VmajcUlSD6GPsrv.png"/></a></figure><p id="a12b529d-620b-4d40-8b32-aa1eae217c28" class="">image-20221028223431754</p><p id="9fa6e4c9-a1ca-4d94-90ad-14ccd233253e" class="">可以看到这里确实弹出了一个对话框（这个对话框无法最小化到图标）也就是说我们只能通过操作对话框来关闭它。</p><p id="44844de4-b2cd-4161-9142-d62262d51cab" class="">只不过就单单是这样的一个对话框太过单调了，我们可以为其添加一些按钮之类的东西：</p><pre id="babe52c6-ebf2-454c-9907-b43b0c36140d" class="code code-wrap"><code>Dialog dialog = new Dialog(frame, &quot;我是对话框&quot;, true);dialog.setResizable(false);dialog.add(new Label(&quot;确定是否要退出程序？&quot;), BorderLayout.NORTH);   //对话框默认采用的是边界布局dialog.add(new Button(&quot;取消&quot;), BorderLayout.WEST);dialog.add(new Button(&quot;不退出&quot;), BorderLayout.EAST);dialog.setSize(200, 80);</code></pre><p id="64da355a-201d-40c4-a77f-57acabaeb627" class="">这样我们退出时，就有对应的提示了：</p><figure id="21d6ad23-acfe-461b-9a2c-f7e2d68e0a30" class="image"><a href="https://s2.loli.net/2022/10/28/3v7ZJio9mMnK8zk.png"><img src="https://s2.loli.net/2022/10/28/3v7ZJio9mMnK8zk.png"/></a></figure><p id="102abf02-cfb1-4e15-91ec-cb0926e2ebaf" class="">image-20221028224410637</p><p id="70768188-2250-4ea7-84f7-4a0ef57437aa" class="">对话框就像一个特殊的窗口一样，各位小伙伴可以自由发挥。</p><p id="086cfbae-78bd-4639-9da1-97c5db45e09a" class="">有些时候我们在使用应用程序的时候，可能需要我们去选择电脑上的一些文件，这个时候我们就可以使用文件对话框：</p><pre id="9890e3e0-ca2f-4951-ae35-39c6bdc56e48" class="code code-wrap"><code>FileDialog dialog = new FileDialog(frame, &quot;请选择一个文件&quot;, FileDialog.LOAD);  //选择文件对话框类型，可以是加载文件或是保存文件frame.addWindowListener(new WindowAdapter() {    @Override    public void windowClosing(WindowEvent e) {        dialog.setVisible(true);    }});</code></pre><p id="8efdb3c0-e9ca-4632-9af6-2c05b4149691" class="">文件对话框是根据操作系统提供的文件选择器决定的：</p><figure id="c43a7ac3-dba4-4ead-b59b-a44875e597da" class="image"><a href="https://s2.loli.net/2022/10/28/TuHNLsmokZvMhIR.png"><img src="https://s2.loli.net/2022/10/28/TuHNLsmokZvMhIR.png"/></a></figure><p id="d14c7783-02c0-47b5-8464-f8eaa0559e77" class="">image-20221028224815769</p><p id="abe59911-0ef8-4ca9-b075-b747347ec74b" class="">我们可以通过文件对话框选择一个文件：</p><pre id="10b3be0c-0305-4927-a503-5db5d271356c" class="code code-wrap"><code>FileDialog dialog = new FileDialog(frame, &quot;请选择一个文件&quot;, FileDialog.LOAD);frame.addWindowListener(new WindowAdapter() {    @Override    public void windowClosing(WindowEvent e) {        dialog.setVisible(true);   //注意，需要将对话框展示出来之后，才能进行选择        //选择完成之后getDirectory和getFile方法就可以返回结果了，否则会阻塞        System.out.println(&quot;选择的文件为：&quot;+dialog.getDirectory() + dialog.getFile());    }});</code></pre><p id="4a829f81-036e-410b-a3c0-46d25e716095" class="">选择文件之后，我们可以通过对话框直接获取到对应的文件：</p><figure id="0d9fe4c1-31fd-4d85-9d8a-af1f8aa3d46c" class="image"><a href="https://s2.loli.net/2022/10/28/uRjWKPgFxCcGUvr.png"><img src="https://s2.loli.net/2022/10/28/uRjWKPgFxCcGUvr.png"/></a></figure><p id="c51daeed-3988-4c6e-a2b4-d413203ae519" class="">image-20221028225343739</p><p id="d81b5205-5f5e-4ded-9a7d-9cab71327500" class="">是不是感觉还是挺简单的？</p><h3 id="217f5111-413d-4fee-8cbe-79b70e9e6bc1" class="">自定义组件</h3><p id="0b6f37b9-227b-4b7c-bb2b-ce8d451ab426" class="">除了使用官方提供的这些组件之外，我们也可以自己创建一些组件来使用，比如官方没有提供图片组件，我们可以自己编写一个图片组件用于在窗口中展示我们的图片。</p><p id="9cb826db-ad98-423b-a698-f1585e993c6a" class="">要自己编写一个组件，需要完成下面的步骤：</p><ul id="c59daeb3-4aa4-4ae0-a982-0d1df12c64f4" class="bulleted-list"><li style="list-style-type:disc">必须继承自Component类，表示这是一个AWT组件。</li></ul><ul id="9abab8c3-a45a-4821-be61-e21333bcca2c" class="bulleted-list"><li style="list-style-type:disc">需要自己实现<code>paintComponent</code>方法，这个方法就是组件的绘制方法，最终绘制出来的结果就是展示出来的结果了。</li></ul><p id="7f3419ab-561f-43d9-b10f-949e0d46b785" class="">首先我们先把最简单的事情做了：</p><pre id="20c71dca-d1e7-4972-ad80-4eb8947cebc0" class="code code-wrap"><code>public class ImageView extends Component {   //继承自Component表示是一个组件    public ImageView(){}    @Override    public void paint(Graphics g) {    //重写paint方法，这个方法就是组件的绘制方法    }}</code></pre><p id="635c2d73-e7be-435d-a5f2-70d79146d47a" class="">我们可以先创建一个这个组件并放到我们的窗口中：</p><pre id="06f4d0cb-a597-4b90-abe7-850e5a688e84" class="code code-wrap"><code>frame.add(new ImageView());</code></pre><p id="e3bbd792-4d8f-4c9c-b78b-6d8309ddf14a" class="">这里用的是边界布局，默认情况下组件会被添加到中心，占满整个窗口。但是由于我们并没有编写任何绘制内容，所以说组件是空白的一片。</p><p id="141c7db1-d292-437b-9a1c-97c2beb02e2e" class="">我们来看看这个<code>paint</code>方法该如何重写，这个方法实际上是在窗口绘制时自动调用，那么到底什么是绘制呢？实际上绘制就是需要我们进行画图操作，当窗口首次展示或是修改大小时就会调用这个方法绘制组件（使用过OpenGL的小伙伴应该能够很容易上手）</p><p id="496947e6-007d-414c-a673-16f84bf21be0" class="">这个方法给了我们一个Graphics对象，实际上这个对象就是我们用于绘制图形的工具，比如我们这个组件需要绘制的是一个矩形：</p><pre id="00d176ca-777f-4402-9f8c-3752b6428912" class="code code-wrap"><code>@Overridepublic void paint(Graphics g) {   //各位小伙伴可以将Graphics看做一只画笔，我们想让画笔做什么就做什么    g.setColor(Color.BLACK);      //我们可以先将画笔切换为黑色    g.fillRect(0, 0, getWidth(), getHeight());   //drawRect就是绘制矩形区域，这里的x和y是相对于当前组件的位置来的}</code></pre><p id="f6e2721d-d10f-47d1-b590-c64bddd7df8a" class="">我们来看看最后会绘制成啥样：</p><figure id="aa34f68f-64e0-41d2-94a1-1562caf13a1b" class="image"><a href="https://s2.loli.net/2022/10/28/qQweM6DprRJjCl7.png"><img src="https://s2.loli.net/2022/10/28/qQweM6DprRJjCl7.png"/></a></figure><p id="2bc2b395-1646-494c-bb62-f6baaf1e5199" class="">image-20221028232701565</p><p id="a2bf8e55-d95b-4202-9777-4edfe274fce1" class="">可以看到整个组件都被涂成了黑色，我们还可以绘制更多好玩的图形：</p><pre id="e5cfbda3-b998-4f60-9bd2-9f54b6cbf023" class="code code-wrap"><code>public void paint(Graphics g) {    g.setColor(Color.BLACK);    g.fillRect(0, 0, getWidth(), getHeight());    g.setColor(Color.RED);    //画笔改成红色    //在中间画个圆角矩形边框    g.drawRoundRect(getWidth() / 4, getHeight() / 4, getWidth() / 2, getHeight() / 2, 30, 30);}</code></pre><p id="2dc5463d-8fd0-4889-8e5c-58cd45d590e6" class="">得到的效果就是这样了：</p><figure id="f2a5ba1a-314e-4f79-85b3-e519d9b42831" class="image"><a href="https://s2.loli.net/2022/10/28/xBsuijLa6beOwJy.png"><img src="https://s2.loli.net/2022/10/28/xBsuijLa6beOwJy.png"/></a></figure><p id="2ac6e102-03bd-40b9-94df-3a59e63afc5a" class="">image-20221028233307877</p><p id="f4cc3998-b0c2-459b-9286-bf5eba70fa3a" class="">是不是感觉还挺好玩的，就像我们在玩画画游戏一样。这里列一下Graphics接口提供的所有功能：</p><pre id="a6229de9-5960-4ad8-b541-62950e802b2f" class="code code-wrap"><code>public abstract class Graphics {    //移动画笔原点到指定坐标，默认是(0,0)    public abstract void translate(int x, int y);    //设定画笔颜色    public abstract void setColor(Color c);    //设置为普通绘画模式    public abstract void setPaintMode();    //交替颜色模式，比较高级，小伙伴自行了解    public abstract void setXORMode(Color c1);    //设置字体，绘制文本内容时就按照这个字体来绘制    public abstract void setFont(Font font);    //设置裁剪区域，一旦设置裁剪区域，那么裁剪区域以外的地方即使绘制，也不会生效，绘制    //只会在裁剪区域内生效（有点像图层蒙版？）    public abstract void setClip(int x, int y, int width, int height);    //设定自定义形状的裁剪区域    public abstract void setClip(Shape clip);    //拷贝指定区域的内容到另一个位置    public abstract void copyArea(int x, int y, int width, int height,                                  int dx, int dy);    //绘制直线    public abstract void drawLine(int x1, int y1, int x2, int y2);    //填充矩形区域    public abstract void fillRect(int x, int y, int width, int height);    //绘制矩形边框    public void drawRect(int x, int y, int width, int height);        //绘制圆角矩形边框    public abstract void drawRoundRect(int x, int y, int width, int height,                                       int arcWidth, int arcHeight);    //填充圆角矩形区域    public abstract void fillRoundRect(int x, int y, int width, int height,                                       int arcWidth, int arcHeight);    //绘制3D矩形边框（其实就是加了个深色和浅色边框，有一个视觉效果罢了）    public void draw3DRect(int x, int y, int width, int height,                           boolean raised);    //填充3D矩形区域（同上）    public void fill3DRect(int x, int y, int width, int height,                           boolean raised);    //绘制椭圆形边框    public abstract void drawOval(int x, int y, int width, int height);    //填充椭圆形区域    public abstract void fillOval(int x, int y, int width, int height);    //绘制弧线边框    public abstract void drawArc(int x, int y, int width, int height,                                 int startAngle, int arcAngle);        //填充扇形区域    public abstract void fillArc(int x, int y, int width, int height,                                 int startAngle, int arcAngle);    //绘制折线（需要提供多个坐标）    public abstract void drawPolyline(int xPoints[], int yPoints[],                                      int nPoints);        //绘制多边形边框    public abstract void drawPolygon(int xPoints[], int yPoints[],                                     int nPoints);    //填充多边形区域    public abstract void fillPolygon(int xPoints[], int yPoints[],                                     int nPoints);    //绘制文本    public abstract void drawString(String str, int x, int y);    //绘制图片（绘制大小为图片原本大小）    public abstract boolean drawImage(Image img, int x, int y,                                      ImageObserver observer);    //绘制按自定义大小缩放后的图片    public abstract boolean drawImage(Image img, int x, int y,                                      int width, int height,                                      ImageObserver observer);    //绘制图片时如果是透明部分则采用背景颜色填充    public abstract boolean drawImage(Image img, int x, int y,                                      Color bgcolor,                                      ImageObserver observer);    //绘制按自定义大小缩放后带背景颜色的图片    public abstract boolean drawImage(Image img, int x, int y,                                      int width, int height,                                      Color bgcolor,                                      ImageObserver observer);    //对原本的图片按照起始坐标和尺寸进行裁剪后，再以给定大小绘制到给定位置    public abstract boolean drawImage(Image img,                                      int dx1, int dy1, int dx2, int dy2,                                      int sx1, int sy1, int sx2, int sy2,                                      ImageObserver observer);    //累了    public abstract boolean drawImage(Image img,                                      int dx1, int dy1, int dx2, int dy2,                                      int sx1, int sy1, int sx2, int sy2,                                      Color bgcolor,                                      ImageObserver observer);}</code></pre><p id="45b4d4c7-4a05-4c1f-be86-8e1b86606201" class="">我们这里要实现的时绘制一个图片，那么我们就可以像这样编写了：</p><pre id="6d49daf3-b118-433f-aaf5-bfc2ef71934d" class="code code-wrap"><code>public class ImageView extends Component {    private final Image image;    public ImageView(String filename) throws IOException {        File file = new File(filename);        image = ImageIO.read(file);   //我们可以使用ImageIO类来快速将图片文件读取为Image对象    }    @Override    public void paint(Graphics g) {        //绘制图片需要提供Image对象        g.drawImage(image, 0, 0, getWidth(), getHeight(), null);    }}</code></pre><p id="9cd19a6f-0406-47cf-86bb-c20f52ec9378" class="">我们来试试看效果吧：</p><figure id="0d26f867-67f0-4104-86f2-1999592a55fa" class="image"><a href="https://s2.loli.net/2022/10/28/5adDsGr2iRxywCX.png"><img src="https://s2.loli.net/2022/10/28/5adDsGr2iRxywCX.png"/></a></figure><p id="05a83834-7411-4551-8c2e-0da83bf25f12" class="">image-20221028235756338</p><p id="bb785e03-3beb-4a25-99ad-7613330d117d" class="">可以看到图片成功绘制出来了，这样，我们就提供自己编写绘制逻辑，成功完成了一个简单的自定义组件。</p><p id="d7c84b04-c52a-4489-ac74-ff401f44d30d" class="">当然，现在我们讲了如何加载图片，顺便把设定自定义的程序图标介绍一下吧：</p><pre id="a3d08358-648a-4457-9841-081468a2ac77" class="code code-wrap"><code>Image image = ImageIO.read(new File(&quot;test.png&quot;));frame.setIconImage(image);</code></pre><p id="00b2230c-e6ed-4475-a631-480a97fa8667" class="">注意，在MacOS下这样写没用，得用专用的增强包：</p><pre id="97974541-1962-48a9-b260-dd1aafcf795b" class="code code-wrap"><code>Image image = ImageIO.read(new File(&quot;test.png&quot;));Application.getApplication().setDockIconImage(image);</code></pre><p id="8c2e53f0-727a-4ac4-960d-4307b009b085" class="">这样，我们的程序就会显示为我们自己定义的图标了。</p><h3 id="a739e5b8-1785-4f82-9075-458d19ba8054" class="">窗口修饰和自定义形状</h3><p id="6805a94d-39aa-4324-b37c-61532fd62e2e" class="">实际上我的窗口在默认情况下都是处于修饰状态，那么什么是修饰状态呢？</p><p id="8785c7a9-0de8-4f02-874f-a6c4d5ee86f4" class="">窗口修饰实际上就是我们窗口外面添加的边框：</p><figure id="1683e2bb-07b6-4cc4-ad49-762b59206132" class="image"><a href="https://s2.loli.net/2022/10/26/fMQDFCmyqIvJeTl.png"><img src="https://s2.loli.net/2022/10/26/fMQDFCmyqIvJeTl.png"/></a></figure><p id="bebb02e9-00f7-4b8c-aa91-2412a0e91135" class="">image-20221026164200924</p><p id="b75e1794-446c-4fc6-aeb8-3617282d6a34" class="">有些时候，可能我们并不需要系统为我们提供的窗口边框，我们希望能够自己编写窗口的边框，包括各种按钮等，此时我们就可以将窗口设定为非修饰状态：</p><pre id="9d47a271-9ef9-45f8-aedc-5f70951803c1" class="code code-wrap"><code>public static void main(String[] args) throws IOException {    Frame frame = new Frame(&quot;我是窗口&quot;);    frame.setUndecorated(true);   //将窗口设定为非修饰状态    frame.setSize(200, 200);    frame.setVisible(true);}</code></pre><p id="deedbca8-e4f1-40a4-8bbc-adcb142bc5ab" class="">非修饰状态下，就只有一个窗口本身了：</p><figure id="2461b644-ad37-4929-8215-d02fdc5f15bd" class="image"><a href="https://s2.loli.net/2022/10/29/u9jSlmAc2GXr4VJ.png"><img src="https://s2.loli.net/2022/10/29/u9jSlmAc2GXr4VJ.png"/></a></figure><p id="ea103352-7d37-4136-b7cd-a3647b0910b0" class="">image-20221029111107959</p><p id="9d65cb37-8598-43a6-b50e-179d641ef1c5" class="">并且这个窗口是无法完成拖拽操作的，要实现拖拽还得我们自己编写（太原始了）可以看到，在默认情况下窗口的形状是一个方形的，我们可以将其调整为其他形状：</p><pre id="80040d2b-db39-48ac-b43f-6421a1d69945" class="code code-wrap"><code>public static void main(String[] args) throws IOException {    Frame frame = new Frame(&quot;我是窗口&quot;);    frame.setUndecorated(true);    frame.setSize(200, 200);    //注意，只有窗口在非修饰状态下才能设定形状    //这里我们使用圆角矩形，形状最好跟窗口大小一样    frame.setShape(new RoundRectangle2D.Double(0, 0, 200, 200, 20, 20));    frame.setVisible(true);}</code></pre><p id="0a95a438-31da-448a-ba59-ee954521b27c" class="">可以看到，我们的窗口变成了这样：</p><figure id="9973c756-50f8-4e58-b908-838a6464dec7" class="image"><a href="https://s2.loli.net/2022/10/29/areQf2g3I74mlpV.png"><img src="https://s2.loli.net/2022/10/29/areQf2g3I74mlpV.png"/></a></figure><p id="1106568f-a486-4933-b33a-ecf5a8a1a2f7" class="">image-20221029111439062</p><p id="de1774be-f458-45ad-8f55-f0403981368e" class="">变成了好看的圆角矩形（但是这个圆角处理得不太好，有点毛毛糙糙的）圆角矩形也是现代操作系统窗口的设计语言。</p><p id="af97fad5-ed5b-4747-a86b-a5ffc0566ee0" class="">我们也可以自行为窗口添加标题栏，同样只需要重写一下<code>paint</code>方法自行绘制就可以了：</p><pre id="cc1f057a-78ea-49a2-9617-68a8188afa1f" class="code code-wrap"><code>Frame frame = new Frame(&quot;我是窗口&quot;) {    //使用匿名内部类（或者自己写个子类也行）    @Override    public void paint(Graphics g) {        g.setColor(Color.LIGHT_GRAY);        g.fillRect(0, 0, getWidth(), 28);   //先绘制标题栏        g.setColor(Color.BLACK);        g.drawString(getTitle(), getWidth() / 2, 20);   //绘制标题名称        super.paint(g);   //原本的绘制别覆盖了，该怎么做还要怎么做    }};</code></pre><p id="dd4fb671-2f7d-4894-acbf-4406e31e8097" class="">我们来看看效果吧：</p><figure id="b5c7b304-3126-40a3-a0d2-35bfc024a939" class="image"><a href="https://s2.loli.net/2022/10/29/hQ2YLjSgazM9Wkd.png"><img src="https://s2.loli.net/2022/10/29/hQ2YLjSgazM9Wkd.png"/></a></figure><p id="ef2a7463-b6a2-4d88-aee2-aa5f83d8d839" class="">image-20221029112035219</p><p id="401db125-d918-48e0-a036-8c2569d65750" class="">是不是感觉不依靠操作系统，我们自己也能写一个好看的窗口出来了？</p><p id="e4f1c6e3-dbb4-4b98-93ff-ce26ff6ecfe2" class="">只不过这个窗口还不能拖动，我们来实现一下按住标题栏就可以拖动：</p><pre id="993e1238-156f-439e-8e2d-f2195b15534e" class="code code-wrap"><code>frame.addMouseMotionListener(new MouseMotionAdapter() {   //只需要写一个监听器就可以搞定了    int oldX, oldY;    public void mouseDragged(MouseEvent e) {   //鼠标拖动时如果是标题栏，就将窗口位置修改        if(e.getY() &lt;= 28)            frame.setLocation(e.getXOnScreen() - oldX, e.getYOnScreen() - oldY);    }    public void mouseMoved(MouseEvent e) {   //记录上一次的鼠标位置        oldX = e.getX();        oldY = e.getY();    }});</code></pre><p id="f4491c17-a42c-4bf1-82b9-e9923c8024b3" class="">至此，有关AWT相关的内容，我们就讲解到这里，相信各位小伙伴肯定已经跃跃欲试想要开发一个自己的桌面应用程序了。只不过很遗憾，Java官方并没有再对AWT相关内容进行维护，因为AWT采用的是取不同操作系统交集策略，因为有些功能只有部分操作系统才有，这就导致很多功能都被砍掉，维护起来也很困难。下节课开始，我们会继续介绍Swing相关组件。</p><hr id="517602ab-bf4e-42ef-8775-9c2d9b75dab4"/><h2 id="7156b106-7989-4dab-ba75-4b69946fa60a" class="">Swing组件介绍</h2><p id="ff5651aa-a6e5-4f86-b61e-57204567bbff" class="">前面我们介绍了AWT，通过Java官方为我们提供的GUI框架，我们就可以编写出自己的桌面应用程序了，现在各位小伙伴应该已经有着良好的图形化界面开发基础了。</p><p id="ac50d40a-6df3-4009-b37b-dc6371fe7d89" class="">而Swing组件才是我们要学习的重点内容，它也是一套GUI框架，但是它是基于AWT编写的上层框架。</p><blockquote id="3d3fbc94-7ace-4a21-9235-ab1c58d5892c" class="">Swing 是在AWT的基础上构建的一套新的图形界面系统，它提供了AWT 所能够提供的所有功能，并且用纯粹的Java代码对AWT 的功能进行了大幅度的扩充。例如说并不是所有的操作系统都提供了对树形控件的支持， Swing 利用了AWT 中所提供的基本作图方法对树形控件进行模拟。由于 Swing 控件是用100%的Java代码来实现的，因此在一个平台上设计的树形控件可以在其他平台上使用。由于在Swing 中没有使用本地方法来实现图形功能，我们通常把Swing控件称为轻量级控件。</blockquote><p id="875519f5-60f3-4abf-9e7f-01aa9e7fcd04" class="">其实简单来说，这玩意就是AWT那一套东西的扩展，或者说是强化版，很多东西还是沿用的AWT中的。</p><h3 id="b0c3f7d4-85b8-4827-988d-ce7334d5167f" class="">基本使用</h3><p id="5c40220f-25eb-49e8-9903-312bf8f41351" class="">我们来看看如何使用Swing编写桌面程序，首先还是最重要的窗口：</p><pre id="7145fd0d-67a5-41e7-b317-5a2ab5c27341" class="code code-wrap"><code>public static void main(String[] args) {    JFrame frame = new JFrame(&quot;我是窗口&quot;);   //Swing中的窗口叫做JFrame，对应的就是AWT中的Frame    //它实际上就是Frame的子类，所以说我们之前怎么用的，现在怎么用就行了    frame.setSize(500, 300);    frame.setVisible(true);}</code></pre><p id="8dfabe3b-01fd-4e68-a181-38afce15d07d" class="">是不是感觉学会AWT之后再看Swing也太简单了？</p><p id="7ee46fcd-cf5a-448e-acd3-c05c37e9275b" class="">当然，既然是AWT的扩展，那肯定是有更多的新增功能的，比如我们之前想要实现点击X号关闭Java程序，这里我们只需要使用一个方法就可以设定了，不需要我们自己去写监听器：</p><pre id="422f46c5-7cbf-40a7-b14b-f8f68ea68efc" class="code code-wrap"><code>//我们可以直接为窗口设定关闭操作，JFrame已经为我们预设好了一些常用的操作了frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //EXIT_ON_CLOSE就是直接退出程序，默认是只隐藏</code></pre><p id="f7e7014c-38d9-4585-b190-fc18614e785a" class="">Swing为我们提供了所有原本AWT中的组件的升级版，他们的名字前面都加上了J，比如按钮组件：</p><pre id="031f75e5-ac9f-4a5f-bd21-082931cfb918" class="code code-wrap"><code>public static void main(String[] args) {    JFrame frame = new JFrame(&quot;我是窗口&quot;);    frame.setLayout(null);    JButton button = new JButton(&quot;Link Start&quot;);  //Button组件对应的就是JButton了    button.setBounds(20, 50, 100, 50);    frame.add(button);    frame.setSize(500, 300);    frame.setVisible(true);}</code></pre><p id="43e489a5-4854-44f8-a387-27ca4578a44b" class="">Swing不像AWT那样，平台组件长啥样，就用什么，它的组件都是自行绘制的：</p><figure id="c43e43cb-a1eb-4807-809b-b7b143bb22f5" class="image"><a href="https://s2.loli.net/2022/10/29/dy6R2VNuOYIJamA.png"><img src="https://s2.loli.net/2022/10/29/dy6R2VNuOYIJamA.png"/></a></figure><p id="a145802e-8a21-4d24-b6fc-d9fdbaa1a54f" class="">image-20221029120313940</p><p id="bd7b7cc5-263d-4080-976c-798ac51903fe" class="">这样，我们在不同的平台上，看到的组件UI样式，都会是一样的，不会出现长得不一样的情况。并且我们可以为组件自由替换皮肤，我们会在后面进行介绍。</p><p id="348f0c7b-8d5b-486f-8cec-f806d509bd60" class="">还有，Swing在没有设定布局时，组件的坐标原点并不是窗口的左上角，而是窗口标题栏下方的左上角：</p><pre id="c6f1ffed-8747-4ce5-b43b-0f569ffc74be" class="code code-wrap"><code>JFrame frame = new JFrame(&quot;我是窗口&quot;);frame.setSize(500, 300);frame.setLayout(null);frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);JButton button = new JButton(&quot;我是按钮&quot;);button.setBounds(0, 0, 100, 30);frame.add(button);frame.setVisible(true);</code></pre><figure id="122e9cad-9ac1-4110-8775-0af8c80ed98c" class="image"><a href="https://s2.loli.net/2022/11/05/RMJWl576CiSDs8b.png"><img src="https://s2.loli.net/2022/11/05/RMJWl576CiSDs8b.png"/></a></figure><p id="6a8a0be0-340c-45ec-b35e-9ce929207101" class="">image-20221105171035570</p><p id="aabda9ec-c00b-49f4-b7bf-d235e2f2aa3d" class="">这一点确实比AWT好很多，不然咱都不知道不同平台的标题栏到底是多高。至于为什么是这样，这是因为JFrame内部实际上单独维护了一个面板来存放组件，很多操作都被重定向给了内部的面板，这里就不深入说了，知道就行。</p><p id="c4d65ceb-97af-4a96-97f2-c1a83f31f07e" class="">同样的，如果我们要使用菜单，直接使用对应的类即可：</p><pre id="105d6a3d-fca5-4c8c-ae13-fd6fadf4824d" class="code code-wrap"><code>JFrame frame = new JFrame(&quot;我是窗口&quot;);JMenuBar bar = new JMenuBar();    //JMenuBar对应的就是MenuBarJMenu menu = new JMenu(&quot;我是菜单&quot;);menu.add(new JMenuItem(&quot;选项1&quot;));menu.add(new JMenuItem(&quot;选项2&quot;));bar.add(menu);frame.setJMenuBar(bar);frame.setSize(500, 300);frame.setVisible(true);</code></pre><p id="627bb39f-9f21-4420-ae9a-846e3b14ae4f" class="">这个菜单也是Swing自己绘制的，如果是AWT的话，不同系统菜单位置还不一样，虽然这里是自己画的，但是效果看着还行：</p><figure id="257e5cf8-3b1f-4cca-a086-d2c454273b31" class="image"><a href="https://s2.loli.net/2022/10/29/aMGHTu8sl2Sg4vm.png"><img src="https://s2.loli.net/2022/10/29/aMGHTu8sl2Sg4vm.png"/></a></figure><p id="36d37cce-aa00-470d-bf77-167838d73e10" class="">image-20221029120737715</p><p id="9ce33501-545c-44b3-8e02-6b9563b66a31" class="">所以，Swing相关组件在使用上其实和我们之前学习的AWT是差不多的，只要前面AWT学的没问题，这里简直So Easy。</p><p id="fd85e87c-da9f-42dd-b0be-f6932755d270" class="">因为Swing是沿用的AWT框架体系，所以说AWT提供的旧组件，也是可以用的，但是这里不推荐：</p><pre id="71950590-8802-4800-8249-31a29231554c" class="code code-wrap"><code>public static void main(String[] args) {    JFrame frame = new JFrame(&quot;我是窗口&quot;);    frame.setSize(500, 300);    frame.add(new Button(&quot;我是按钮&quot;));   //可以继续使用AWT组件，但是有新的咱肯定用新的啊    frame.setVisible(true);}</code></pre><p id="43965b35-ec3c-46e8-a530-82e89281416d" class="">有关其他组件还请各位小伙伴自行了解。</p><h3 id="bb8d2b2a-ef16-40c3-9354-ae154728aadc" class="">新增组件介绍</h3><p id="4696e3a4-0f91-4ce0-9b36-bc66a44cfceb" class="">Swing除了强化AWT提供的组件之外，还自行实现了各种各样新式的组件，我们来依次介绍一下。</p><p id="5293335b-6349-40c2-950d-e5f61ac25b3e" class="">首先是进度条组件：</p><figure id="b8471f92-ce68-4428-aa6b-319c052daf95" class="image"><a href="https://s2.loli.net/2022/11/05/SY8wjEkdcArvxnQ.png"><img src="https://s2.loli.net/2022/11/05/SY8wjEkdcArvxnQ.png"/></a></figure><p id="27ffbf7c-8f28-46ce-b419-c61cc1bfe09f" class="">image-20221105163846233</p><p id="f3ce8311-5305-439d-873b-d48f66f82217" class="">很多时候我们都会用到进度条来展示某些任务的完成进度：</p><pre id="73752740-78ea-4b21-bc91-9c992425daaf" class="code code-wrap"><code>JProgressBar bar = new JProgressBar();bar.setMaximum(100);    //设定进度条的最大值bar.setValue(50);    //设定进度值bar.setBounds(20, 50, 100, 10);</code></pre><p id="07a6f48e-7919-4e67-a43e-04c70cb43616" class="">我们可以利用进度条来写一个很简单的案例，比如文件的拷贝：</p><pre id="7810ec04-4590-4529-abf9-9f4e219eceed" class="code code-wrap"><code>JProgressBar bar = new JProgressBar();   //进度条显示文件拷贝进度bar.setMaximum(1000);bar.setBounds(20, 50, 300, 10);JButton button = new JButton(&quot;点击开始&quot;);   //点击按钮开始拷贝文件button.setBounds(20, 100, 100, 30);button.addActionListener(e -&gt; new Thread(() -&gt; {    //注意，不能直接在这个线程里面处理，因为这个线程是负责图形界面的，得单独创建一个线程处理，否则图形界面会卡死    File file = new File(&quot;in.iso&quot;);    try(FileInputStream in = new FileInputStream(file);        FileOutputStream out = new FileOutputStream(&quot;out.iso&quot;)){        long size = file.length(), current = 0;        int len;        byte[] bytes = new byte[1024];        while ((len = in.read(bytes)) &gt; 0) {            current += len;            bar.setValue((int) (bar.getMaximum() * (double)current / size));   //每次拷贝都更新进度条            bar.repaint();  //因为并不是每次更新值都会使得组件重新绘制，如果视觉上比较卡，可以每次拷贝都重新绘制组件            out.write(bytes, 0, len);        }    } catch (IOException exception) {        exception.printStackTrace();    }}).start());</code></pre><p id="03333692-9915-4098-9c62-e77a00b4af36" class="">这样，我们在拷贝文件的时候，就有一个进度条实时显示当前的进度了：</p><figure id="d68a7565-77fc-4dd4-862b-4cfaaa6bac20" class="image"><a href="https://s2.loli.net/2022/11/05/qNoT6OwylH4Y8xc.png"><img src="https://s2.loli.net/2022/11/05/qNoT6OwylH4Y8xc.png"/></a></figure><p id="72bda7ed-1c0f-42b1-90f5-5573360c00a6" class="">image-20221105165756172</p><p id="e731f289-2d36-4d2a-8596-e2eaa3baa8e2" class="">我们接着来看下一个组件，开关按钮：</p><pre id="e3b450ed-a488-40ce-98c4-9b4f58a78524" class="code code-wrap"><code>JToggleButton button = new JToggleButton(&quot;我是切换按钮&quot;);   //开关按钮有两个状态，一个是开一个是关button.setBounds(20, 50, 100, 30);</code></pre><p id="1ce75bf0-c92b-4100-9900-84eb9747d98e" class="">它就像：</p><figure id="0e29a379-dd78-44c6-a42b-55d973e76774" class="image"><a href="https://s2.loli.net/2022/11/05/1fBdjMOy4SnADHu.png"><img src="https://s2.loli.net/2022/11/05/1fBdjMOy4SnADHu.png"/></a></figure><p id="5781fabf-3cdf-4c4e-b9ec-e4b6dd94d107" class="">image-20221105170052200</p><p id="97e7f141-8535-409f-9659-d9613ec8bf32" class="">它有着两个状态，我们点击一次会使得其切换到另一种状态：</p><figure id="32662ee5-0cce-420b-b9bc-7904a578162f" class="image"><a href="https://s2.loli.net/2022/11/05/JXpw64yHb8rCRSg.png"><img src="https://s2.loli.net/2022/11/05/JXpw64yHb8rCRSg.png"/></a></figure><p id="9e147292-e261-4091-9e90-3b2bd982dce3" class="">image-20221105170125623</p><p id="6636ee61-eb28-4983-a007-368d32cbb6ad" class="">还有一些大型组件，比如颜色选择器：</p><pre id="8d8663e0-fd48-4aa2-af26-3be121a38035" class="code code-wrap"><code>JColorChooser chooser = new JColorChooser();chooser.setBounds(0, 0, 600, 300);</code></pre><p id="11f9ab31-5772-4f2c-b186-3328d6495d61" class="">颜色选择器的主要作用顾名思义，就是让用户选择一个颜色：</p><figure id="6dd8c8fd-c365-4809-b917-503202e31965" class="image"><a href="https://s2.loli.net/2022/11/05/zsjxuSoYEr9lvZy.png"><img src="https://s2.loli.net/2022/11/05/zsjxuSoYEr9lvZy.png"/></a></figure><p id="ddac33d5-f6bc-4ed7-bad5-720a81715790" class="">image-20221105170623359</p><p id="b5dba848-34f2-457c-ab7b-c6810bdf1480" class="">这个太高级了，看着就很专业。同样的还有文件选择器JFileChooser：</p><figure id="ce7f63f0-05fa-4ba0-96ea-5020d6823591" class="image"><a href="https://s2.loli.net/2022/11/05/T6Vld1NMB9AJfct.png"><img src="https://s2.loli.net/2022/11/05/T6Vld1NMB9AJfct.png"/></a></figure><p id="fe02e7a3-ce2c-44d0-932e-2694a0d17f3b" class="">image-20221105170745920</p><p id="ee7e7fb1-e899-4734-837f-c38d18176f6a" class="">完了，这Mac越用咋越像Windows了。</p><p id="14d5f849-1bb8-4e22-be42-2256db4451d7" class="">当然，Swing考虑得不止这些，甚至连工具提示都有，啥是工具提示？</p><figure id="1b5614cc-ccfd-4b94-99d9-2cc7224872ad" class="image"><a href="https://s2.loli.net/2022/11/05/mGaU6X2ILvqQT1g.png"><img src="https://s2.loli.net/2022/11/05/mGaU6X2ILvqQT1g.png"/></a></figure><p id="de448345-d427-48b3-ae73-db2cdb825579" class="">image-20221105171336948</p><p id="71db8172-500c-40fb-8957-7c4f5d954f8a" class="">实际上就是当我们鼠标移动到某个组件上时，会给出一个漂浮提示，告诉我们这个组件是干嘛用的。</p><pre id="cd1aefe1-c711-46c5-bce7-c0f72976faba" class="code code-wrap"><code>JButton button = new JButton(&quot;我是按钮&quot;);button.setBounds(50, 50, 100, 30);button.setToolTipText(&quot;这个按钮是用来解决你毕设的！&quot;);</code></pre><figure id="4dfdde32-c2f4-4a83-934c-6db303f10bf0" class="image"><a href="https://s2.loli.net/2022/11/05/izpvcCbVA3Ut81u.png"><img src="https://s2.loli.net/2022/11/05/izpvcCbVA3Ut81u.png"/></a></figure><p id="f0a4567c-619e-4f5f-ad76-cd11ea6b98e2" class="">image-20221105171453445</p><p id="6cbd932b-a55d-4f48-b6fe-f041bf72975b" class=""><code>setToolTipText</code>方法是<code>JComponent</code>就带有的，因此任何组件都可以设置这样的工具提示，是不是感觉很高级？</p><p id="787ba68b-d7ca-4e2f-ad9e-c8aae5e7cc36" class="">还有文件树，我们经常在窗口中看到这样的：</p><figure id="308b6833-eb37-4b4a-abab-ff6352cb56ff" class="image"><a href="https://s2.loli.net/2022/11/05/gcCnLterFaqPvkK.png"><img src="https://s2.loli.net/2022/11/05/gcCnLterFaqPvkK.png"/></a></figure><p id="f26841e6-4171-45b6-8e1a-db1f8ecabff9" class="">image-20221105171728838</p><p id="46f4b5ef-b97e-486f-9e5c-082d81e0e774" class="">我们的文件实际上在硬盘上就是以树形存储的，而Swing也为我们提供了能够显示树形关系的组件：</p><pre id="14af164d-b961-4a8b-99de-21f24e234601" class="code code-wrap"><code>JTree tree = new JTree();tree.setBounds(0, 0, 200, 200);</code></pre><figure id="4bdbbaa8-e9d9-4d41-838c-2f2c55d306de" class="image"><a href="https://s2.loli.net/2022/11/05/IvjYykGRXiOAMtK.png"><img src="https://s2.loli.net/2022/11/05/IvjYykGRXiOAMtK.png"/></a></figure><p id="c1b56053-c42b-4cbb-8086-bcb63aac9fab" class="">image-20221105171813979</p><p id="c9bdf8a9-54a3-416d-8c76-5d2625deed3c" class="">这样，我们就可以用它来做一个文件资源管理器了：</p><pre id="795cec60-5db8-4500-be5c-ddd953db7505" class="code code-wrap"><code>//这里我们让JTree展示.idea目录下所有文件File file = new File(&quot;.idea&quot;);   //这里我们列出.idea目录下所有文件DefaultMutableTreeNode root = new DefaultMutableTreeNode(file.getName()); //既然是树形关系，肯定有一个根结点//拿到当前目录下所有文件和文件夹File[] files = Optional.ofNullable(file.listFiles()).orElseGet(() -&gt; new File[0]);for (File f : files)    root.add(new DefaultMutableTreeNode(f.getName()));    //构造子结点并连接JTree tree = new JTree(root);    //设定默认的根结点tree.setBounds(0, 0, 200, 200);</code></pre><p id="99eabf4b-c4e8-42fe-a839-cf675df6b12d" class="">来看看效果吧：</p><figure id="c1303f7b-5a04-4f34-82e6-d055bce507a4" class="image"><a href="https://s2.loli.net/2022/11/05/YN4gKJbfstpRSCE.png"><img src="https://s2.loli.net/2022/11/05/YN4gKJbfstpRSCE.png"/></a></figure><p id="15688027-677d-4a8c-a884-76c4392a90f7" class="">image-20221105172802572</p><p id="9f26945f-dd59-449d-a3cb-84b4846e5935" class="">你就说有没有内味吧。</p><h3 id="50dd9a47-4622-45f2-8f4e-c216303441e2" class="">多面板和分割面板</h3><p id="0ad276a4-0476-4d2c-aea1-2e7b997e1181" class="">前面我们介绍了Swing为我们提供的丰富组件，我们接着来看多面板。</p><figure id="5611b4df-5fdf-487b-9166-eb015ad99afb" class="image"><a href="https://s2.loli.net/2022/11/05/keDg2pnsJolaUZH.png"><img src="https://s2.loli.net/2022/11/05/keDg2pnsJolaUZH.png"/></a></figure><p id="7277f7f9-0463-4932-8fbd-247acc85bd49" class="">image-20221105173345221</p><p id="a939708f-e0ee-45a2-b297-2d3b67eb96c1" class="">多面板顾名思义，就是为了在一个窗口中展示多个面板，但是面板是可以自由切换的，在顶部会有一个小小的标签，我们点击之后就可以切换到对应的面板了：</p><pre id="fe18c416-3dc8-40ac-9cb7-f31b93f0a3e5" class="code code-wrap"><code>JTabbedPane pane = new JTabbedPane();pane.setBounds(0, 0, 500, 300);pane.addTab(&quot;一号&quot;, new JPanel(){{setBackground(Color.ORANGE);}});pane.addTab(&quot;二号&quot;, new JPanel(){{setBackground(Color.PINK);}});</code></pre><p id="573f2dcd-0182-4266-b24f-c7ae6e01670e" class="">JTabbedPane跟我们之前认识的Panel很像，相当于也是将我们的组件装进了内部，但是它可以同时装很多个，并且支持自由切换，所以说是很高级的。</p><p id="b906c948-976e-4181-bcab-498880af953e" class="">这里我们创建两个面板，将一号面板设定为橙色，二号面板设定为粉色，分别添加到里面：</p><figure id="1fcd7ed9-99ed-4328-b509-631edf64ce0d" class="image"><a href="https://s2.loli.net/2022/11/05/4jp1N9LnmwJGtOl.png"><img src="https://s2.loli.net/2022/11/05/4jp1N9LnmwJGtOl.png"/></a></figure><p id="b760205e-d499-4c50-a5f4-af061cd57473" class="">image-20221105173821177</p><p id="0a580c5f-1545-4831-be2c-82ce19903d93" class="">这样，我们就可以布置一号面板做某些事情，二号面板做另外一些事情了：</p><pre id="cc564f91-9e2e-48de-829a-e079fe5c8917" class="code code-wrap"><code>JTabbedPane pane = new JTabbedPane();pane.setBounds(0, 0, 500, 300);pane.addTab(&quot;一号&quot;, new JColorChooser());   //一号面板当颜色选择器pane.addTab(&quot;二号&quot;, new JFileChooser());    //二号面板当文件选择器</code></pre><p id="e49b8dd8-3b65-4159-8445-8f9797821b4d" class="">高级感一下就出来了不是：</p><figure id="58b16c23-ecb0-48e5-a499-119b9c6fc214" class="image"><a href="https://s2.loli.net/2022/11/05/QBPn8lk9tFd6sgH.png"><img src="https://s2.loli.net/2022/11/05/QBPn8lk9tFd6sgH.png"/></a></figure><p id="e7bf7b01-8d72-4825-ad73-291e83b4c484" class="">image-20221105174105955</p><p id="73b73790-c3d1-475a-a299-5ca8a6e10cab" class="">除了多面板这样的特殊面板组件之外，我们也可以使用分割面板：</p><figure id="4133b532-977f-41c2-b7c0-17eef7b3465a" class="image"><a href="https://s2.loli.net/2022/11/05/2gMxOrFGkHCJ73o.png"><img src="https://s2.loli.net/2022/11/05/2gMxOrFGkHCJ73o.png"/></a></figure><p id="263d08e0-29f1-447e-8616-9aa04b0d1fca" class="">image-20221105174239436</p><p id="ead96219-40c9-4f42-98ba-6bc77d81e8d5" class="">分割面板将一块完整的面板分割为两个部分，这样，我们就可以分别在左右两边进行操作了，而且中间的分割线是可以拖动的，实际上我们的IDEA也是这样的：</p><figure id="3d07b90a-f98a-43b5-825b-32151e0169d5" class="image"><a href="https://s2.loli.net/2022/11/05/21l4GHg75fCaFzP.png"><img src="https://s2.loli.net/2022/11/05/21l4GHg75fCaFzP.png"/></a></figure><p id="1146857a-912c-4130-9781-4e2a25daf431" class="">image-20221105174326135</p><p id="23142dba-7eb7-4f8b-8aa3-c7d0dffcad58" class="">IDEA的左边是文件管理器，右边就是编辑区域，同样支持拖动中间的分割线，这样的设计是非常人性化的。</p><p id="b02a33a2-cd95-4ad4-9b5a-4b8343f48673" class="">我们来看看如何创建分割面板：</p><pre id="e51a9ab0-9282-4b16-8f7e-3c8ae97c1791" class="code code-wrap"><code>JSplitPane pane = new JSplitPane();pane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  //设定为横向分割//横向分割之后，我们需要指定左右两边的组件pane.setLeftComponent(new JPanel(){{setBackground(Color.ORANGE);}});pane.setRightComponent(new JPanel(){{setBackground(Color.PINK);}});</code></pre><figure id="ad1e250d-ce0c-4be7-847e-d0be669f7b35" class="image"><a href="https://s2.loli.net/2022/11/05/3VjoCckOZG2qNIf.png"><img src="https://s2.loli.net/2022/11/05/3VjoCckOZG2qNIf.png"/></a></figure><p id="971724a1-f875-422c-82c9-6fa147006bb5" class="">image-20221105174609500</p><p id="1333e186-bf82-493b-86e3-bb81be33a25e" class="">配合我们之前的JTree组件和JTextArea组件，我们也可以写一个简单的IDEA软件出来：</p><pre id="8337e040-d58a-46ef-8060-4d56d06c70f7" class="code code-wrap"><code>JTextArea area = new JTextArea();   //右边就是我们需要编辑的文本域File file = new File(&quot;.idea&quot;);DefaultMutableTreeNode root = new DefaultMutableTreeNode(file);File[] files = Optional.ofNullable(file.listFiles()).orElseGet(() -&gt; new File[0]);for (File f : files)    root.add(new DefaultMutableTreeNode(f.getName()));JTree tree = new JTree(root);   //左边就是我们的文件树tree.addTreeSelectionListener(e -&gt; {   //点击文件之后，我们需要变换编辑窗口中的文本内容，这里加个监听器    area.setText(&quot;&quot;);   //先清空    try (FileReader reader = new FileReader(&quot;.idea/&quot;+e.getPath().getLastPathComponent().toString())){        char[] chars = new char[128];   //直接开始读取内容        int len;        while ((len = reader.read(chars)) &gt; 0)            area.setText(area.getText() + new String(chars, 0, len));   //开始写入到编辑窗口中    } catch (IOException ex) {        ex.printStackTrace();    }});pane.setLeftComponent(new JScrollPane(tree));   //文件树和编辑区域都套一个滚动面板，因为有可能会撑得很大pane.setRightComponent(new JScrollPane(area));</code></pre><p id="d3ac792a-3743-4818-a226-b7417ad23c50" class="">我们来看看我们自己写的IDEA软件怎么样吧：</p><figure id="666227d4-64ee-4e9d-b239-ac8827f2ca10" class="image"><a href="https://s2.loli.net/2022/11/05/rwik4EqaOeMYWfz.png"><img src="https://s2.loli.net/2022/11/05/rwik4EqaOeMYWfz.png"/></a></figure><p id="ae028ebb-0eb8-4fea-ac4c-d98f679b92c9" class="">image-20221105180609195</p><p id="2f28257a-2e52-4f03-865e-726e0c20d965" class="">嗯，真不错，各位小伙伴赶紧去JetBrains投简历吧！</p><h3 id="321605d8-ed4f-4445-91ff-3b2810c7ea12" class="">选项窗口</h3><p id="033de0ae-c198-452e-8917-bd92b8245fcc" class="">前面我们介绍过对话框，但是AWT提供的对话框太过原始，很多功能都需要我们自行实现，而Swing为我们提供了一套已经实现好的预设选项对话框，我们只需要直接使用即可。</p><pre id="a9724374-12d3-47e6-b915-1f6f134dea75" class="code code-wrap"><code>JFrame frame = new JFrame(&quot;我是窗口&quot;);frame.setSize(500, 300);frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);  //先将默认关闭行为设定为什么都不做frame.addWindowListener(new WindowAdapter() {   //我们自己来实现窗口关闭行为    @Override    public void windowClosing(WindowEvent e) {   //这里我们可以直接展示一个预设好的确认对话框        int value = JOptionPane.showConfirmDialog(frame, &quot;你真的要退出吗？&quot;);        if(value == JOptionPane.OK_OPTION)    //返回值就是用户的选择结果，也是预置好的，这里判断如果是OK那么就退出            System.exit(0);    }});</code></pre><p id="73450a66-154d-42b8-9880-4ff7814e876f" class="">我们之前要实现这样的一个功能，非常麻烦，但是现在就很简单了：</p><figure id="5a9110ff-031c-44ac-8a87-1230f44f2128" class="image"><a href="https://s2.loli.net/2022/11/06/ekOZLQnUR2dMXTN.png"><img src="https://s2.loli.net/2022/11/06/ekOZLQnUR2dMXTN.png"/></a></figure><p id="5778afae-20e9-4efa-ac3b-0bf6fe1ef874" class="">image-20221106162732123</p><p id="4b62aa06-2498-490e-a439-56a62720248c" class="">官方已经给我们预设好了一个对话框，我们直接用就可以了。当然，还有各种类型的，我们可以自己定义窗口的标题、图标等：</p><pre id="8024d4c6-1bd4-42b7-beaa-9287f8fb179a" class="code code-wrap"><code>JOptionPane.showConfirmDialog(frame, &quot;你真的要退出吗？&quot;, &quot;退出程序&quot;, JOptionPane.YES_NO_OPTION);</code></pre><p id="f78b1451-c89d-4b75-b902-f820a01d0000" class="">除了这种简单的对话框，Swing还为我们提供了一些其他类型的对话框，比如单纯的消息提示框：</p><pre id="36edaeeb-01e8-4e4f-93bb-b55ee8907a30" class="code code-wrap"><code>JOptionPane.showMessageDialog(frame, &quot;我是简单的提示消息！&quot;);</code></pre><figure id="2f092cf6-5462-45c6-bd21-0249aa7b1be3" class="image"><a href="https://s2.loli.net/2022/11/06/YH8dgDRunsG9jPv.png"><img src="https://s2.loli.net/2022/11/06/YH8dgDRunsG9jPv.png"/></a></figure><p id="c4498627-bc1e-4adb-a8ed-e42146610882" class="">image-20221106165351473</p><p id="c406970c-ee1a-4387-a6ca-4e0816f87767" class="">还有用户输入文本的输入对话框：</p><pre id="adf0f6bc-feb9-4e04-b207-25f37eb2e694" class="code code-wrap"><code>JFrame frame = new JFrame(&quot;我是窗口&quot;);frame.setSize(500, 300);frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);frame.addWindowListener(new WindowAdapter() {    @Override    public void windowClosing(WindowEvent e) {        String str = JOptionPane.showInputDialog(&quot;毕业后的你，将何去何从呢？&quot;);        System.out.println(str);    }});</code></pre><figure id="bd486d75-5174-4ba6-9fd8-0b22e20bd139" class="image"><a href="https://s2.loli.net/2022/11/06/ZwGfv1HqOjikEPn.png"><img src="https://s2.loli.net/2022/11/06/ZwGfv1HqOjikEPn.png"/></a></figure><p id="d7224ed5-b474-40d6-95ac-0016e1f07a41" class="">image-20221106165324954</p><p id="d1e33732-d103-4420-9634-6d9e94ab9d75" class="">通过灵活使用这些对话框，用户与我们的交互就更加亲密了。</p><h3 id="a5769043-dff8-47e1-8bf6-d37674414003" class="">自定义主题</h3><p id="e2395d79-7c82-4159-ac72-d2840faf4d68" class="">Swing早就考虑到了不同平台可能会出现的组件样式差异，因此推出了皮肤机制。</p><p id="8221fdf2-fb87-4a06-ad43-d75f496d538d" class="">就像我们可以给英雄换皮肤一样，我们的组件UI也是可以换皮肤的，官方名称叫做LookAndFeel，Swing官方为我们提供了很多套皮肤，这些皮肤都是可以跨平台的，当然也有某些平台专属的限定皮肤：</p><ul id="ce9f07f4-b876-4274-8634-a84256795fa3" class="bulleted-list"><li style="list-style-type:disc">MetalLookAndFeel - 官方默认皮肤</li></ul><ul id="06401e6a-3fb3-4307-a641-696f88087f57" class="bulleted-list"><li style="list-style-type:disc">WindowsLookAndFeel - Windows操作系统限定皮肤，其他平台无法使用</li></ul><ul id="e30f49ff-a896-4746-b153-5e645a4a1c45" class="bulleted-list"><li style="list-style-type:disc">MotifLookAndFeel - 官方皮肤</li></ul><ul id="395fff88-9587-4d87-8e97-0dd7f20fea54" class="bulleted-list"><li style="list-style-type:disc">NimbusLookAndFeel - 官方皮肤</li></ul><ul id="cf9183dd-82b7-4bd4-90a3-20d3f91c0ff8" class="bulleted-list"><li style="list-style-type:disc">AquaLookAndFeel - MacOS操作系统限定皮肤，其他平台无法使用</li></ul><p id="5bc31bc1-dd90-405b-af99-4f7bb68e5fe8" class="">更换皮肤很简单，我们只需要执行一个方法就可以，它是全局生效的：</p><pre id="804fadcb-63e4-454f-9e77-31b29987ac89" class="code code-wrap"><code>UIManager.setLookAndFeel(new AquaLookAndFeel());</code></pre><p id="389e45c2-bea5-4ad3-a285-471b7db5bbf1" class="">这里我们将皮肤设定为MacOS的冰雪节限定皮肤AquaLookAndFeel：</p><figure id="ca9ca091-c547-47dd-8691-ada67008fdd9" class="image"><a href="https://s2.loli.net/2022/11/06/L7HyUlVpA5P9iTZ.png"><img src="https://s2.loli.net/2022/11/06/L7HyUlVpA5P9iTZ.png"/></a></figure><p id="f88f8a3c-e775-4d58-af32-9840ee884f02" class="">image-20221106170921703</p><p id="0b5a7a72-b678-4a2a-b53a-9c819c2a46b3" class="">是不是感觉视觉上和之前的皮肤不太一样？我们可以多看看其他的皮肤：</p><figure id="c313c22e-36b0-412b-b852-4eaa3eda9e4a" class="image"><a href="https://s2.loli.net/2022/11/06/EGrWzIZuRfejXN2.png"><img src="https://s2.loli.net/2022/11/06/EGrWzIZuRfejXN2.png"/></a></figure><p id="39a4f3bd-6452-44f8-bdb6-6476d99d4e6d" class="">image-20221106171046755</p><figure id="c522b6a9-0852-4d0c-8d1e-b248d0273a06" class="image"><a href="https://s2.loli.net/2022/11/06/BOtWrIe7CuklMcZ.png"><img src="https://s2.loli.net/2022/11/06/BOtWrIe7CuklMcZ.png"/></a></figure><p id="f57674e1-2739-4b31-b8b7-6921514441a8" class="">image-20221106171110930</p><p id="824df59e-09ab-45ed-a612-e71dc0b42507" class="">实际上Swing组件的绘制并不是由组件本身编写的，而是在各个UI实现类中编写的，所以说要修改组件样式只需要更换皮肤即可。</p><p id="38eabc95-ed12-456f-9f7c-7bfd48820b10" class="">除了全局设定皮肤之外，我们也可以单独对某些组件设定皮肤，每个组件都有自己的<code>getUI</code>方法，这个方法就是获取当前组件使用的UI样式的：</p><pre id="263a4b69-7916-48ad-a0fa-90e4ce0af010" class="code code-wrap"><code>System.out.println(tree.getUI());</code></pre><p id="b8c4d146-8bd0-40e7-8203-6f4ab61da1e3" class="">这里得到的是：</p><figure id="baab3342-4f24-4c58-b4b5-46c52bcd529a" class="image"><a href="https://s2.loli.net/2022/11/06/2NChELXRkoqJGMQ.png"><img src="https://s2.loli.net/2022/11/06/2NChELXRkoqJGMQ.png"/></a></figure><p id="6381f091-3bf6-4e97-bd17-cad5a2c352c3" class="">image-20221106224348544</p><p id="d5bdf5fb-b4f3-4a36-99de-fcaf4e17225b" class="">我们可以自己编写一个UI样式来为组件进行设定：</p><pre id="b08272fe-dde1-4a00-952a-8ff1cd677ce2" class="code code-wrap"><code>public static class TestJButtonUI extends ButtonUI {   //继承对应的UI父类    @Override    public void paint(Graphics g, JComponent c) {   //我们只需要重写对应UI的paint方法就可以了        int width = c.getWidth(), height = c.getHeight();        g.setColor(Color.BLACK);        g.fillRect(0, 0, width, height);        g.setColor(Color.WHITE);        JButton button = (JButton) c;        g.drawString(button.getText(), 0, 20);    }}</code></pre><p id="e069c6b5-91c5-46e0-8920-e167379d94c4" class="">我们只需要使用set方法来设定即可：</p><pre id="012e57e2-a1ce-4e24-85a1-3b410c5e7ffb" class="code code-wrap"><code>JButton button = new JButton(&quot;我是按钮&quot;);button.setBounds(0, 0, 200, 30);button.setUI(new TestJButtonUI());   //将UI设定为我们自己定义的即可</code></pre><p id="9a90f5df-61f3-4a3c-a431-5e7c9f47e94b" class="">这样就换成我们自己的皮肤了：</p><figure id="724a413a-2c60-469d-8622-c6aac4be00a5" class="image"><a href="https://s2.loli.net/2022/11/06/53kHx2zTZ7wtUfC.png"><img src="https://s2.loli.net/2022/11/06/53kHx2zTZ7wtUfC.png"/></a></figure><p id="d48bd35d-1a07-4eff-a493-1e903ad9c4fd" class="">image-20221106231437842</p><p id="87719c23-9b3a-4217-abac-3ae9e0ea77c6" class="">各位小伙伴甚至可以编写一套自己的UI，并制作成一个LookAndFeel，这样我们写出来的程序就非常个性化了。</p><hr id="8a315ab6-cb56-4c6b-8991-67bb8cd82afc"/><h2 id="8cb7da2a-ae4a-44e7-ba8f-6aca990defae" class="">项目实战</h2><p id="2d410936-504d-4ec3-b864-a6f6a4751a0a" class="">前面我们已经学习了Swing的全部内容，最后我们还是来做一个小项目吧！</p><h3 id="26b9f58a-7586-4bd2-9940-cdae9c4be6fe" class="">Intellij IDEA Extreme</h3><p id="b5f327ff-8a83-4771-b49b-f51330ed55c0" class="">我们的目标是用IDEA写一个IDEA（当然不会太复杂，只需要实现基本功能就可以了）</p><p id="e1d10ca5-6a48-4ff9-9a06-19aba2223153" class="">需求分析：</p><ul id="026022a1-21cc-45db-98ff-f97e18b347fe" class="bulleted-list"><li style="list-style-type:disc">支持创建项目、管理项目文件</li></ul><ul id="6edc3f07-c2a0-447f-9158-80279ee1f1a7" class="bulleted-list"><li style="list-style-type:disc">支持对源代码文件的编辑</li></ul><ul id="65a4fff6-2d5a-4fcc-908c-0f5c612cd891" class="bulleted-list"><li style="list-style-type:disc">支持一键编译、运行</li></ul><p id="9bb49e8d-2f64-48ed-ba8c-7ecb5faed61e" class="">做Swing项目，什么五子棋、坦克大战都弱爆了，这里我们直接手撕一个IDEA出来。</p></div></article></body></html>
