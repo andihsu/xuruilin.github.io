@@ -1,0 +1,676 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>JavaSE 笔记（五）泛型程序设计</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="458ffb57-7e2c-44cf-b192-6c49ebf645d5" class="page mono"><header><h1 class="page-title">JavaSE 笔记（五）泛型程序设计</h1><p class="page-description"></p></header><div class="page-body"><figure id="6f570f82-545c-491a-ab66-b1925b5b801d" class="image"><a href="https://s2.loli.net/2022/09/24/AulBzXWK6JCPMH5.png"><img src="https://s2.loli.net/2022/09/24/AulBzXWK6JCPMH5.png"/></a></figure><p id="ddd3d275-7e7e-47ea-8705-1c9e3998b419" class="">image-20220924223020333</p><h1 id="f7667a50-e042-4766-8e3f-313fd0ae0073" class="">泛型程序设计</h1><p id="e627c007-701d-4b84-b935-03edd87a3b40" class="">在前面我们学习了最重要的类和对象，了解了面向对象编程的思想，注意，非常重要，面向对象是必须要深入理解和掌握的内容，不能草草结束。在本章节，我们还会继续深入了解，从泛型开始，再到数据结构，最后再开始我们的集合类学习，循序渐进。</p><h2 id="48c93ad5-fc01-4a94-814d-744cf3f2a368" class="">泛型</h2><p id="91731584-17d4-46e3-a2a0-1c138b6c814c" class="">为了统计学生成绩，要求设计一个Score对象，包括课程名称、课程号、课程成绩，但是成绩分为两种，一种是以<code>优秀、良好、合格</code> 来作为结果，还有一种就是 <code>60.0、75.5、92.5</code> 这样的数字分数，可能高等数学这门课是以数字成绩进行结算，而计算机网络实验这门课是以等级进行结算，这两种分数类型都有可能出现，那么现在该如何去设计这样的一个Score类呢？</p><p id="d2c21958-ab23-44f6-8169-7b8c526fbf94" class="">现在的问题就是，成绩可能是<code>String</code>类型，也可能是<code>Integer</code>类型，如何才能很好的去存可能出现的两种类型呢？</p><pre id="78263e1c-ba39-4aad-8b70-8c8b902a8d85" class="code code-wrap"><code>public class Score {    String name;    String id;    Object value;  //因为Object是所有类型的父类，因此既可以存放Integer也能存放String    public Score(String name, String id, Object value) {        this.name = name;        this.id = id;        this.score = value;    }}</code></pre><p id="fc1fd45a-03db-4981-94c0-5adeeaefd2f4" class="">以上的方法虽然很好地解决了多种类型存储问题，但是Object类型在编译阶段并不具有良好的类型判断能力，很容易出现以下的情况：</p><pre id="01e00014-ce28-42b7-bcbc-d8a8dbe674ec" class="code code-wrap"><code>public static void main(String[] args) {    Score score = new Score(&quot;数据结构与算法基础&quot;, &quot;EP074512&quot;, &quot;优秀&quot;);  //是String类型的    ...    Integer number = (Integer) score.score;  //获取成绩需要进行强制类型转换，虽然并不是一开始的类型，但是编译不会报错}</code></pre><p id="8fc52b3e-6081-4358-9f31-85232fa7edb0" class="">使用Object类型作为引用，对于使用者来说，由于是Object类型，所以说并不能直接判断存储的类型到底是String还是Integer，取值只能进行强制类型转换，显然无法在编译期确定类型是否安全，项目中代码量非常之大，进行类型比较又会导致额外的开销和增加代码量，如果不经比较就很容易出现类型转换异常，代码的健壮性有所欠缺</p><p id="be30aa34-badb-421c-bbb2-58add7a78299" class="">所以说这种解决办法虽然可行，但并不是最好的方案。</p><p id="ab99373b-1467-4808-a5fc-f40ba968eabf" class="">为了解决以上问题，JDK 5新增了泛型，它能够在编译阶段就检查类型安全，大大提升开发效率。</p><h3 id="ddbd9135-1351-481d-a7e5-40b7553512d5" class="">泛型类</h3><p id="b6c4cab7-034b-4767-9f8d-bd6a8faa3cb1" class="">泛型其实就一个待定类型，我们可以使用一个特殊的名字表示泛型，泛型在定义时并不明确是什么类型，而是需要到使用时才会确定对应的泛型类型。</p><p id="979c7f81-d530-4540-96c2-d4250bd56fc8" class="">我们可以将一个类定义为一个泛型类：</p><pre id="d52a24a7-977c-4990-9d4f-53146db43275" class="code code-wrap"><code>public class Score&lt;T&gt; {   //泛型类需要使用&lt;&gt;，我们需要在里面添加1 - N个类型变量    String name;    String id;    T value;   //T会根据使用时提供的类型自动变成对应类型    public Score(String name, String id, T value) {   //这里T可以是任何类型，但是一旦确定，那么就不能修改了        this.name = name;        this.id = id;        this.value = value;    }}</code></pre><p id="7e3ebfb0-7e39-469e-8345-af82f57ec778" class="">我们来看看这是如何使用的：</p><pre id="d9ac5fa1-75dc-4faa-8177-c636c6847e38" class="code code-wrap"><code>public static void main(String[] args) {    Score&lt;String&gt; score = new Score&lt;String&gt;(&quot;计算机网络&quot;, &quot;EP074512&quot;, &quot;优秀&quot;);    //因为现在有了类型变量，在使用时同样需要跟上&lt;&gt;并在其中填写明确要使用的类型    //这样我们就可以根据不同的类型进行选择了    String value = score.value;   //一旦类型明确，那么泛型就变成对应的类型了    System.out.println(value);}</code></pre><p id="3cd1f023-ea9d-40a9-9372-35410a4a79e9" class="">泛型将数据类型的确定控制在了编译阶段，在编写代码的时候就能明确泛型的类型，如果类型不符合，将无法通过编译！因为是具体使用对象时才会明确具体类型，所以说静态方法中是不能用的：</p><figure id="5ede8f4a-ad08-4c4f-a2c6-1a7c15225a83" class="image"><a href="https://s2.loli.net/2022/09/27/RCqAhvMGzNwfH7J.png"><img src="https://s2.loli.net/2022/09/27/RCqAhvMGzNwfH7J.png"/></a></figure><p id="f7e13a30-f081-4907-8406-98976f655c35" class="">image-20220927135128332</p><p id="a63517d0-4307-48e6-b0e7-07b19105d817" class="">只不过这里需要注意一下，我们在方法中使用待确定类型的变量时，因为此时并不明确具体是什么类型，那么默认会认为这个变量是一个Object类型的变量，因为无论具体类型是什么，一定是Object类的子类：</p><figure id="d33cb9ce-09f7-49f1-9185-1b7b652912b5" class="image"><a href="https://s2.loli.net/2022/09/26/gkFs35US9rxo7f2.png"><img src="https://s2.loli.net/2022/09/26/gkFs35US9rxo7f2.png"/></a></figure><p id="036739f6-7347-45b8-9a98-6348d0b08503" class="">image-20220926235642963</p><p id="2bd244e1-f30b-41cd-916f-9d80ee29f18a" class="">我们可以对其进行强制类型转换，但是实际上没多大必要：</p><pre id="0c18540a-49f1-49c7-bae7-acbe7cf1ccf1" class="code code-wrap"><code>public void test(T t){    String str = (String) t;   //都明确要用String了，那这里定义泛型不是多此一举吗}</code></pre><p id="a278b453-cbd7-4b70-9222-f68a022824b4" class="">因为泛型本身就是对某些待定类型的简单处理，如果都明确要使用什么类型了，那大可不必使用泛型。还有，不能通过这个不确定的类型变量就去直接创建对象和对应的数组：</p><figure id="58e3beaf-97da-4ceb-be4e-619ef8a8bf65" class="image"><a href="https://s2.loli.net/2022/09/27/RlHYhPSUJ5ICswG.png"><img src="https://s2.loli.net/2022/09/27/RlHYhPSUJ5ICswG.png"/></a></figure><p id="d28cce97-a0ae-4b08-8890-2f9f91354c11" class="">image-20220927134825845</p><p id="5fbf2908-0722-4838-8962-e741eb0cea80" class="">注意，具体类型不同的泛型类变量，不能使用不同的变量进行接收：</p><figure id="7cb458a1-17e9-4b01-835d-a761f0bf1296" class="image"><a href="https://s2.loli.net/2022/09/25/jhekq9ZKHoiT2yI.png"><img src="https://s2.loli.net/2022/09/25/jhekq9ZKHoiT2yI.png"/></a></figure><p id="5f104162-a61c-40ae-8426-ade10139b4f6" class="">image-20220925170746329</p><p id="d16855b8-f9fa-49f4-8dc2-af6944829acd" class="">如果要让某个变量支持引用确定了任意类型的泛型，那么可以使用<code>?</code>通配符：</p><pre id="40f9c2ce-f100-457c-ba5e-1daaa24fa5e2" class="code code-wrap"><code>public static void main(String[] args) {    Test&lt;?&gt; test = new Test&lt;Integer&gt;();    test = new Test&lt;String&gt;();    Object o = test.value;    //但是注意，如果使用通配符，那么由于类型不确定，所以说具体类型同样会变成Object}</code></pre><p id="330e8827-2a69-4a8c-8062-4ffefdc6ab97" class="">当然，泛型变量不止可以只有一个，如果需要使用多个的话，我们也可以定义多个：</p><pre id="dfbd3be5-18bd-495f-aeec-a943c34bf317" class="code code-wrap"><code>public class Test&lt;A, B, C&gt; {   //多个类型变量使用逗号隔开    public A a;    public B b;    public C c;}</code></pre><p id="2205ac35-2648-40d9-a394-170d817587ec" class="">那么在使用时，就需要将这三种类型都进行明确指定：</p><pre id="7e8a91bb-0e44-499e-93c3-fe34ae41eb08" class="code code-wrap"><code>public static void main(String[] args) {    Test&lt;String, Integer, Character&gt; test = new Test&lt;&gt;();  //使用钻石运算符可以省略其中的类型    test.a = &quot;lbwnb&quot;;    test.b = 10;    test.c = &#x27;淦&#x27;;}</code></pre><p id="d0e4e043-44d0-4848-962c-c78a20287764" class="">是不是感觉好像还是挺简单的？只要是在类中，都可以使用类型变量：</p><pre id="22b0fa82-8b69-49c1-bf93-49e08a658fbb" class="code code-wrap"><code>public class Test&lt;T&gt;{    private T value;    public void setValue(T value) {        this.value = value;    }    public T getValue() {        return value;    }}</code></pre><p id="5433524e-9981-4ab8-8a68-51aa57a8ea8f" class="">只不过，泛型只能确定为一个引用类型，基本类型是不支持的：</p><pre id="6f6b67ae-bc36-4f09-9f6a-cfc805387203" class="code code-wrap"><code>public class Test&lt;T&gt;{    public T value;}</code></pre><figure id="34ad5ffb-1078-49eb-b8ab-e7dfe307158d" class="image"><a href="https://s2.loli.net/2022/09/26/TI6tWwj4vXFdenr.png"><img src="https://s2.loli.net/2022/09/26/TI6tWwj4vXFdenr.png"/></a></figure><p id="74ac5897-74e7-4145-bde3-ba75dc425be5" class="">image-20220926232135111</p><p id="c414fd24-c37e-4649-85bb-afea1d01f790" class="">如果要存放基本数据类型的值，我们只能使用对应的包装类：</p><pre id="0602178d-f4bd-46a2-afee-fb890d9854d8" class="code code-wrap"><code>public static void main(String[] args) {    Test&lt;Integer&gt; test = new Test&lt;&gt;();}</code></pre><p id="7dc63860-68c1-469c-80ec-c09f7660842f" class="">当然，如果是基本类型的数组，因为数组本身是引用类型，所以说是可以的：</p><pre id="01060ca7-46b1-4330-97ec-9cf4c914dabf" class="code code-wrap"><code>public static void main(String[] args) {    Test&lt;int[]&gt; test = new Test&lt;&gt;();}</code></pre><p id="4c9868b3-b2d8-4b6a-a040-ad58be858f71" class="">通过使用泛型，我们就可以将某些不明确的类型在具体使用时再明确。</p><h3 id="6ff55a62-0641-4d97-a394-e4d5c8c55f62" class="">泛型与多态</h3><p id="1d66271f-5d34-4165-9c45-96443c80aea6" class="">不只是类，包括接口、抽象类，都是可以支持泛型的：</p><pre id="71af8c32-5d5c-4b3f-be23-7dd466df9606" class="code code-wrap"><code>public interface Study&lt;T&gt; {    T test();}</code></pre><p id="46f37022-127c-4314-9e26-e4d1fd33b91e" class="">当子类实现此接口时，我们可以选择在实现类明确泛型类型，或是继续使用此泛型让具体创建的对象来确定类型：</p><pre id="ec206735-36f3-41ed-95cd-08fefe4413ed" class="code code-wrap"><code>public class Main {    public static void main(String[] args) {        A a = new A();        Integer i = a.test();    }    static class A implements Study&lt;Integer&gt; {        //在实现接口或是继承父类时，如果子类是一个普通类，那么可以直接明确对应类型        @Override        public Integer test() {            return null;        }    }}</code></pre><p id="914f8038-a65c-44a9-9bdd-63768df5e0c7" class="">或者是继续摆烂，依然使用泛型：</p><pre id="970ede96-0f3d-4361-b92a-099df1d33c43" class="code code-wrap"><code>public class Main {    public static void main(String[] args) {        A&lt;String&gt; a = new A&lt;&gt;();        String i = a.test();    }    static class A&lt;T&gt; implements Study&lt;T&gt; {        //让子类继续为一个泛型类，那么可以不用明确        @Override        public T test() {            return null;        }    }}</code></pre><p id="ef26882d-1882-41f0-9666-4a8f9ae100b8" class="">继承也是同样的：</p><pre id="27f51279-8b00-4009-a057-8acee22343cd" class="code code-wrap"><code>static class A&lt;T&gt; {}static class B extends A&lt;String&gt; {}</code></pre><h3 id="36f6f22c-f6a6-41b9-9467-43c417b1c8bc" class="">泛型方法</h3><p id="29e74b49-dda5-48b2-8edb-849a29155f77" class="">当然，类型变量并不是只能在泛型类中才可以使用，我们也可以定义泛型方法。</p><p id="5fa038c7-86c9-4ed3-8184-997d179157f4" class="">当某个方法（无论是是静态方法还是成员方法）需要接受的参数类型并不确定时，我们也可以使用泛型来表示：</p><pre id="7ba9404a-5e1c-4d38-8a10-0b22b99a4153" class="code code-wrap"><code>public class Main {    public static void main(String[] args) {        String str = test(&quot;Hello World!&quot;);    }    private static &lt;T&gt; T test(T t){   //在返回值类型前添加&lt;&gt;并填写泛型变量表示这个是一个泛型方法        return t;    }}</code></pre><p id="398e1018-1327-446a-aee5-3b6b2f89ea54" class="">泛型方法会在使用时自动确定泛型类型，比如上我们定义的是类型T作为参数，同样的类型T作为返回值，实际传入的参数是一个字符串类型的值，那么T就会自动变成String类型，因此返回值也是String类型。</p><pre id="7c6283bb-04e2-4335-994f-bd6aa655356b" class="code code-wrap"><code>public static void main(String[] args) {    String[] strings = new String[1];    Main main = new Main();    main.add(strings, &quot;Hello&quot;);    System.out.println(Arrays.toString(strings));}private &lt;T&gt; void add(T[] arr, T t){    arr[0] = t;}</code></pre><p id="52ab1985-adc6-4df1-9b0c-e42c2687929d" class="">实际上泛型方法在很多工具类中也有，比如说Arrays的排序方法：</p><pre id="bb0c0078-7f52-46b2-b1db-b2709cf41a4d" class="code code-wrap"><code>Integer[] arr = {1, 4, 5, 2, 6, 3, 0, 7, 9, 8};Arrays.sort(arr, new Comparator&lt;Integer&gt;() {    //通过创建泛型接口的匿名内部类，来自定义排序规则，因为匿名内部类就是接口的实现类，所以说这里就明确了类型    @Override    public int compare(Integer o1, Integer o2) {   //这个方法会在执行排序时被调用（别人来调用我们的实现）        return 0;    }});</code></pre><p id="006d8f3e-cf02-4fb6-91b4-815874fab100" class="">比如现在我们想要让数据从大到小排列，我们就可以自定义：</p><pre id="2fc83835-7f53-4b4f-a776-1d7bf15777ac" class="code code-wrap"><code>public static void main(String[] args) {    Integer[] arr = {1, 4, 5, 2, 6, 3, 0, 7, 9, 8};    Arrays.sort(arr, new Comparator&lt;Integer&gt;() {        @Override        public int compare(Integer o1, Integer o2) {   //两个需要比较的数会在这里给出            return o2 - o1;            //compare方法要求返回一个int来表示两个数的大小关系，大于0表示大于，小于0表示小于            //这里直接o2-o1就行，如果o2比o1大，那么肯定应该排在前面，所以说返回正数表示大于        }    });    System.out.println(Arrays.toString(arr));}</code></pre><p id="4f7cff51-db10-4cb0-9c4f-2b59cb0c419f" class="">因为我们前面学习了Lambda表达式，像这种只有一个方法需要实现的接口，直接安排了：</p><pre id="d018c08a-e192-46ca-98e0-e16a55f36fcb" class="code code-wrap"><code>public static void main(String[] args) {    Integer[] arr = {1, 4, 5, 2, 6, 3, 0, 7, 9, 8};    Arrays.sort(arr, (o1, o2) -&gt; o2 - o1);   //瞬间变一行，效果跟上面是一样的    System.out.println(Arrays.toString(arr));}</code></pre><p id="53661762-b31a-4618-9345-1164d8f346a1" class="">包括数组复制方法：</p><pre id="d493c25b-7a4e-4880-9ba3-8b87f862ef21" class="code code-wrap"><code>public static void main(String[] args) {    String[] arr = {&quot;AAA&quot;, &quot;BBB&quot;, &quot;CCC&quot;};    String[] newArr = Arrays.copyOf(arr, 3);   //这里传入的类型是什么，返回的类型就是什么，也是用到了泛型    System.out.println(Arrays.toString(newArr));}</code></pre><p id="def0e8e2-f3e7-4d34-8df5-0d2c1d80d8b0" class="">因此，泛型实际上在很多情况下都能够极大地方便我们对于程序的代码设计。</p><h3 id="4bf7f9d4-9c7e-4cbb-993c-afea4e82da21" class="">泛型的界限</h3><p id="10d77224-c459-41f0-907d-360c76ee2be6" class="">现在有一个新的需求，现在没有String类型的成绩了，但是成绩依然可能是整数，也可能是小数，这时我们不希望用户将泛型指定为除数字类型外的其他类型，我们就需要使用到泛型的上界定义：</p><pre id="8d543223-cbec-4a59-ab63-46ee4e5770b5" class="code code-wrap"><code>public class Score&lt;T extends Number&gt; {   //设定类型参数上界，必须是Number或是Number的子类    private final String name;    private final String id;    private final T value;    public Score(String name, String id, T value) {        this.name = name;        this.id = id;        this.value = value;    }    public T getValue() {        return value;    }}</code></pre><p id="f1b404c0-d23e-4054-a583-4c2b67c42ec1" class="">只需要在泛型变量的后面添加<code>extends</code>关键字即可指定上界，使用时，具体类型只能是我们指定的上界类型或是上界类型的子类，不得是其他类型。否则一律报错：</p><figure id="a3b16423-0f3c-46d4-b4b5-f8239add534b" class="image"><a href="https://s2.loli.net/2022/09/27/BAgmdCkDFL62V8H.png"><img src="https://s2.loli.net/2022/09/27/BAgmdCkDFL62V8H.png"/></a></figure><p id="a1889333-c949-4196-8cc4-a0993967824a" class="">image-20220927000902574</p><p id="a91483d6-8649-45f8-adeb-60a7af48d1a9" class="">实际上就像这样：</p><figure id="8bb2a194-8c73-4874-94ae-2bf15acc93bc" class="image"><a href="https://s2.loli.net/2022/09/27/rLnjHp73tdFSPUM.png"><img src="https://s2.loli.net/2022/09/27/rLnjHp73tdFSPUM.png"/></a></figure><p id="ffd473fd-8c7a-4562-a648-9590b0664b0a" class="">img</p><p id="7e0cd13a-c7b0-423b-8a6a-42133a667310" class="">同样的，当我们在使用变量时，泛型通配符也支持泛型的界限：</p><pre id="53d66486-a8b5-44ff-a267-d62608f94ce5" class="code code-wrap"><code>public static void main(String[] args) {    Score&lt;? extends Integer&gt; score = new Score&lt;&gt;(&quot;数据结构与算法&quot;, &quot;EP074512&quot;, 60);}</code></pre><p id="c4add5c1-1d1b-4dfa-9598-81a76e656cf7" class="">那么既然泛型有上界，那么有没有下界呢？肯定的啊：</p><figure id="2eafb5e3-5da5-4e87-a01c-73a534c94a1a" class="image"><a href="https://s2.loli.net/2022/09/27/UJg7s41NC9Gn6fX.png"><img src="https://s2.loli.net/2022/09/27/UJg7s41NC9Gn6fX.png"/></a></figure><p id="9777fbef-9bca-45fe-9ca5-42c3024b80b4" class="">image-20220927002611032</p><p id="49ff58f4-08e4-466c-8e49-f16dceae4e36" class="">只不过下界仅适用于通配符，对于类型变量来说是不支持的。下界限定就像这样：</p><figure id="55063f69-a72a-41d7-b3ab-1e4074282a15" class="image"><a href="https://s2.loli.net/2022/09/27/QFZNSCpnAmKG7qr.png"><img src="https://s2.loli.net/2022/09/27/QFZNSCpnAmKG7qr.png"/></a></figure><p id="4e6edf38-9b20-4373-8f85-3102961986e4" class="">4aa52791-73f4-448f-bab3-9133ea85d850.jpg</p><p id="24a5f969-9e49-40fb-9505-9f775de0b4ec" class="">那么限定了上界后，我们再来使用这个对象的泛型成员，会变成什么类型呢？</p><pre id="dd0c4915-63c3-4aff-9cf0-ab5ef9b2cddb" class="code code-wrap"><code>public static void main(String[] args) {    Score&lt;? extends Number&gt; score = new Score&lt;&gt;(&quot;数据结构与算法基础&quot;, &quot;EP074512&quot;, 10);    Number o = score.getValue();   //可以看到，此时虽然使用的是通配符，但是不再是Object类型，而是对应的上界}</code></pre><p id="0ad6215a-34e2-44c7-833b-4575bafd9780" class="">但是我们限定下界的话，因为还是有可能是Object，所以说依然是跟之前一样：</p><pre id="00e36862-279a-4c80-be1d-94899287494b" class="code code-wrap"><code>public static void main(String[] args) {    Score&lt;? super Number&gt; score = new Score&lt;&gt;(&quot;数据结构与算法基础&quot;, &quot;EP074512&quot;, 10);    Object o = score.getValue();}</code></pre><p id="79826861-d691-49d5-8bae-58002504a0a3" class="">通过给设定泛型上限，我们就可以更加灵活地控制泛型的具体类型范围。</p><h3 id="27c7bad3-9da5-44ae-a75d-abfa0254c286" class="">类型擦除</h3><p id="31cfeeac-5b30-4c1d-9a7d-a739e7f51f48" class="">前面我们已经了解如何使用泛型，那么泛型到底是如何实现的呢，程序编译之后的样子是什么样的？</p><pre id="ebdfbf87-995d-4e2d-8826-686a56fec501" class="code code-wrap"><code>public abstract class A &lt;T&gt;{    abstract T test(T t);}</code></pre><p id="4372292f-0e89-4a08-9169-c74a58d1928b" class="">实际上在Java中并不是真的有泛型类型（为了兼容之前的Java版本）因为所有的对象都是属于一个普通的类型，一个泛型类型编译之后，实际上会直接使用默认的类型：</p><pre id="17a98745-06f3-4844-bf01-f5ac0577f4d2" class="code code-wrap"><code>public abstract class A {    abstract Object test(Object t);  //默认就是Object}</code></pre><p id="c794f6b3-451b-4940-b5fb-516eeaf5655d" class="">当然，如果我们给类型变量设定了上界，那么会从默认类型变成上界定义的类型：</p><pre id="89ee2e98-72e4-443b-8c43-98701108ae58" class="code code-wrap"><code>public abstract class A &lt;T extends Number&gt;{   //设定上界为Number    abstract T test(T t);}</code></pre><p id="eabbfe54-396c-40bc-9a30-232585d4102f" class="">那么编译之后：</p><pre id="b44244ff-08bd-438e-8c2c-b8fa84945c9d" class="code code-wrap"><code>public abstract class A {    abstract Number test(Number t);  //上界Number，因为现在只可能出现Number的子类}</code></pre><p id="1ea8463c-b7e7-4dd4-8d79-8668fd19fd61" class="">因此，泛型其实仅仅是在编译阶段进行类型检查，当程序在运行时，并不会真的去检查对应类型，所以说哪怕是我们不去指定类型也可以直接使用：</p><pre id="92df0a26-eac3-4b9c-aef8-5b4044ed847c" class="code code-wrap"><code>public static void main(String[] args) {    Test test = new Test();    //对于泛型类Test，不指定具体类型也是可以的，默认就是原始类型}</code></pre><p id="92c49d42-e91e-484b-aa6d-f1a968454ba0" class="">只不过此时编译器会给出警告：</p><figure id="d55041c0-fca0-4627-8bfc-65dbc65f09d3" class="image"><a href="https://s2.loli.net/2022/09/27/kVCIg3TilOuLFmj.png"><img src="https://s2.loli.net/2022/09/27/kVCIg3TilOuLFmj.png"/></a></figure><p id="ea33d463-c821-463e-b757-68102c419399" class="">image-20220927131226728</p><p id="5e567d62-6e0d-41f1-96a8-610373101416" class="">同样的，由于类型擦除，实际上我们在使用时，编译后的代码是进行了强制类型转换的：</p><pre id="da316231-bc64-4072-9a75-f34e31b55f86" class="code code-wrap"><code>public static void main(String[] args) {    A&lt;String&gt; a = new B();    String  i = a.test(&quot;10&quot;);     //因为类型A只有返回值为原始类型Object的方法}</code></pre><p id="33b9b90c-a84e-4098-8fcb-f5af2ddf5b5b" class="">实际上编译之后：</p><pre id="27ec0bf0-674a-4522-819a-9aea2156e3b9" class="code code-wrap"><code>public static void main(String[] args) {    A a = new B();    String i = (String) a.test(&quot;10&quot;);   //依靠强制类型转换完成的}</code></pre><p id="8a98002b-42b7-40e9-8d7d-935d59b8bb88" class="">不过，我们思考一个问题，既然继承泛型类之后可以明确具体类型，那么为什么<code>@Override</code>不会出现错误呢？我们前面说了，重写的条件是需要和父类的返回值类型和形参一致，而泛型默认的原始类型是Object类型，子类明确后变为其他类型，这显然不满足重写的条件，但是为什么依然能编译通过呢？</p><pre id="1116909f-3f0e-4c43-a02f-6e65b02886d1" class="code code-wrap"><code>public class B extends A&lt;String&gt;{    @Override    String test(String s) {        return null;    }}</code></pre><p id="3aca1b4e-de33-47e9-84ff-298d9cf42e33" class="">我们来看看编译之后长啥样：</p><pre id="bd707fff-6431-4e55-9cf6-0971265b4d64" class="code code-wrap"><code>// Compiled from &quot;B.java&quot;public class com.test.entity.B extends com.test.entity.A&lt;java.lang.String&gt; {  public com.test.entity.B();  java.lang.String test(java.lang.String);  java.lang.Object test(java.lang.Object);   //桥接方法，这才是真正重写的方法，但是使用时会调用上面的方法}</code></pre><p id="b8cefe02-5cc8-47f5-a370-adcb9ec45d81" class="">通过反编译进行观察，实际上是编译器帮助我们生成了一个桥接方法用于支持重写：</p><pre id="fca8045d-8bc8-4487-a3d9-2be46fc33805" class="code code-wrap"><code>public class B extends A {    public Object test(Object obj) {   //这才是重写的桥接方法        return this.test((Integer) obj);   //桥接方法调用我们自己写的方法    }    public String test(String str) {   //我们自己写的方法        return null;    }}</code></pre><p id="1843b518-c566-4d3a-98fb-32a7da6aafb7" class="">类型擦除机制其实就是为了方便使用后面集合类（不然每次都要强制类型转换）同时为了向下兼容采取的方案。因此，泛型的使用会有一些限制：</p><p id="8a92859f-4c70-413b-8b45-866d7d802e35" class="">首先，在进行类型判断时，不允许使用泛型，只能使用原始类型：</p><figure id="7e3ba5a9-9e7e-46c7-a623-6695ca985f54" class="image"><a href="https://s2.loli.net/2022/09/27/q7DQ9lAweJLOFky.png"><img src="https://s2.loli.net/2022/09/27/q7DQ9lAweJLOFky.png"/></a></figure><p id="bfa080da-7059-4ef0-9222-14bd94af77ec" class="">image-20220927133232627</p><p id="7b69c807-8a82-4f86-a4a9-4719884fb2c4" class="">只能判断是不是原始类型，里面的具体类型是不支持的：</p><pre id="eb35b8bf-f519-4407-b63c-8a3f71dee794" class="code code-wrap"><code>Test&lt;String&gt; test = new Test&lt;&gt;();System.out.println(test instanceof Test);   //在进行类型判断时，不允许使用泛型，只能使用原始类型</code></pre><p id="7bfc7ec6-6098-462d-8726-11c82afdd439" class="">还有，泛型类型是不支持创建参数化类型数组的：</p><figure id="716a37e9-c2e1-4f39-bb2f-8df016b6d2ee" class="image"><a href="https://s2.loli.net/2022/09/27/7tK5APuSZovBLIc.png"><img src="https://s2.loli.net/2022/09/27/7tK5APuSZovBLIc.png"/></a></figure><p id="54d7f93a-00c6-4e87-843b-33bb2857efed" class="">image-20220927133611288</p><p id="0510b1fd-13e6-4f3d-8d8a-af6fd9b99633" class="">要用只能用原始类型：</p><pre id="0ee1c99b-5c7b-47e8-8225-1fdade46bb2b" class="code code-wrap"><code>public static void main(String[] args) {    Test[] test = new Test[10];   //同样是因为类型擦除导致的，运行时可不会去检查具体类型是什么}</code></pre><p id="07bfeee1-9695-49b8-868f-65b0713242f5" class="">只不过只是把它当做泛型类型的数组还是可以用的：</p><figure id="01023cae-778c-4c47-9fe1-e2b9d23ce7db" class="image"><a href="https://s2.loli.net/2022/09/27/upjWbyq9XC5FLDv.png"><img src="https://s2.loli.net/2022/09/27/upjWbyq9XC5FLDv.png"/></a></figure><p id="1b7dea86-e4d6-4735-a7ca-5cc0a2a6d28b" class="">image-20220927134335255</p><h3 id="111ca5b2-9315-4a2b-bf7a-1741f392b0d7" class="">函数式接口</h3><p id="072f36bc-fce1-4a0b-b0b0-f400cdc2d818" class="">学习了泛型，我们来介绍一下再JDK 1.8中新增的函数式接口。</p><p id="6f1338e3-61d8-4577-8945-acb7fed260b6" class="">函数式接口就是JDK1.8专门为我们提供好的用于Lambda表达式的接口，这些接口都可以直接使用Lambda表达式，非常方便，这里我们主要介绍一下四个主要的函数式接口：</p><p id="7160e65f-cba6-4eff-ad1a-bf3a3b704bf0" class=""><strong>Supplier供给型函数式接口：</strong>这个接口是专门用于供给使用的，其中只有一个get方法用于获取需要的对象。</p><pre id="d16435d5-1530-44ee-a58c-a86ebced27f1" class="code code-wrap"><code>@FunctionalInterface   //函数式接口都会打上这样一个注解public interface Supplier&lt;T&gt; {    T get();   //实现此方法，实现供给功能}</code></pre><p id="2c5f701a-c54f-44d6-96e8-78da0e894628" class="">比如我们要实现一个专门供给Student对象Supplier，就可以使用：</p><pre id="9200cce3-cb0c-4c50-a5e4-ae7c0715dab1" class="code code-wrap"><code>public class Student {    public void hello(){        System.out.println(&quot;我是学生！&quot;);    }}</code></pre><pre id="1016a237-106c-46b0-a36f-5dc1e6535aee" class="code code-wrap"><code>//专门供给Student对象的Supplierprivate static final Supplier&lt;Student&gt; STUDENT_SUPPLIER = Student::new;public static void main(String[] args) {    Student student = STUDENT_SUPPLIER.get();    student.hello();}</code></pre><p id="393cfe01-d99a-42fb-886a-9ec50f693df5" class=""><strong>Consumer消费型函数式接口：</strong>这个接口专门用于消费某个对象的。</p><pre id="c6d40e2a-f020-4fc8-95a7-20b9762135d9" class="code code-wrap"><code>@FunctionalInterfacepublic interface Consumer&lt;T&gt; {    void accept(T t);    //这个方法就是用于消费的，没有返回值    default Consumer&lt;T&gt; andThen(Consumer&lt;? super T&gt; after) {   //这个方法便于我们连续使用此消费接口        Objects.requireNonNull(after);        return (T t) -&gt; { accept(t); after.accept(t); };    }}</code></pre><p id="47ebfac0-7264-481f-a12f-75eff3079572" class="">使用起来也是很简单的：</p><pre id="3128682f-d419-469f-bbff-ffca14faef27" class="code code-wrap"><code>//专门消费Student对象的Consumerprivate static final Consumer&lt;Student&gt; STUDENT_CONSUMER = student -&gt; System.out.println(student+&quot; 真好吃！&quot;);public static void main(String[] args) {    Student student = new Student();    STUDENT_CONSUMER.accept(student);}</code></pre><p id="eeb907cb-295a-4411-a28f-039d334e3fe7" class="">当然，我们也可以使用<code>andThen</code>方法继续调用：</p><pre id="8ca757b6-17ee-4a5a-981c-a5f7f1fbad87" class="code code-wrap"><code>public static void main(String[] args) {    Student student = new Student();    STUDENT_CONSUMER   //我们可以提前将消费之后的操作以同样的方式预定好            .andThen(stu -&gt; System.out.println(&quot;我是吃完之后的操作！&quot;))            .andThen(stu -&gt; System.out.println(&quot;好了好了，吃饱了！&quot;))            .accept(student);   //预定好之后，再执行}</code></pre><p id="507ceb6e-87c4-4d1b-856a-12e83c9eb1fe" class="">这样，就可以在消费之后进行一些其他的处理了，使用很简洁的代码就可以实现：</p><figure id="a2c2b09f-7447-4bbf-b29a-1b478743a698" class="image"><a href="https://s2.loli.net/2022/09/27/Pu1jGzKNSvnV9YZ.png"><img src="https://s2.loli.net/2022/09/27/Pu1jGzKNSvnV9YZ.png"/></a></figure><p id="58736dc4-d85d-409a-aae7-4f2fcd8f1904" class="">image-20220927181706365</p><p id="4e0b1830-0d99-43f7-9446-74969faafdc2" class=""><strong>Function函数型函数式接口：</strong>这个接口消费一个对象，然后会向外供给一个对象（前两个的融合体）</p><pre id="22cc41db-eef7-42fb-8209-ad02230b1863" class="code code-wrap"><code>@FunctionalInterfacepublic interface Function&lt;T, R&gt; {    R apply(T t);   //这里一共有两个类型参数，其中一个是接受的参数类型，还有一个是返回的结果类型    default &lt;V&gt; Function&lt;V, R&gt; compose(Function&lt;? super V, ? extends T&gt; before) {        Objects.requireNonNull(before);        return (V v) -&gt; apply(before.apply(v));    }    default &lt;V&gt; Function&lt;T, V&gt; andThen(Function&lt;? super R, ? extends V&gt; after) {        Objects.requireNonNull(after);        return (T t) -&gt; after.apply(apply(t));    }    static &lt;T&gt; Function&lt;T, T&gt; identity() {        return t -&gt; t;    }}</code></pre><p id="2216f062-c3d9-41a8-a64f-d4ec4936bc70" class="">这个接口方法有点多，我们一个一个来看，首先还是最基本的<code>apply</code>方法，这个是我们需要实现的：</p><pre id="1e41c1b0-47f7-4336-9cf2-789024b47290" class="code code-wrap"><code>//这里实现了一个简单的功能，将传入的int参数转换为字符串的形式private static final Function&lt;Integer, String&gt; INTEGER_STRING_FUNCTION = Object::toString;public static void main(String[] args) {    String str = INTEGER_STRING_FUNCTION.apply(10);    System.out.println(str);}</code></pre><p id="2b1d3776-9aa3-4425-9f3a-eb29da6545cf" class="">我们可以使用<code>compose</code>将指定函数式的结果作为当前函数式的实参：</p><pre id="c9d31c55-2395-415f-a1bf-f75e25a4bdda" class="code code-wrap"><code>public static void main(String[] args) {    String str = INTEGER_STRING_FUNCTION            .compose((String s) -&gt; s.length())   //将此函数式的返回值作为当前实现的实参            .apply(&quot;lbwnb&quot;);   //传入上面函数式需要的参数    System.out.println(str);}</code></pre><p id="851cb060-7e13-4bfd-b07a-d8b24af7c40f" class="">相反的，<code>andThen</code>可以将当前实现的返回值进行进一步的处理，得到其他类型的值：</p><pre id="bee54732-f8f2-4769-bd17-0a0ad4394672" class="code code-wrap"><code>public static void main(String[] args) {    Boolean str = INTEGER_STRING_FUNCTION            .andThen(String::isEmpty)   //在执行完后，返回值作为参数执行andThen内的函数式，最后得到的结果就是最终的结果了            .apply(10);    System.out.println(str);}</code></pre><p id="b7803646-0226-4490-80a9-75773147677d" class="">比较有趣的是，Function中还提供了一个将传入参数原样返回的实现：</p><pre id="1fe233b8-3b5c-4bb1-b9fb-b672141a785f" class="code code-wrap"><code>public static void main(String[] args) {    Function&lt;String, String&gt; function = Function.identity();   //原样返回    System.out.println(function.apply(&quot;不会吧不会吧，不会有人听到现在还是懵逼的吧&quot;));}</code></pre><p id="2cfc5064-fb61-448e-8027-343c772fb198" class=""><strong>Predicate断言型函数式接口：</strong>接收一个参数，然后进行自定义判断并返回一个boolean结果。</p><pre id="330db9b2-20c6-49da-8197-f10e294fe041" class="code code-wrap"><code>@FunctionalInterfacepublic interface Predicate&lt;T&gt; {    boolean test(T t);    //这个方法就是我们要实现的    default Predicate&lt;T&gt; and(Predicate&lt;? super T&gt; other) {        Objects.requireNonNull(other);        return (t) -&gt; test(t) &amp;&amp; other.test(t);    }    default Predicate&lt;T&gt; negate() {        return (t) -&gt; !test(t);    }    default Predicate&lt;T&gt; or(Predicate&lt;? super T&gt; other) {        Objects.requireNonNull(other);        return (t) -&gt; test(t) || other.test(t);    }    static &lt;T&gt; Predicate&lt;T&gt; isEqual(Object targetRef) {        return (null == targetRef)                ? Objects::isNull                : object -&gt; targetRef.equals(object);    }}</code></pre><p id="b7bc5fb3-d43f-47d5-839a-8a72d6ea2cd4" class="">我们可以来编写一个简单的例子：</p><pre id="aa063ff0-a093-476a-9d2b-1d382c2d798f" class="code code-wrap"><code>public class Student {    public int score;}</code></pre><pre id="93fadcab-0a92-433e-964d-33bea04ff3b7" class="code code-wrap"><code>private static final Predicate&lt;Student&gt; STUDENT_PREDICATE = student -&gt; student.score &gt;= 60;public static void main(String[] args) {    Student student = new Student();    student.score = 80;    if(STUDENT_PREDICATE.test(student)) {  //test方法的返回值是一个boolean结果        System.out.println(&quot;及格了，真不错，今晚奖励自己一次&quot;);    } else {        System.out.println(&quot;不是，Java都考不及格？隔壁初中生都在打ACM了&quot;);    }}</code></pre><p id="abead921-3c8b-465d-ad95-a5bd0da97baa" class="">我们也可以使用组合条件判断：</p><pre id="9bfd9d53-caa6-4fb4-b46d-18ddb23e8101" class="code code-wrap"><code>public static void main(String[] args) {    Student student = new Student();    student.score = 80;    boolean b = STUDENT_PREDICATE            .and(stu -&gt; stu.score &gt; 90)   //需要同时满足这里的条件，才能返回true            .test(student);    if(!b) System.out.println(&quot;Java到现在都没考到90分？你的室友都拿国家奖学金了&quot;);}</code></pre><p id="2754b4cd-ca36-445a-9940-38b63a9b7905" class="">同样的，这个类型提供了一个对应的实现，用于判断两个对象是否相等：</p><pre id="13b321a1-f620-447b-a28b-f4c36c0fd582" class="code code-wrap"><code>public static void main(String[] args) {    Predicate&lt;String&gt; predicate = Predicate.isEqual(&quot;Hello World&quot;);   //这里传入的对象会和之后的进行比较    System.out.println(predicate.test(&quot;Hello World&quot;));}</code></pre><p id="3aa7a647-3207-434a-85eb-e91c8ad47244" class="">通过使用这四个核心的函数式接口，我们就可以使得代码更加简洁，具体的使用场景会在后面讲解。</p><h3 id="f4e717da-6281-44c2-b5f3-13064599e90e" class="">判空包装</h3><p id="3b56a22c-1435-499f-9dde-95c6d399369f" class="">Java8还新增了一个非常重要的判空包装类Optional，这个类可以很有效的处理空指针问题。</p><p id="3a21b84c-ac54-49c8-b2fe-59cfe636a02d" class="">比如对于下面这样一个很简单的方法：</p><pre id="78c562bb-66a4-4564-a74b-2f943e6ab195" class="code code-wrap"><code>private static void test(String str){   //传入字符串，如果不是空串，那么就打印长度    if(!str.isEmpty()) {        System.out.println(&quot;字符串长度为：&quot;+str.length());    }}</code></pre><p id="24f97625-6e7c-402f-9577-b78c96786ee7" class="">但是如果我们在传入参数时，丢个null进去，直接原地爆炸：</p><pre id="4f67e2fb-084f-4137-be9c-8bba73b6ba15" class="code code-wrap"><code>public static void main(String[] args) {    test(null);}private static void test(String str){    if(!str.isEmpty()) {   //此时传入的值为null，调用方法马上得到空指针异常        System.out.println(&quot;字符串长度为：&quot;+str.length());    }}</code></pre><p id="37349683-cf3d-41eb-9a46-44ee600c1434" class="">因此我们还需要在使用之前进行判空操作：</p><pre id="c86dff7c-9bb7-476e-9a0b-239ed40054f0" class="code code-wrap"><code>private static void test(String str){    if(str == null) return;   //这样就可以防止null导致的异常了    if(!str.isEmpty()) {        System.out.println(&quot;字符串长度为：&quot;+str.length());    }}</code></pre><p id="e2aefdea-58d1-4034-ae92-022e42a7cce1" class="">虽然这种方式很好，但是在Java8之后，有了Optional类，它可以更加优雅地处理这种问题，我们来看看如何使用：</p><pre id="6efd7d8c-8224-4084-bbf8-83d0d32a463e" class="code code-wrap"><code>private static void test(String str){    Optional            .ofNullable(str)   //将传入的对象包装进Optional中            .ifPresent(s -&gt; System.out.println(&quot;字符串长度为：&quot;+s.length()));                    //如果不为空，则执行这里的Consumer实现}</code></pre><p id="e8bfff58-a110-47b0-ba38-71a37bbfe2f7" class="">优雅，真是太优雅了，同样的功能，现在我们只需要两行就搞定了，而且代码相当简洁。如果你学习过JavaScript或是Kotlin等语言，它的语法就像是：</p><pre id="6f541da4-1a0c-447e-a5ec-c793cee45cb2" class="code code-wrap"><code>var str : String? = nullstr?.upperCase()</code></pre><p id="88fcd221-7ffa-4314-b24c-4d407519c4c6" class="">并且，包装之后，我们再获取时可以优雅地处理为空的情况：</p><pre id="77a95d4b-69e0-4c33-86a8-91495aa04ea3" class="code code-wrap"><code>private static void test(String str){    String s = Optional.ofNullable(str).get();   //get方法可以获取被包装的对象引用，但是如果为空的话，会抛出异常    System.out.println(s);}</code></pre><p id="426b38b6-b797-4378-9695-326a992a6571" class="">我们可以对于这种有可能为空的情况进行处理，如果为空，那么就返回另一个备选方案：</p><pre id="95edb602-6662-4626-ac4b-3f1afc66832b" class="code code-wrap"><code>private static void test(String str){    String s = Optional.ofNullable(str).orElse(&quot;我是为null的情况备选方案&quot;);    System.out.println(s);}</code></pre><p id="87e0d724-5cfe-45a4-8adc-fd2cddde92a7" class="">是不是感觉很方便？我们还可以将包装的类型直接转换为另一种类型：</p><pre id="357d59bb-b875-4f48-867c-af934bcb9d60" class="code code-wrap"><code>private static void test(String str){    Integer i = Optional            .ofNullable(str)            .map(String::length)   //使用map来进行映射，将当前类型转换为其他类型，或者是进行处理            .orElse(-1);    System.out.println(i);}</code></pre><p id="8cd34cbd-5112-40ad-92af-dcd78941e021" class="">当然，Optional的方法比较多，这里就不一一介绍了。</p><hr id="cea7a9b1-ec55-4ed3-8c5f-db9191b7bd47"/><h2 id="b9f69e95-b07b-4684-a6ce-43479f677519" class="">数据结构基础</h2><p id="20f467ab-bc33-4336-93e2-2984d7ef3c34" class=""><strong>注意：</strong>本部分内容难度很大，推荐计算机专业课程《数据结构与算法》作为前置学习课程。本部分介绍数据结构只是为了为后面的集合类型做准备。</p><p id="efc1a3df-8bba-47c4-b6d9-a5109319cfdc" class="">学习集合类之前，我们还有最关键的内容需要学习，同第二章一样，自底向上才是最佳的学习方向，比起直接带大家认识集合类，不如先了解一下数据结构，只有了解了数据结构基础，才能更好地学习集合类，同时，数据结构也是你以后深入学习JDK源码的必备条件（学习不要快餐式）当然，我们主要是讲解Java，数据结构作为铺垫作用，所以我们只会讲解关键的部分，其他部分可以在数据结构与算法篇视频教程中详细学习。</p><blockquote id="080053bc-6283-4bca-9f6f-5d0e8947fbc2" class="">在计算机科学中，数据结构是一种数据组织、管理和存储的格式,它可以帮助我们实现对数据高效的访问和修改。更准确地说,数据结构是数据值的集合，可以体现数据值之间的关系，以及可以对数据进行应用的函数或操作。</blockquote><p id="0b24d171-20ca-41b3-818a-c6d9a85a3c49" class="">通俗地说，我们需要去学习在计算机中如何去更好地管理我们的数据，才能让我们对我们的数据控制更加灵活！</p><figure id="a74910c1-9495-493a-89ae-96414f2d3cf8" class="image"><a href="https://s2.loli.net/2022/07/10/9RwL7pxgyfoB3WT.png"><img src="https://s2.loli.net/2022/07/10/9RwL7pxgyfoB3WT.png"/></a></figure><p id="df0fda0e-9390-45d8-a69a-a7ceffb6995d" class="">image-20220710103307583</p><p id="615a35a1-4014-4f69-ab47-c65dcadad892" class="">比如现在我们需要保存100个学生的数据，那么你首先想到的肯定是使用数组吧！没错，没有什么比数组更适合存放这100个学生的数据了，但是如果我们现在有了新的需求呢？我们不仅仅是存放这些数据，我们还希望能够将这些数据按顺序存放，支持在某个位置插入一条数据、删除一条数据、修改一条数据等，这时候，数组就显得有些乏力了。</p><p id="2221bfe6-9ec6-4a6d-9606-f8ac7d323b54" class="">数组无法做到这么高级的功能，那么我们就需要定义一种更加高级的数据结构来做到，我们可以使用线性表（Linear List）</p><blockquote id="02b9bf97-8095-40dc-bd2c-92c8b9760061" class="">线性表是由同一类型的数据元素构成的有序序列的线性结构。线性表中元素的个数就是线性表的长度，表的起始位置称为表头，表的结束位置称为表尾，当一个线性表中没有元素时，称为空表。</blockquote><p id="68de2a93-9c09-42fc-8cf9-c8f56b88a6d6" class="">线性表一般需要包含以下功能：</p><ul id="0fd5aee7-1390-4a2f-a1db-682fbe8caacd" class="bulleted-list"><li style="list-style-type:disc"><strong>获取指定位置上的元素：</strong>直接获取线性表指定位置<code>i</code>上的元素。</li></ul><ul id="bb8f55d1-6220-4d5e-b6b8-31094b1a69de" class="bulleted-list"><li style="list-style-type:disc"><strong>插入元素：</strong>在指定位置<code>i</code>上插入一个元素。</li></ul><ul id="2c14c6a3-ba42-43f5-92f9-76c4de8ae7d1" class="bulleted-list"><li style="list-style-type:disc"><strong>删除元素：</strong>删除指定位置<code>i</code>上的一个元素。</li></ul><ul id="42c7a8bb-ce82-4bb4-815a-23a9e0c753d9" class="bulleted-list"><li style="list-style-type:disc"><strong>获取长度：</strong>返回线性表的长度。</li></ul><p id="a9310039-e7d2-41a2-be26-b95bd35ac17c" class="">也就是说，现在我们需要设计的是一种功能完善的表结构，它不像是数组那么低级，而是真正意义上的表：</p><figure id="76e4a5fd-414a-4498-b609-51f5e7ff5e7c" class="image"><a href="https://s2.loli.net/2022/07/23/Ve6dlqROzhumD5o.png"><img src="https://s2.loli.net/2022/07/23/Ve6dlqROzhumD5o.png"/></a></figure><p id="6269a31f-1a40-43fc-ab29-7d21338868a9" class="">image-20220723112639416</p><p id="1002c2cd-65de-4a76-8c1b-e0eaabd60859" class="">简单来说它就是列表，比如我们的菜单，我们在点菜时就需要往菜单列表中添加菜品或是删除菜品，这时列表就很有用了，因为数组长度固定、操作简单，而我们添加菜品、删除菜品这些操作又要求长度动态变化、操作多样。</p><p id="89e498b1-4106-426f-b492-778626ed0bab" class="">那么，如此高级的数据结构，我们该如何去实现呢？实现线性表的结构一般有两种，一种是顺序存储实现，还有一种是链式存储实现，我们先来看第一种，也是最简单的的一种。</p><h3 id="a6365b7e-66b9-4461-a794-0ac607c3c37d" class="">线性表：顺序表</h3><p id="5cc1f0dd-45d2-4db8-b15e-2693616ab83d" class="">前面我们说到，既然数组无法实现这样的高级表结构，那么我就基于数组，对其进行强化，也就是说，我们存放数据还是使用数组，但是我们可以为其编写一些额外的操作来强化为线性表，像这样底层依然采用顺序存储实现的线性表，我们称为顺序表。</p><figure id="1fe2fc71-e5ff-4e81-8e32-9f9cf2c18dd8" class="image"><a href="https://s2.loli.net/2022/07/24/elBvx4Zo1AJ2WqT.png"><img src="https://s2.loli.net/2022/07/24/elBvx4Zo1AJ2WqT.png"/></a></figure><p id="12fdeff7-23f3-421d-b05a-65464dec28f7" class="">image-20220724150015044</p><p id="3caf3dfc-280e-47ef-a675-ac2ca91683f9" class="">这里我们可以先定义一个新的类型：</p><pre id="403fa72e-cc6f-488c-8995-3bf77e4057a2" class="code code-wrap"><code>public class ArrayList&lt;E&gt; {   //泛型E，因为表中要存的具体数据类型待定    int capacity = 10;   //当前顺序表的容量    int size = 0;   //当前已经存放的元素数量    private Object[] array = new Object[capacity];   //底层存放数据的数组}</code></pre><p id="d3cdde90-fd89-4615-be41-2c3c6fb291eb" class="">顺序表的插入和删除操作，其实就是：</p><figure id="65346812-8509-4db7-afd2-0606bc154e76" class="image"><a href="https://s2.loli.net/2022/09/27/24Glc7UQjLt5Wny.jpg"><img src="https://s2.loli.net/2022/09/27/24Glc7UQjLt5Wny.jpg"/></a></figure><p id="cffc94f4-4c3f-4408-938e-c238be24fa0c" class="">67813f22-3607-4351-934d-f8127e6ba15a</p><p id="b99a4082-c9b5-4112-9a44-24c6ea886c35" class="">当插入元素时，需要将插入位置给腾出来，也就是将后面的所有元素向后移，同样的，如果要删除元素，那么也需要将所有的元素向前移动，顺序表是紧凑的，不能出现空位。</p><p id="1c8d93c1-c6f7-4e97-ba04-6a5d4c13b715" class="">所以说我们可以来尝试实现一下，首先是插入方法：</p><pre id="3aca29e7-734c-4300-9500-e0016fdf1474" class="code code-wrap"><code>public void add(E element, int index){   //插入方法需要支持在指定下标位置插入    for (int i = size; i &gt; index; i--)   //从后往前，一个一个搬运元素        array[i] = array[i - 1];    array[index] = element;   //腾出位置之后，直接插入元素放到对应位置上    size++;   //插入完成之后，记得将size自增}</code></pre><p id="03352f07-145c-4c7c-bf97-56af8be60621" class="">只不过这样并不完美，因为我们的插入操作并不是在任何位置都支持插入的，我们允许插入的位置只能是 [0, size] 这个范围内</p><figure id="449a8db4-546d-4b66-bc89-7d0417f9c698" class="image"><a href="https://s2.loli.net/2022/07/23/H67F1crBhqQiXxg.png"><img src="https://s2.loli.net/2022/07/23/H67F1crBhqQiXxg.png"/></a></figure><p id="45afda24-e4b5-4281-84ed-6188ebee84e3" class="">image-20220723153933279</p><p id="37fd4ab8-2524-424c-8478-893af0d10f46" class="">所以说我们需要在插入之前进行判断：</p><pre id="b945dee9-feb3-43d8-9b45-8e229fa8ed93" class="code code-wrap"><code>public void add(E element, int index){    if(index &lt; 0 || index &gt; size)    //插入之前先判断插入位置是否合法        throw new IndexOutOfBoundsException(&quot;插入位置非法，合法的插入位置为：0 ~ &quot;+size);    for (int i = size; i &gt; index; i--)        array[i] = array[i - 1];    array[index] = element;    size++;}</code></pre><p id="b9c373f4-fcd9-4450-9596-7b4d529be6a2" class="">我们来测试一下吧：</p><pre id="b9e7355d-3c47-4c87-954b-cf300a6f5cb4" class="code code-wrap"><code>public static void main(String[] args) {    ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();    list.add(10, 1);    //一上来只能在第一个位置插入，第二个位置肯定是非法的}</code></pre><p id="4a92418c-0a98-4ac4-86bb-4c20f0a12769" class="">于是就成功得到异常：</p><figure id="bf50738e-f575-4cf4-afc4-641ea68c0abc" class="image"><a href="https://s2.loli.net/2022/09/27/rtkRMaWseE2Cm1z.png"><img src="https://s2.loli.net/2022/09/27/rtkRMaWseE2Cm1z.png"/></a></figure><p id="c0ed922d-94ce-41d3-b263-b3ee5a059bf6" class="">image-20220927211134905</p><p id="cbfffa68-d5bb-4274-ab7e-6131ba7e1d14" class="">只不过依然不够完美，万一我们的顺序表装满了咋办？所以说，我们在插入元素之前，需要进行判断，如果已经装满了，那么我们需要先扩容之后才能继续插入新的元素：</p><pre id="fed636b8-0900-447c-8c2b-b3a873618092" class="code code-wrap"><code>public void add(E element, int index){    if(index &lt; 0 || index &gt; size)        throw new IndexOutOfBoundsException(&quot;插入位置非法，合法的插入位置为：0 ~ &quot;+size);    if(capacity == size) {        int newCapacity = capacity + (capacity &gt;&gt; 1);   //扩容规则就按照原本容量的1.5倍来吧        Object[] newArray = new Object[newCapacity];    //创建一个新的数组来存放更多的元素        System.arraycopy(array, 0, newArray, 0, size);   //使用arraycopy快速拷贝原数组内容到新的数组        array = newArray;   //更换为新的数组        capacity = newCapacity;   //容量变成扩容之后的    }    for (int i = size; i &gt; index; i--)        array[i] = array[i - 1];    array[index] = element;    size++;}</code></pre><p id="b24702ca-65e5-44f0-a1a5-fb05d2d7cfe0" class="">我们来重写一下<code>toString</code>方法打印当前存放的元素：</p><pre id="815f6fe6-da00-414e-9cf8-b1ca6f3cca27" class="code code-wrap"><code>public String toString() {    StringBuilder builder = new StringBuilder();    for (int i = 0; i &lt; size; i++) builder.append(array[i]).append(&quot; &quot;);    return builder.toString();}</code></pre><p id="52755c59-ab27-4279-999b-e876ac47666b" class="">可以看到，我们的底层数组会自动扩容，便于我们使用：</p><pre id="ce0a1324-5997-4b81-9b39-0379fbbbeb52" class="code code-wrap"><code>public static void main(String[] args) {    ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();    for (int i = 0; i &lt; 20; i++)        list.add(i, i);    System.out.println(list);}</code></pre><figure id="a0d36b3b-d081-4522-a974-45ba98d15a1a" class="image"><a href="https://s2.loli.net/2022/09/27/6SMZxC5QI3cgXYk.png"><img src="https://s2.loli.net/2022/09/27/6SMZxC5QI3cgXYk.png"/></a></figure><p id="9ab9d323-60f1-4606-960a-db39f45c1391" class="">image-20220927212426959</p><p id="2e33cf68-0b56-437c-9007-2cccf97ab308" class="">我们接着来看删除操作，其实操作差不多，只需要将后面的覆盖到前面就可以了：</p><pre id="26bb7fc7-da00-46ef-867b-7bb7ebb496c9" class="code code-wrap"><code>@SuppressWarnings(&quot;unchecked&quot;)   //屏蔽未经检查警告public E remove(int index){   //删除对应位置上的元素，注意需要返回被删除的元素    E e = (E) array[index];   //因为存放的是Object类型，这里需要强制类型转换为E    for (int i = index; i &lt; size; i++)   //从前往后，挨个往前搬一位        array[i] = array[i + 1];    size--;    //删完记得将size--    return e;}</code></pre><p id="5d16de12-b2e6-4917-be78-d16366c3a58f" class="">同样的，我们需要对删除的合法范围进行判断：</p><figure id="a5d5936c-3f15-4820-b221-f0ba0b48bd32" class="image"><a href="https://s2.loli.net/2022/07/23/uHBjUfKpd9ygScW.png"><img src="https://s2.loli.net/2022/07/23/uHBjUfKpd9ygScW.png"/></a></figure><p id="95b6cea3-f581-42d4-b1d0-a1617bc4a404" class="">image-20220723160901921</p><p id="245f821e-24b4-4f1c-ae02-5b75d7e2e10f" class="">所以说我们也来进行一下判断：</p><pre id="7eec7c26-ff8b-425d-b819-3de15cdd5ed9" class="code code-wrap"><code>@SuppressWarnings(&quot;unchecked&quot;)public E remove(int index){    if(index &lt; 0 || index &gt; size - 1)        throw new IndexOutOfBoundsException(&quot;删除位置非法，合法的插入位置为：0 ~ &quot;+(size - 1));    E e = (E) array[index];    for (int i = index; i &lt; size; i++)        array[i] = array[i + 1];    size--;    return e;}</code></pre><p id="51f19ecf-ee1c-45e6-94da-d8f70b15cb13" class="">因为删除不需要考虑容量的问题，所以说这里的删除操作就编写完成了。</p><p id="4e19990c-136b-4562-9a05-07cb6cd47d7e" class="">当然，我们还得支持获取指定下标位置上的元素，这个就简单了，直接从数组中那就行了：</p><pre id="d1fdef9c-91a1-44d8-97f7-bb3da64fc0dd" class="code code-wrap"><code>@SuppressWarnings(&quot;unchecked&quot;)public E get(int index){    if(index &lt; 0 || index &gt; size - 1)   //在插入之前同样要进行范围检查        throw new IndexOutOfBoundsException(&quot;非法的位置，合法的位置为：0 ~ &quot;+(size - 1));    return (E) array[index];   //直接返回就完事}public int size(){   //获取当前存放的元素数量    return size;}</code></pre><p id="ff8b6b37-0778-4bc4-ae55-835bfb7b2641" class="">是不是感觉顺便表其实还是挺简单的，也就是一个数组多了一些操作罢了。</p><h3 id="c2967bd7-2b42-41b5-9342-5c231e682ebb" class="">线性表：链表</h3><p id="771bd695-d573-4e42-a96d-1b4ab06e641e" class="">前面我们介绍了如何使用数组实现线性表，我们接着来看第二种方式，我们可以使用链表来实现，那么什么是链表呢？</p><figure id="a7820adf-02fa-471d-bd90-7b62f126b747" class="image"><a href="https://s2.loli.net/2022/07/23/ruemiRQplVy7q9s.png"><img src="https://s2.loli.net/2022/07/23/ruemiRQplVy7q9s.png"/></a></figure><p id="a529b46d-61d1-4843-94f8-b443901aaca7" class="">image-20220723171648380</p><p id="bc13ee95-488a-4cdd-a2e6-bdd800207537" class="">链表不同于顺序表，顺序表底层采用数组作为存储容器，需要分配一块连续且完整的内存空间进行使用，而链表则不需要，它通过一个指针来连接各个分散的结点，形成了一个链状的结构，每个结点存放一个元素，以及一个指向下一个结点的指针，通过这样一个一个相连，最后形成了链表。它不需要申请连续的空间，只需要按照顺序连接即可，虽然物理上可能不相邻，但是在逻辑上依然是每个元素相邻存放的，这样的结构叫做链表（单链表）。</p><p id="7266e440-988b-4c21-97b1-7aff03f943c9" class="">链表分为带头结点的链表和不带头结点的链表，戴头结点的链表就是会有一个头结点指向后续的整个链表，但是头结点不存放数据：</p><figure id="70077452-c3b1-47f0-beed-3162944d8c20" class="image"><a href="https://s2.loli.net/2022/07/23/gRUEfOqbtrGN2JZ.png"><img src="https://s2.loli.net/2022/07/23/gRUEfOqbtrGN2JZ.png"/></a></figure><p id="d59edd9b-1943-4249-b17d-763e5845731d" class="">image-20220723180221112</p><p id="9110b49b-4cd2-4401-8b5e-001947f21e32" class="">而不带头结点的链表就像上面那样，第一个节点就是存放数据的结点，一般设计链表都会采用带头结点的结构，因为操作更加方便。</p><p id="71f612e2-ba03-4833-81d3-2be06d5e9372" class="">我们来尝试定义一下：</p><pre id="dd0e15ca-7157-4a14-85a3-a54b95871a74" class="code code-wrap"><code>public class LinkedList&lt;E&gt; {    //链表的头结点，用于连接之后的所有结点    private final Node&lt;E&gt; head = new Node&lt;&gt;(null);    private int size = 0;   //当前的元素数量还是要存一下，方便后面操作    private static class Node&lt;E&gt; {  //结点类，仅供内部使用        E element;   //每个结点都存放元素        Node&lt;E&gt; next;   //以及指向下一个结点的引用        public Node(E element) {            this.element = element;        }    }}</code></pre><p id="aa11df4e-56b3-4ee6-9a72-26806443ad1c" class="">接着我们来设计一下链表的插入和删除，我们前面实现了顺序表的插入，那么链表的插入该怎么做呢？</p><figure id="4b178d44-05cd-4c2b-a134-6ff34b4922e4" class="image"><a href="https://s2.loli.net/2022/07/23/71dgFSWDfoELiXB.png"><img src="https://s2.loli.net/2022/07/23/71dgFSWDfoELiXB.png"/></a></figure><p id="bb38d3f8-c317-4392-be13-915f41e43ce5" class="">image-20220723175548491</p><p id="894633e5-f8fb-4bb9-be31-58b7be157809" class="">我们可以先修改新插入的结点的后继结点（也就是下一个结点）指向，指向原本在这个位置的结点：</p><figure id="49f6cf51-4df5-46a6-a53e-ccb32262ecb1" class="image"><a href="https://s2.loli.net/2022/07/23/8MNURYiacWZqwu6.png"><img src="https://s2.loli.net/2022/07/23/8MNURYiacWZqwu6.png"/></a></figure><p id="af6e8a67-cc18-4ff4-831b-7700a80833dc" class="">image-20220723220552680</p><p id="f011a3e2-146c-41a7-b79c-aeddcfbdeaeb" class="">接着我们可以将前驱结点（也就是上一个结点）的后继结点指向修改为我们新插入的结点：</p><figure id="15068fc3-6701-4628-9799-6da5b7cbde4d" class="image"><a href="https://s2.loli.net/2022/07/23/ysETUJb6cgBz2Qx.png"><img src="https://s2.loli.net/2022/07/23/ysETUJb6cgBz2Qx.png"/></a></figure><p id="7fd0bee0-b549-4bb1-8267-9c970f0df103" class="">image-20220723175745472</p><p id="2ba6c182-0e29-4f40-ad67-4e9ad06e9b2d" class="">这样，我们就成功插入了一个新的结点，现在新插入的结点到达了原本的第二个位置上：</p><figure id="d1b2db9c-7782-495e-b5e4-a2060e72be15" class="image"><a href="https://s2.loli.net/2022/07/23/Kb7jCiWa3o4AN8D.png"><img src="https://s2.loli.net/2022/07/23/Kb7jCiWa3o4AN8D.png"/></a></figure><p id="b114becf-8557-4413-bec5-4b7a39a6b40d" class="">image-20220723175842075</p><p id="d236f563-f2d3-4422-bde3-651dc71b21a0" class="">按照这个思路，我们来实现一下，首先设计一下方法：</p><pre id="280da6e3-ca8f-4f54-b54b-a7ee55c12f44" class="code code-wrap"><code>public void add(E element, int index){    Node&lt;E&gt; prev = head;   //先找到对应位置的前驱结点    for (int i = 0; i &lt; index; i++)        prev = prev.next;    Node&lt;E&gt; node = new Node&lt;&gt;(element);   //创建新的结点    node.next = prev.next;   //先让新的节点指向原本在这个位置上的结点    prev.next = node;   //然后让前驱结点指向当前结点    size++;   //完事之后一样的，更新size}</code></pre><p id="badd668b-fad3-4b9a-9a81-7c1e9ffb0f9f" class="">我们来重写一下toString方法看看能否正常插入：</p><pre id="b399bb98-c815-4dc9-bee4-189f439e465f" class="code code-wrap"><code>@Overridepublic String toString() {    StringBuilder builder = new StringBuilder();    Node&lt;E&gt; node = head.next;   //从第一个结点开始，一个一个遍历，遍历一个就拼接到字符串上去    while (node != null) {        builder.append(node.element).append(&quot; &quot;);        node = node.next;    }    return builder.toString();}</code></pre><p id="bc1acebd-c1e3-4e98-adb4-0706afc97dd2" class="">可以看到我们的插入操作是可以正常工作的：</p><pre id="bcf7d06d-c28e-4fa9-8026-55eca26162c8" class="code code-wrap"><code>public static void main(String[] args) {    LinkedList&lt;Integer&gt; list = new LinkedList&lt;&gt;();    list.add(10, 0);    list.add(30, 0);    list.add(20, 1);    System.out.println(list);}</code></pre><figure id="15bda6a9-af57-4330-8036-a6b8b49a46d2" class="image"><a href="https://s2.loli.net/2022/09/27/Mpj9azwWciemAZY.png"><img src="https://s2.loli.net/2022/09/27/Mpj9azwWciemAZY.png"/></a></figure><p id="212c0009-46a4-46db-9cea-61434fcff155" class="">image-20220927235051844</p><p id="06a8209a-775d-4ad0-a5ac-fdaa022edc61" class="">只不过还不够完美，跟之前一样，我们还得考虑插入位置是否合法：</p><pre id="3673269f-7ea2-4457-bdae-c725dfc59409" class="code code-wrap"><code>public void add(E element, int index){    if(index &lt; 0 || index &gt; size)        throw new IndexOutOfBoundsException(&quot;插入位置非法，合法的插入位置为：0 ~ &quot;+size);    Node&lt;E&gt; prev = head;    for (int i = 0; i &lt; index; i++)        prev = prev.next;    Node&lt;E&gt; node = new Node&lt;&gt;(element);    node.next = prev.next;    prev.next = node;    size++;}</code></pre><p id="2e5f5e36-02f5-40ba-8ecd-fd69e781de6c" class="">插入操作完成之后，我们接着来看删除操作，那么我们如何实现删除操作呢？实际上也会更简单一些，我们可以直接将待删除节点的前驱结点指向修改为待删除节点的下一个：</p><figure id="063d1c43-0375-4de0-b52f-be4e93ed4602" class="image"><a href="https://s2.loli.net/2022/07/23/N5sZx9T2a8lOzoC.png"><img src="https://s2.loli.net/2022/07/23/N5sZx9T2a8lOzoC.png"/></a></figure><p id="42103937-6740-432a-91ca-b3a89f5ea6cb" class="">image-20220723222922058</p><figure id="6bbb3179-f28f-48bd-83bd-9f96d9c15fea" class="image"><a href="https://s2.loli.net/2022/07/23/tNYnBJe9pczUq1Z.png"><img src="https://s2.loli.net/2022/07/23/tNYnBJe9pczUq1Z.png"/></a></figure><p id="e6e74357-aa6c-437f-b853-b3897f2ed995" class="">image-20220723223103306</p><p id="d8b2ba90-182a-404f-92ec-a0adcabe24d6" class="">这样，在逻辑上来说，待删除结点其实已经不在链表中了，所以我们只需要释放掉待删除结点占用的内存空间就行了：</p><figure id="9599ca7f-7c01-4621-b030-36130d573074" class="image"><a href="https://s2.loli.net/2022/07/23/MFE2gZuS5eOysDW.png"><img src="https://s2.loli.net/2022/07/23/MFE2gZuS5eOysDW.png"/></a></figure><p id="4f0c53ae-2035-42c7-ba60-ec9353a683ee" class="">image-20220723223216420</p><p id="ec54f134-335e-466d-9d66-f740f60fecf0" class="">那么我们就按照这个思路来编写一下程序：</p><pre id="46c0a23f-bd27-4a59-b5c5-c3fee41b9913" class="code code-wrap"><code>public E remove(int index){    if(index &lt; 0 || index &gt; size - 1)   //同样的，先判断位置是否合法        throw new IndexOutOfBoundsException(&quot;删除位置非法，合法的删除位置为：0 ~ &quot;+(size - 1));    Node&lt;E&gt; prev = head;    for (int i = 0; i &lt; index; i++)   //同样需要先找到前驱结点        prev = prev.next;    E e = prev.next.element;   //先把待删除结点存放的元素取出来    prev.next = prev.next.next;  //可以删了    size--;   //记得size--    return e;}</code></pre><p id="03feb3b2-f4e9-47f3-a7c1-0dd50097d7b2" class="">是不是感觉还是挺简单的？这样，我们就成功完成了链表的删除操作。</p><p id="37a5497f-b253-45ca-922a-7e450ea68243" class="">我们接着来实现一下获取对应位置上的元素：</p><pre id="66d502f7-0208-4322-b8c4-ac021fd033ae" class="code code-wrap"><code>public E get(int index){    if(index &lt; 0 || index &gt; size - 1)        throw new IndexOutOfBoundsException(&quot;非法的位置，合法的位置为：0 ~ &quot;+(size - 1));    Node&lt;E&gt; node = head;    while (index-- &gt;= 0)   //这里直接让index减到-1为止        node = node.next;    return node.element;}public int size(){    return size;}</code></pre><p id="3ba9f85e-8ff5-41d9-8b53-7d1e2abbf4a0" class="">这样，我们的链表就编写完成了，实际上只要理解了那种结构，其实还是挺简单的。</p><p id="5b86a364-0d76-48af-84f4-3b50db981b58" class=""><strong>问题</strong>：什么情况下使用顺序表，什么情况下使用链表呢？</p><ul id="4bc279b6-3330-479e-8c8d-564a02f714d4" class="bulleted-list"><li style="list-style-type:disc">通过分析顺序表和链表的特性我们不难发现，链表在随机访问元素时，需要通过遍历来完成，而顺序表则利用数组的特性直接访问得到，所以，当我们读取数据多于插入或是删除数据的情况下时，使用顺序表会更好。</li></ul><ul id="94cdf7ce-bdb2-4e07-b444-9bca957888b4" class="bulleted-list"><li style="list-style-type:disc">而顺序表在插入元素时就显得有些鸡肋了，因为需要移动后续元素，整个移动操作会浪费时间，而链表则不需要，只需要修改结点 指向即可完成插入，所以在频繁出现插入或删除的情况下，使用链表会更好。</li></ul><p id="81eef8d3-20be-45b6-84e9-99e636a30ac5" class="">虽然单链表使用起来也比较方便，不过有一个问题就是，如果我们想要操作某一个结点，比如删除或是插入，那么由于单链表的性质，我们只能先去找到它的前驱结点，才能进行。为了解决这种查找前驱结点非常麻烦的问题，我们可以让结点不仅保存指向后续结点的指针，同时也保存指向前驱结点的指针：</p><figure id="fa5691fe-2527-4e2d-be7e-c5f9055e28c6" class="image"><a href="https://s2.loli.net/2022/07/24/oeXm6nyW7I9lPMf.png"><img src="https://s2.loli.net/2022/07/24/oeXm6nyW7I9lPMf.png"/></a></figure><p id="1c43306e-6b9f-49b1-b077-a9656c108f1f" class="">image-20220724123947104</p><p id="dc3d81c5-de2d-44ab-bfb0-c69e34a2a27a" class="">这样我们无论在哪个结点，都能够快速找到对应的前驱结点，就很方便了，这样的链表我们成为双向链表（双链表）</p><h3 id="5e0b9c37-0680-4998-88f7-8f0d1a35513e" class="">线性表：栈</h3><p id="09382048-655f-429e-aefa-b6005055bf6c" class="">栈（也叫堆栈，Stack）是一种特殊的线性表，它只能在在表尾进行插入和删除操作，就像下面这样：</p><figure id="ba45de23-08e9-45f9-9a9e-262af5afdfdc" class="image"><a href="https://s2.loli.net/2022/07/24/D3heysaM9EpAgS4.png"><img src="https://s2.loli.net/2022/07/24/D3heysaM9EpAgS4.png"/></a></figure><p id="e40ebad9-7269-4380-9f30-f24ccbc0bbcd" class="">image-20220724210955622</p><p id="72f89d33-79a9-44f9-ae42-4df7078b19b3" class="">也就是说，我们只能在一端进行插入和删除，当我们依次插入1、2、3、4这四个元素后，连续进行四次删除操作，删除的顺序刚好相反：4、3、2、1，我们一般将其竖着看：</p><figure id="583784c3-9ef2-438d-ae5c-06a01a405b7d" class="image"><a href="https://s2.loli.net/2022/07/24/2NxUpCIRLoZt9Ky.png"><img src="https://s2.loli.net/2022/07/24/2NxUpCIRLoZt9Ky.png"/></a></figure><p id="f94ee892-de08-454c-8cc1-9ece54c914c9" class="">image-20220724211442421</p><p id="05194cd4-22da-4b7b-8bf3-6af3d6b28050" class="">底部称为栈底，顶部称为栈顶，所有的操作只能在栈顶进行，也就是说，被压在下方的元素，只能等待其上方的元素出栈之后才能取出，就像我们往箱子里里面放的书一样，因为只有一个口取出里面的物品，所以被压在下面的书只能等上面的书被拿出来之后才能取出，这就是栈的思想，它是一种先进后出的数据结构（FILO，First In, Last Out）</p><p id="84f2138a-7958-43e6-9de8-490706fcfbbd" class="">实现栈也是非常简单的，可以基于我们前面的顺序表或是链表，这里我们需要实现两个新的操作：</p><ul id="1b3ce489-cf85-49d7-8b75-7942184f1268" class="bulleted-list"><li style="list-style-type:disc">pop：出栈操作，从栈顶取出一个元素。</li></ul><ul id="93e5093d-fe44-4cb4-92eb-a00e3a66d3bb" class="bulleted-list"><li style="list-style-type:disc">push：入栈操作，向栈中压入一个新的元素。</li></ul><p id="29c2fcc8-84c4-4f0f-80f9-e94afaaa5c50" class="">栈可以使用顺序表实现，也可以使用链表实现，这里我们就使用链表，实际上使用链表会更加的方便，我们可以直接将头结点指向栈顶结点，而栈顶结点连接后续的栈内结点：</p><figure id="4d3f632f-e8fd-4999-a049-50f29019029f" class="image"><a href="https://s2.loli.net/2022/07/24/outf2S7D3WzQK8c.png"><img src="https://s2.loli.net/2022/07/24/outf2S7D3WzQK8c.png"/></a></figure><p id="af82fd63-9105-4efe-a3ad-698580f5c62c" class="">image-20220724222836333</p><p id="58b4f42c-ea5b-45b2-805f-d19358e2e921" class="">当有新的元素入栈，只需要在链表头部插入新的结点即可，我们来尝试编写一下：</p><pre id="762de5a0-3210-4c4c-b1bc-1eae6ca3b505" class="code code-wrap"><code>public class LinkedStack&lt;E&gt; {    private final Node&lt;E&gt; head = new Node&lt;&gt;(null);   //大体内容跟链表类似    private static class Node&lt;E&gt; {        E element;        Node&lt;E&gt; next;        public Node(E element) {            this.element = element;        }    }}</code></pre><p id="cdf07385-0141-44af-a915-2d6eec411f08" class="">接着我们来编写一下入栈操作：</p><figure id="cdcf8e6c-690b-4eae-b416-6ae569d95c7e" class="image"><a href="https://s2.loli.net/2022/07/24/GdBj3g5YRFzSsVw.png"><img src="https://s2.loli.net/2022/07/24/GdBj3g5YRFzSsVw.png"/></a></figure><p id="ba899353-4487-4f04-83e2-293efa51a120" class="">image-20220724223550553</p><p id="3b580709-8e6b-4235-b6e7-448aec1f748b" class="">代码如下：</p><pre id="1778df0f-a98e-4cc0-a40c-f084e6f9f59c" class="code code-wrap"><code>public void push(E element){    Node&lt;E&gt; node = new Node&lt;&gt;(element);   //直接创建新结点    node.next = head.next;    //新结点的下一个变成原本的栈顶结点    head.next = node;     //头结点的下一个改成新的结点}</code></pre><p id="5e0648ee-bd92-4aef-8593-07696bbda6e8" class="">这样，我们就可以轻松实现入栈操作了。其实出栈也是同理，所以我们只需要将第一个元素移除即可：</p><pre id="6931fa3c-8192-4f9e-86ca-e2ee0208df9d" class="code code-wrap"><code>public E pop(){    if(head.next == null)   //如果栈已经没有元素了，那么肯定是没办法取的        throw new NoSuchElementException(&quot;栈为空&quot;);    E e = head.next.element;   //先把待出栈元素取出来    head.next = head.next.next;   //直接让头结点的下一个指向下一个的下一个    return e;}</code></pre><p id="d79961d0-ce63-4abc-8f24-45eb4e157852" class="">我们来测试一下吧：</p><pre id="c90b5379-8797-46a0-bd8a-7ac8d2b2ce27" class="code code-wrap"><code>public static void main(String[] args) {    LinkedStack&lt;String&gt; stack = new LinkedStack&lt;&gt;();    stack.push(&quot;AAA&quot;);    stack.push(&quot;BBB&quot;);    stack.push(&quot;CCC&quot;);    System.out.println(stack.pop());    System.out.println(stack.pop());    System.out.println(stack.pop());}</code></pre><p id="0e1e4645-995a-4af2-80bf-4588798de2d0" class="">可以看到，入栈顺序和出栈顺序是完全相反的：</p><figure id="016eee4c-ae47-47a2-82f2-fd8f394de81e" class="image"><a href="https://s2.loli.net/2022/09/28/yaWmfPDU63X8BQn.png"><img src="https://s2.loli.net/2022/09/28/yaWmfPDU63X8BQn.png"/></a></figure><p id="ad9d6900-89de-4def-8516-4c65c7502156" class="">image-20220928101152179</p><p id="fc34390d-4c6a-465f-b646-ff8201d24c31" class="">其实还是挺简单的。</p><h3 id="7a91d1de-718d-4656-a630-0c8cf3ba9ce9" class="">线性表：队列</h3><p id="c0363d2b-ac81-4308-9aff-01de619a596a" class="">前面我们学习了栈，栈中元素只能栈顶出入，它是一种特殊的线性表，同样的，队列（Queue）也是一种特殊的线性表。</p><p id="0f64cef2-a204-46a3-83ae-98efb40240f0" class="">就像我们在超市、食堂需要排队一样，我们总是排成一列，先到的人就排在前面，后来的人就排在后面，越前面的人越先完成任务，这就是队列，队列有队头和队尾：</p><figure id="f112ce90-fc3e-4af8-bca1-248dd63b41dd" class="image"><a href="https://s2.loli.net/2022/07/25/xBuZckTNtR54AEq.png"><img src="https://s2.loli.net/2022/07/25/xBuZckTNtR54AEq.png"/></a></figure><p id="a911a04b-6e15-4e57-a29d-e9297fccf7f9" class="">image-20220725103600318</p><p id="413ab370-3b86-4576-ab69-05065a1c4fc7" class="">秉承先来后到的原则，队列中的元素只能从队尾进入，只能从队首出去，也就是说，入队顺序为1、2、3、4，那么出队顺序也一定是1、2、3、4，所以队列是一种先进先出（FIFO，First In, First Out）的数据结构。</p><p id="524dcf7f-9a75-4eee-853b-fcdfaad6797a" class="">队列也可以使用链表和顺序表来实现，只不过使用链表的话就不需要关心容量之类的问题了，会更加灵活一些：</p><figure id="da4353ae-0394-4756-8ada-056d968fe8bf" class="image"><a href="https://s2.loli.net/2022/07/25/lwGgHXqAV5z2KNk.png"><img src="https://s2.loli.net/2022/07/25/lwGgHXqAV5z2KNk.png"/></a></figure><p id="2baf5b6b-4627-444f-b81d-ed30f7442a89" class="">image-20220725145214955</p><p id="f5256115-4ace-4aac-a205-ce8bff428f7e" class="">注意我们需要同时保存队首和队尾两个指针，因为是单链表，所以队首需要存放指向头结点的指针，因为需要的是前驱结点，而队尾则直接是指向尾结点的指针即可，后面只需要直接在后面拼接就行。</p><p id="f1260c32-29cc-4cb6-a72b-284541a34377" class="">当有新的元素入队时，只需要拼在队尾就行了，同时队尾指针也要后移一位：</p><figure id="e41a028f-e3ac-466b-bf80-d4ac28ccd4e9" class="image"><a href="https://s2.loli.net/2022/07/25/ufmFEwrS9xVKoIZ.png"><img src="https://s2.loli.net/2022/07/25/ufmFEwrS9xVKoIZ.png"/></a></figure><p id="4df1c219-b7b3-4836-be60-aee6dd37735f" class="">image-20220725145608827</p><p id="891082ce-bd44-44cb-bd7f-11f5da90d3fc" class="">出队时，只需要移除队首指向的下一个元素即可：</p><figure id="2b2b89ac-098f-4df7-8aba-a79a40f06331" class="image"><a href="https://s2.loli.net/2022/07/25/geJRFwHKhGT69XD.png"><img src="https://s2.loli.net/2022/07/25/geJRFwHKhGT69XD.png"/></a></figure><p id="77bd374b-2049-4e0d-80d8-7e2254623853" class="">image-20220725145707707</p><p id="da62d79c-abde-489a-869d-54560113f8dd" class="">那么我们就按照这个思路，来编写一下代码吧：</p><pre id="8b6390ce-8f50-44a5-81dd-3e5293a6dc53" class="code code-wrap"><code>public class LinkedQueue&lt;E&gt; {    private final Node&lt;E&gt; head = new Node&lt;&gt;(null);    public void offer(E element){  //入队操作        Node&lt;E&gt; last = head;        while (last.next != null)   //入队直接丢到最后一个结点的屁股后面就行了            last = last.next;        last.next = new Node&lt;&gt;(element);    }    public E poll(){   //出队操作        if(head.next == null)   //如果队列已经没有元素了，那么肯定是没办法取的            throw new NoSuchElementException(&quot;队列为空&quot;);        E e = head.next.element;        head.next = head.next.next;   //直接从队首取出        return e;    }    private static class Node&lt;E&gt; {        E element;        Node&lt;E&gt; next;        public Node(E element) {            this.element = element;        }    }}</code></pre><p id="7fe71c22-d05e-4d04-ad96-e8dbddb18c55" class="">其实使用起来还是挺简单的，我们来测试一下吧：</p><pre id="e58a1510-256f-478c-952d-9374a2341e40" class="code code-wrap"><code>public static void main(String[] args) {    LinkedQueue&lt;String&gt; stack = new LinkedQueue&lt;&gt;();    stack.offer(&quot;AAA&quot;);    stack.offer(&quot;BBB&quot;);    stack.offer(&quot;CCC&quot;);    System.out.println(stack.poll());    System.out.println(stack.poll());    System.out.println(stack.poll());}</code></pre><figure id="be1753a3-0156-4925-9d7e-0b604956d328" class="image"><a href="https://s2.loli.net/2022/09/28/FUS1Rc8JuEMT6bq.png"><img src="https://s2.loli.net/2022/09/28/FUS1Rc8JuEMT6bq.png"/></a></figure><p id="8ba5ff4d-4b1f-4914-9284-67d8dfc55d34" class="">image-20220928154121872</p><p id="5c912f4d-881e-432b-9a8d-1e587dd757a8" class="">可以看到，队列遵从先进先出，入队顺序和出队顺序是一样的。</p><h3 id="e36ee71a-06e7-4fd5-8ee2-856e3a4ff49d" class="">树：二叉树</h3><p id="0176728c-6bb5-4619-b9d8-b3c7c2c18e78" class="">树是一种全新的数据结构，它就像一棵树的树枝一样，不断延伸。</p><figure id="519bb342-c59b-4d2b-b235-2b88b907b1e3" class="image"><a href="https://s2.loli.net/2022/08/08/NajFZzXHxUCDQBW.png"><img src="https://s2.loli.net/2022/08/08/NajFZzXHxUCDQBW.png"/></a></figure><p id="c1624423-4982-470a-843f-617194615d33" class="">树枝666</p><p id="a4f2a2c7-fddb-4051-b78a-1353a36c3694" class="">在我们的程序中，想要表示出一棵树，就可以像下面这样连接：</p><figure id="78873e63-17a1-4207-84f8-131cdefe53a2" class="image"><a href="https://s2.loli.net/2022/08/01/aoBjrR5bPqWzCel.png"><img src="https://s2.loli.net/2022/08/01/aoBjrR5bPqWzCel.png"/></a></figure><p id="8780e056-9bdd-4afe-bcbe-33df411a35d7" class="">image-20220801210920230</p><p id="ae17d3ff-f502-4e2d-9db1-2221fd1dc155" class="">可以看到，现在一个结点下面可能会连接多个节点，并不断延伸，就像树枝一样，每个结点都有可能是一个分支点，延伸出多个分支，从位于最上方的结点开始不断向下，而这种数据结构，我们就称为<strong>树</strong>（Tree）注意分支只能向后单独延伸，之后就分道扬镳了，<strong>不能与其他分支上的结点相交！</strong></p><ul id="1d20ab87-af58-44e6-9681-830711d4b19a" class="bulleted-list"><li style="list-style-type:disc">我们一般称位于最上方的结点为树的<strong>根结点</strong>（Root）因为整棵树正是从这里开始延伸出去的。</li></ul><ul id="5fd61d99-51ba-4bd2-a664-ea6ea3c47df6" class="bulleted-list"><li style="list-style-type:disc">每个结点连接的子结点数目（分支的数目），我们称为结点的<strong>度</strong>（Degree），而各个结点度的最大值称为树的度。</li></ul><ul id="a14bedb5-258e-42e0-bed5-7c897c029baf" class="bulleted-list"><li style="list-style-type:disc">每个结点延伸下去的下一个结点都可以称为一棵<strong>子树</strong>（SubTree）比如结点<code>B</code>及其之后延伸的所有分支合在一起，就是一棵<code>A</code>的子树。</li></ul><ul id="78c6db9d-3861-4745-b93f-18c89dcf7012" class="bulleted-list"><li style="list-style-type:disc">每个<strong>结点的层次</strong>（Level）按照从上往下的顺序，树的根结点为<code>1</code>，每向下一层<code>+1</code>，比如<code>G</code>的层次就是<code>3</code>，整棵树中所有结点的最大层次，就是这颗<strong>树的深度</strong>（Depth），比如上面这棵树的深度为4，因为最大层次就是4。</li></ul><p id="2ee0c854-a739-4b06-9e42-c32df58fe0a2" class="">由于整棵树错综复杂，所以说我们需要先规定一下结点之间的称呼，就像族谱那样：</p><ul id="faf9f4e2-3e0c-40a2-8fdd-5197dfebf75c" class="bulleted-list"><li style="list-style-type:disc">与当前结点直接向下相连的结点，我们称为<strong>子结点</strong>（Child），比如<code>B、C、D</code>结点，都是<code>A</code>的子结点，就像族谱中的父子关系一样，下一代一定是子女，相反的，那么<code>A</code>就是<code>B、C、D</code>的<strong>父结点</strong>（Parent），也可以叫双亲结点。</li></ul><ul id="c7e36396-41a3-4d70-963f-f07b7b14b22a" class="bulleted-list"><li style="list-style-type:disc">如果某个节点没有任何的子结点（结点度为0时）那么我们称这个结点为<strong>叶子结点</strong>（因为已经到头了，后面没有分支了，这时就该树枝上长叶子了那样）比如<code>K、L、F、G、M、I、J</code>结点，都是叶子结点。</li></ul><ul id="8ebb4815-5a0a-4273-a344-3dd302c29aed" class="bulleted-list"><li style="list-style-type:disc">如果两个结点的父结点是同一个，那么称这两个节点为<strong>兄弟结点</strong>（Sibling）比如<code>B</code>和<code>C</code>就是兄弟结点，因为都是<code>A</code>的孩子。</li></ul><ul id="9477932e-a7b2-48f3-8897-53e9a664e221" class="bulleted-list"><li style="list-style-type:disc">从根结点开始一直到某个结点的整条路径的所有结点，都是这个结点的<strong>祖先结点</strong>（Ancestor）比如<code>L</code>的祖先结点就是<code>A、B、E</code></li></ul><p id="275d1d3d-5ce8-4014-a5ac-93a81de0c5f7" class="">那么在了解了树的相关称呼之后，相信各位就应该对树有了一定的了解，虽然概念比较多，但是还请各位一定记住，不然后面就容易听懵。</p><p id="0e5c83cf-087b-433e-8ef3-340bbb2a4b39" class="">而我们本章需要着重讨论的是<strong>二叉树</strong>（Binary Tree）它是一种特殊的树，它的度最大只能为<code>2</code>，所以我们称其为二叉树，一棵二叉树大概长这样：</p><figure id="0cec86ec-13b9-474d-a6ec-e7fa7744418c" class="image"><a href="https://s2.loli.net/2022/08/01/QGLfnYWFby37deP.png"><img src="https://s2.loli.net/2022/08/01/QGLfnYWFby37deP.png"/></a></figure><p id="39b73d6a-372b-4693-bb04-73a9da6dd233" class="">image-20220801224008266</p><p id="700b8069-7ea1-4134-adb6-f611a7057161" class="">并且二叉树任何结点的子树是有左右之分的，不能颠倒顺序，比如A结点左边的子树，称为左子树，右边的子树称为右子树。</p><p id="648d8115-c5bd-4327-adf2-8ec4ed0aea0a" class="">当然，对于某些二叉树我们有特别的称呼，比如，在一棵二叉树中，所有分支结点都存在左子树和右子树，且叶子结点都在同一层：</p><figure id="236b1a55-3b60-4fe6-b278-039e2a9385f4" class="image"><a href="https://s2.loli.net/2022/08/01/btfjlJhDuWrSXYi.png"><img src="https://s2.loli.net/2022/08/01/btfjlJhDuWrSXYi.png"/></a></figure><p id="89c850ea-678a-4f18-9ceb-acfb2c4c2838" class="">image-20220801231216578</p><p id="882787e4-fac7-4fe0-af28-c949c6408779" class="">这样的二叉树我们称为<strong>满二叉树</strong>，可以看到整棵树都是很饱满的，没有出现任何度为1的结点，当然，还有一种特殊情况：</p><figure id="31571b5a-e623-4034-97f1-4e8bb5f95f30" class="image"><a href="https://s2.loli.net/2022/08/01/QGLfnYWFby37deP.png"><img src="https://s2.loli.net/2022/08/01/QGLfnYWFby37deP.png"/></a></figure><p id="6dec50cb-7d4e-4c99-8bbb-73c6b359ad7a" class="">image-20220801224008266</p><p id="881dbeea-8593-46f1-b0f8-9b2094d8ff9a" class="">可以看到只有最后一层有空缺，并且所有的叶子结点是按照从左往右的顺序排列的，这样的二叉树我们一般称其为<strong>完全二叉树</strong>，所以，一棵满二叉树，一定是一棵完全二叉树。</p><p id="fecfe503-8357-43dc-be90-1dd5551dc931" class="">我们接着来看看二叉树在程序中的表示形式，我们在前面使用链表的时候，每个结点不仅存放对应的数据，而且会存放一个指向下一个结点的引用：</p><figure id="0177b387-1713-49c5-99ba-fdd8840f20d8" class="image"><a href="https://s2.loli.net/2022/07/23/ruemiRQplVy7q9s.png"><img src="https://s2.loli.net/2022/07/23/ruemiRQplVy7q9s.png"/></a></figure><p id="b38a3720-a885-4d32-8de5-3394a2bd46b4" class="">image-20220723171648380</p><p id="f77a97c9-1015-4b7f-a7b3-27f252d334de" class="">而二叉树也可以使用这样的链式存储形式，只不过现在一个结点需要存放一个指向左子树的引用和一个指向右子树的引用了：</p><figure id="36e94389-e687-44f0-8303-fe7d89a77d00" class="image"><a href="https://s2.loli.net/2022/08/06/H9MqkghmAjFJnuO.png"><img src="https://s2.loli.net/2022/08/06/H9MqkghmAjFJnuO.png"/></a></figure><p id="b6adb51a-dffe-4e75-82a5-668f18b1f00d" class="">image-20220806111610082</p><p id="3c3fa2fa-fcfe-447c-b106-a54dc8e6f23f" class="">通过这种方式，我们就可以通过连接不同的结点形成一颗二叉树了，这样也更便于我们去理解它，我们首先定义一个类：</p><pre id="97bf5f04-e2fa-42ba-9dfb-66c8c33995c6" class="code code-wrap"><code>public class TreeNode&lt;E&gt; {    public E element;    public TreeNode&lt;E&gt; left, right;    public TreeNode(E element){        this.element = element;    }}</code></pre><p id="cc4d2bb3-d84c-4803-b075-5f87c717ce90" class="">比如我们现在想要构建一颗像这样的二叉树：</p><figure id="58e4bbfd-b708-4c46-9e2e-483dc2a61b71" class="image"><a href="https://s2.loli.net/2022/08/05/uan6A3ZRLykt289.png"><img src="https://s2.loli.net/2022/08/05/uan6A3ZRLykt289.png"/></a></figure><p id="ac8a122c-c42b-4ab0-83fc-e8e598944e1a" class="">image-20220805231744693</p><p id="5debfb81-c023-4b6b-b4b9-d90d4bc93179" class="">首先我们需要创建好这几个结点：</p><pre id="42a046e0-31a7-4f85-8431-67902d55ea37" class="code code-wrap"><code>public static void main(String[] args) {    TreeNode&lt;Character&gt; a = new TreeNode&lt;&gt;(&#x27;A&#x27;);    TreeNode&lt;Character&gt; b = new TreeNode&lt;&gt;(&#x27;B&#x27;);    TreeNode&lt;Character&gt; c = new TreeNode&lt;&gt;(&#x27;C&#x27;);    TreeNode&lt;Character&gt; d = new TreeNode&lt;&gt;(&#x27;D&#x27;);    TreeNode&lt;Character&gt; e = new TreeNode&lt;&gt;(&#x27;E&#x27;);}</code></pre><p id="3a73b57b-7a76-4d6a-97e4-860bb6a27b27" class="">接着我们从最上面开始，挨着进行连接，首先是A这个结点：</p><pre id="e5ab9793-1b17-4ec1-9712-1e2b2147b075" class="code code-wrap"><code>public static void main(String[] args) {    ...    a.left = b;    a.right = c;    b.left = d;    b.right = e;}</code></pre><p id="0a744b84-a88d-46e1-b003-6798ffe3508e" class="">这样的话，我们就成功构建好了这棵二叉树，比如现在我们想通过根结点访问到D：</p><pre id="4cc62513-68ba-4d9a-8e07-812d357773e6" class="code code-wrap"><code>System.out.println(a.left.left.element);</code></pre><p id="d13ab718-9f0c-4806-8de5-bfb3d872c350" class="">断点调试也可以看的很清楚：</p><figure id="535ae405-7f2f-4617-a084-16ff25a7b46f" class="image"><a href="https://s2.loli.net/2022/09/30/XCkDxVBFz2bWph8.png"><img src="https://s2.loli.net/2022/09/30/XCkDxVBFz2bWph8.png"/></a></figure><p id="a4a4ec0f-64e2-4671-98be-b32b1de92091" class="">image-20220930160452608</p><p id="a7127b87-4f54-4e3c-9572-d3c5a80b4dcf" class="">这样，我们就通过使用链式结构，成功构建出了一棵二叉树，接着我们来看看如何遍历一棵二叉树，也就是说我们想要访问二叉树的每一个结点，由于树形结构特殊，遍历顺序并不唯一，所以一共有四种访问方式：<strong>前序遍历、中序遍历、后序遍历、层序遍历。</strong>不同的访问方式输出都结点顺序也不同。</p><p id="4f547fc0-ca52-44cb-b9ab-65cfa2824f5d" class="">首先我们来看最简单的前序遍历：</p><figure id="a66fde5f-4091-49b9-a5c0-8c7a8118a431" class="image"><a href="https://s2.loli.net/2022/08/06/G6ujstSVZ2XWJLE.png"><img src="https://s2.loli.net/2022/08/06/G6ujstSVZ2XWJLE.png"/></a></figure><p id="6f2c97f2-c10b-4b75-94d6-54d3ccd25539" class="">image-20220806171459056</p><p id="71b44176-618a-4f53-84b3-7ca806fcd88c" class="">前序遍历是一种勇往直前的态度，走到哪就遍历到那里，先走左边再走右边，比如上面的这个图，首先会从根节点开始：</p><figure id="26f9d9b9-1b5a-4feb-a686-175fb3d2b169" class="image"><a href="https://s2.loli.net/2022/08/06/qCFMosHtujEZ3U6.png"><img src="https://s2.loli.net/2022/08/06/qCFMosHtujEZ3U6.png"/></a></figure><p id="68fc0ea2-b26c-4cf7-963f-f2257003c8b9" class="">image-20220806171431845</p><p id="64447161-5a36-4da0-97d5-4e96e481cd7b" class="">从A开始，先左后右，那么下一个就是B，然后继续走左边，是D，现在ABD走完之后，B的左边结束了，那么就要开始B的右边了，所以下一个是E，E结束之后，现在A的左子树已经全部遍历完成了，然后就是右边，接着就是C，C没有左子树了，那么只能走右边了，最后输出F，所以上面这个二叉树的前序遍历结果为：ABDECF</p><ol type="1" id="71ba8201-41dc-4c5f-9f8b-aa7a20cb38f6" class="numbered-list" start="1"><li>打印根节点</li></ol><ol type="1" id="22feaf20-b031-4a0b-8876-efc15104b49c" class="numbered-list" start="2"><li>前序遍历左子树</li></ol><ol type="1" id="f93c30af-57ec-4b14-82e5-b8888ff00da8" class="numbered-list" start="3"><li>前序遍历右子树</li></ol><p id="1211a855-4c4b-4adf-8b9b-83a9f46273c4" class="">我们不难发现规律，整棵二叉树（包括子树）的根节点一定是出现在最前面的，比如A在最前面，A的左子树根结点B也是在最前面的。我们现在就来尝试编写一下代码实现一下，先把二叉树构建出来：</p><pre id="e68ef816-54ad-4dee-890d-e549112136c9" class="code code-wrap"><code>public static void main(String[] args) {    TreeNode&lt;Character&gt; a = new TreeNode&lt;&gt;(&#x27;A&#x27;);    TreeNode&lt;Character&gt; b = new TreeNode&lt;&gt;(&#x27;B&#x27;);    TreeNode&lt;Character&gt; c = new TreeNode&lt;&gt;(&#x27;C&#x27;);    TreeNode&lt;Character&gt; d = new TreeNode&lt;&gt;(&#x27;D&#x27;);    TreeNode&lt;Character&gt; e = new TreeNode&lt;&gt;(&#x27;E&#x27;);    TreeNode&lt;Character&gt; f = new TreeNode&lt;&gt;(&#x27;F&#x27;);    a.left = b;    a.right = c;    b.left = d;    b.right = e;    c.right = f;}</code></pre><p id="bd0125d8-3f87-4f98-80d5-22408e620f29" class="">组装好之后，我们来实现一下前序遍历的方法：</p><pre id="0026f56f-d464-4cd2-b001-1dce81645251" class="code code-wrap"><code>private static &lt;T&gt; void preOrder(TreeNode&lt;T&gt; root){    System.out.print(root.element + &quot; &quot;);   //首先肯定要打印，这个是必须的}</code></pre><p id="c0884249-9ac6-4163-b3c3-4e7dbc5213bd" class="">打印完成之后，我们就按照先左后右的规则往后遍历下一个结点，这里我们就直接使用递归来完成：</p><pre id="1e9cc214-50cb-4a65-8879-264e31fe6eb2" class="code code-wrap"><code>private static &lt;T&gt; void preOrder(TreeNode&lt;T&gt; root){    System.out.print(root.element + &quot; &quot;);    preOrder(root.left);    //先走左边    preOrder(root.right);   //再走右边}</code></pre><p id="ee5b5049-6444-4458-944e-6c62c50a1367" class="">不过还没完，我们的递归肯定是需要一个终止条件的，不可能无限地进行下去，如果已经走到底了，那么就不能再往下走了，所以：</p><pre id="a8da701b-5957-4c86-aa17-65e499e1c33b" class="code code-wrap"><code>private static &lt;T&gt; void preOrder(TreeNode&lt;T&gt; root){    if(root == null) return;    System.out.print(root.element);    preOrder(root.left);    preOrder(root.right);}</code></pre><p id="8c2bf592-168a-4270-be48-1eb013a4161c" class="">最后我们来测试一下吧：</p><pre id="48d94fa7-72e9-4601-acab-0949687766eb" class="code code-wrap"><code>public static void main(String[] args) {    ...    preOrder(a);}</code></pre><p id="25c6a9c8-de4d-455f-9ab3-c61736335067" class="">可以看到结果为：</p><figure id="e11dbc10-1b65-4b5d-82be-195a1d056e70" class="image"><a href="https://s2.loli.net/2022/08/06/hZ8qEfWaP5o6L2j.png"><img src="https://s2.loli.net/2022/08/06/hZ8qEfWaP5o6L2j.png"/></a></figure><p id="6890eed3-6b8b-42ed-8cee-e1a0ecb66c0b" class="">image-20220806173227580</p><p id="0bf176b5-b1f4-41dc-83ce-17c539e48da5" class="">这样我们就通过一个简单的递归操作完成了对一棵二叉树的前序遍历，如果不太好理解，建议结合调试进行观察。</p><p id="0697b5da-a8c8-4e73-840c-44c6cb101da2" class="">那么前序遍历我们了解完了，接着就是中序遍历了，中序遍历在顺序上与前序遍历不同，前序遍历是走到哪就打印到哪，而中序遍历需要先完成整个左子树的遍历后再打印，然后再遍历其右子树。</p><p id="fe77318f-04e3-4200-a38a-188d38e94546" class="">我们还是以上面的二叉树为例：</p><figure id="43f19e41-ff8d-4118-b2f4-c5233c266513" class="image"><a href="https://s2.loli.net/2022/08/06/W6Yb5M92gQApNJa.png"><img src="https://s2.loli.net/2022/08/06/W6Yb5M92gQApNJa.png"/></a></figure><p id="12b6b354-cf29-4119-9b8a-26b948151c81" class="">image-20220806230603967</p><p id="a9780b79-db03-4559-b29f-1feec8c26407" class="">首先需要先不断遍历左子树，走到最底部，但是沿途并不进行打印，而是到底之后，再打印，所以第一个打印的是D，接着由于没有右子树，所以我们回到B，此时再打印B，然后再去看B的右结点E，由于没有左子树和右子树了，所以直接打印E，左边遍历完成，接着回到A，打印A，然后对A的右子树重复上述操作。所以说遍历的基本规则还是一样的，只是打印值的时机发生了改变。</p><ol type="1" id="44b2d76f-4ed1-4ac4-a247-c37773407623" class="numbered-list" start="1"><li>中序遍历左子树</li></ol><ol type="1" id="9f04bd73-0bdb-4259-aa11-68321ae614da" class="numbered-list" start="2"><li>打印结点</li></ol><ol type="1" id="8e4449cf-e9e9-4238-87ac-f2ad4e7c01fa" class="numbered-list" start="3"><li>中序遍历右子树</li></ol><p id="10f61b3f-b167-41b4-87be-a64ed2f6d6d9" class="">所以这棵二叉树的中序遍历结果为：DBEACF，我们可以发现一个规律，就是在某个结点的左子树中所有结点，其中序遍历结果也是按照这样的规律排列的，比如A的左子树中所有结点，中序遍历结果中全部都在A的左边，右子树中所有的结点，全部都在A的右边（这个规律很关键，后面在做一些算法题时会用到）</p><p id="0ae4fd1b-9c27-460b-a8c6-36c58dbfcfaf" class="">那么怎么才能将打印调整到左子树全部遍历结束之后呢？其实很简单：</p><pre id="870f240a-568e-4b32-ba70-16ab3aeb1d08" class="code code-wrap"><code>private static &lt;T&gt; void inOrder(TreeNode&lt;T&gt; root){    if(root == null) return;    inOrder(root.left);    //先完成全部左子树的遍历    System.out.print(root.element);    //等待左子树遍历完成之后再打印    inOrder(root.right);    //然后就是对右子树进行遍历}</code></pre><p id="d642991c-49c5-4ab6-914a-7a8a04042e5a" class="">我们只需要将打印放到左子树遍历之后即可，这样打印出来的结果就是中序遍历的结果了：</p><figure id="9ea52429-245d-47fb-8c88-556a785ed233" class="image"><a href="https://s2.loli.net/2022/08/06/V2KdMy3T5Beo8vx.png"><img src="https://s2.loli.net/2022/08/06/V2KdMy3T5Beo8vx.png"/></a></figure><p id="31104594-48eb-454e-b325-e2220a7651a4" class="">image-20220806231752418</p><p id="13e8820a-188f-4ad9-903c-b679ab9baaf8" class="">这样，我们就实现了二叉树的中序遍历，实际上还是很好理解的。</p><p id="79e6366f-c09b-47e2-a6c3-a493d107d611" class="">接着我们来看一下后序遍历，后序遍历继续将打印的时机延后，需要等待左右子树全部遍历完成，才会去进行打印。</p><figure id="daac09f0-25d7-44ab-9341-9bd32970bfc6" class="image"><a href="https://s2.loli.net/2022/08/06/YE2rODdqpCInUa9.png"><img src="https://s2.loli.net/2022/08/06/YE2rODdqpCInUa9.png"/></a></figure><p id="771d3610-65f1-4717-a83c-adc9b4fefefc" class="">image-20220806233407910</p><p id="49126939-9a0f-4888-95d4-28b5322f993b" class="">首先还是一路向左，到达结点D，此时结点D没有左子树了，接着看结点D还有没有右子树，发现也没有，左右子树全部遍历完成，那么此时再打印D，同样的，D完事之后就回到B了，此时接着看B的右子树，发现有结点E，重复上述操作，E也打印出来了，接着B的左右子树全部OK，那么再打印B，接着A的左子树就完事了，现在回到A，看到A的右子树，继续重复上述步骤，当A的右子树也遍历结束后，最后再打印A结点。</p><ol type="1" id="87ac1726-242d-4956-99b7-4b58bc77465d" class="numbered-list" start="1"><li>后序遍历左子树</li></ol><ol type="1" id="6f21f664-6d3e-4a9c-a27e-7a4a970dc914" class="numbered-list" start="2"><li>后序遍历右子树</li></ol><ol type="1" id="0f40c281-4dd2-4d6e-8485-accfe825e0c1" class="numbered-list" start="3"><li>打印结点</li></ol><p id="d8ff4af6-6266-4bd2-8778-081564f2764f" class="">所以最后的遍历顺序为：DEBFCA，不难发现，整棵二叉树（包括子树）根结点一定是在后面的，比如A在所有的结点的后面，B在其子节点D、E的后面，这一点恰恰和前序遍历相反（注意不是得到的结果相反，是规律相反）</p><p id="5d4203c6-a646-4d11-8cbc-cacd9479b409" class="">所以，按照这个思路，我们来编写一下后序遍历：</p><pre id="4e72cddc-4a09-4b27-af3f-8124ffc1df6c" class="code code-wrap"><code>private static &lt;T&gt; void postOrder(TreeNode&lt;T&gt; root){    if(root == null) return;    postOrder(root.left);    postOrder(root.right);    System.out.print(root.element);  //时机延迟到最后}</code></pre><p id="7bb50c64-76cb-4243-aec5-a1aad06b3cde" class="">结果如下：</p><figure id="87ceabbf-0d92-4ba1-aa23-dcea90cf95cd" class="image"><a href="https://s2.loli.net/2022/08/06/6Vx9fmSUcqw51Mp.png"><img src="https://s2.loli.net/2022/08/06/6Vx9fmSUcqw51Mp.png"/></a></figure><p id="753c79fe-c0d0-44f3-98a8-87155873d356" class="">image-20220806234428922</p><p id="ba70c76a-5146-4faf-8509-b4a9bf2d685b" class="">最后我们来看层序遍历，实际上这种遍历方式是我们人脑最容易理解的，它是按照每一层在进行遍历：</p><figure id="d4d2c4e2-9e66-4ecf-8da6-5779df15937c" class="image"><a href="https://s2.loli.net/2022/08/07/ywF6r9MU1JSPIge.png"><img src="https://s2.loli.net/2022/08/07/ywF6r9MU1JSPIge.png"/></a></figure><p id="4815a683-8b68-42ca-ada9-bf11f4631f1e" class="">image-20220807205135936</p><p id="f921c685-ee0f-4d8b-ad48-d3aab876f395" class="">层序遍历实际上就是按照从上往下每一层，从左到右的顺序打印每个结点，比如上面的这棵二叉树，那么层序遍历的结果就是：ABCDEF，像这样一层一层的挨个输出。</p><p id="880ae777-8c4f-4909-b666-39ffcfdbc0be" class="">虽然理解起来比较简单，但是如果让你编程写出来，该咋搞？是不是感觉有点无从下手？</p><p id="4f5c8151-9074-4b33-94d4-a872928391d4" class="">我们可以利用队列来实现层序遍历，首先将根结点存入队列中，接着循环执行以下步骤：</p><ul id="a04d39bd-e08d-47b1-866f-4c6795a2e2d4" class="bulleted-list"><li style="list-style-type:disc">进行出队操作，得到一个结点，并打印结点的值。</li></ul><ul id="84a12023-f694-4172-ad51-1326dec8d0e3" class="bulleted-list"><li style="list-style-type:disc">将此结点的左右孩子结点依次入队。</li></ul><p id="1b4569ca-7033-4d26-be1c-fe537fb39f8d" class="">不断重复以上步骤，直到队列为空。</p><p id="8c987636-78a0-456e-901c-150bc1ba1978" class="">我们来分析一下，首先肯定一开始A在里面：</p><figure id="eeba0844-496d-485f-8bd1-285de63907cd" class="image"><a href="https://s2.loli.net/2022/08/07/ZsNpeVUivEjCymt.png"><img src="https://s2.loli.net/2022/08/07/ZsNpeVUivEjCymt.png"/></a></figure><p id="3d2463b7-b662-48f2-9232-57270e60c2a7" class="">image-20220807211522409</p><p id="a46d038e-4e47-4e8d-a6a0-38b90ad32e30" class="">接着开始不断重复上面的步骤，首先是将队首元素出队，打印A，然后将A的左右孩子依次入队：</p><figure id="2aa315ab-817f-4746-b025-3b45b81dba9f" class="image"><a href="https://s2.loli.net/2022/08/07/v8yXWNato3sfeUn.png"><img src="https://s2.loli.net/2022/08/07/v8yXWNato3sfeUn.png"/></a></figure><p id="3b4a9bea-36e5-431b-b9aa-91d2cb0860fe" class="">image-20220807211631110</p><p id="04d6768e-8017-484c-a97f-4bb39478a542" class="">现在队列中有B、C两个结点，继续重复上述操作，B先出队，打印B，然后将B的左右孩子依次入队：</p><figure id="1cf80c54-24d7-4233-9210-d90675abf2da" class="image"><a href="https://s2.loli.net/2022/08/07/Qkprfi5RhAXP7Cd.png"><img src="https://s2.loli.net/2022/08/07/Qkprfi5RhAXP7Cd.png"/></a></figure><p id="c3eae2f2-fcea-4f32-94cf-6f064a0a006a" class="">image-20220807211723776</p><p id="3229f0c0-60f9-4552-916a-c171b209bb38" class="">现在队列中有C、D、E这三个结点，继续重复，C出队并打印，然后将F入队：</p><figure id="696f772d-9c82-41f1-9aec-a90977388389" class="image"><a href="https://s2.loli.net/2022/08/07/MxQTArlWK2gDjqi.png"><img src="https://s2.loli.net/2022/08/07/MxQTArlWK2gDjqi.png"/></a></figure><p id="9f9cd8a3-5f7a-4580-b0a4-139b9bcf434f" class="">image-20220807211800852</p><p id="2e4ae3f7-6919-449f-9563-cdabb10760c7" class="">我们发现，这个过程中，打印的顺序正好就是我们层序遍历的顺序，所以说队列还是非常有用的，这里我们可以直接把之前的队列拿来用。那么现在我们就来上代码吧，首先是之前的队列：</p><pre id="9dada172-8b68-43ee-b418-cd9d7bb07f08" class="code code-wrap"><code>public class LinkedQueue&lt;E&gt; {    private final Node&lt;E&gt; head = new Node&lt;&gt;(null);    public void offer(E element){        Node&lt;E&gt; last = head;        while (last.next != null)            last = last.next;        last.next = new Node&lt;&gt;(element);    }    public E poll(){        if(head.next == null)            throw new NoSuchElementException(&quot;队列为空&quot;);        E e = head.next.element;        head.next = head.next.next;        return e;    }    public boolean isEmpty(){   //这里多写了一个判断队列为空的操作，方便之后使用        return head.next == null;   //直接看头结点后面还有没有东西就行了    }    private static class Node&lt;E&gt; {        E element;        Node&lt;E&gt; next;        public Node(E element) {            this.element = element;        }    }}</code></pre><p id="d4695c21-14de-4ff7-8e7d-40e041250122" class="">我们来尝试编写一下层序遍历：</p><pre id="9e31f577-48e4-45a7-8b29-5514b5500dd2" class="code code-wrap"><code>private static &lt;T&gt; void levelOrder(TreeNode&lt;T&gt; root){    LinkedQueue&lt;TreeNode&lt;T&gt;&gt; queue = new LinkedQueue&lt;&gt;();  //创建一个队列    queue.offer(root);    //将根结点丢进队列    while (!queue.isEmpty()) {   //如果队列不为空，就一直不断地取出来        TreeNode&lt;T&gt; node = queue.poll();   //取一个出来        System.out.print(node.element);  //打印        if(node.left != null) queue.offer(node.left);   //如果左右孩子不为空，直接将左右孩子丢进队列        if(node.right != null) queue.offer(node.right);    }}</code></pre><p id="e71c3335-cbb2-450f-8863-0527bad8bf49" class="">可以看到结果就是层序遍历的结果：</p><figure id="2b4ca981-f816-440c-9eff-6fcef783e41e" class="image"><a href="https://s2.loli.net/2022/08/07/YlUfDhPoQrg9TkB.png"><img src="https://s2.loli.net/2022/08/07/YlUfDhPoQrg9TkB.png"/></a></figure><p id="39f9968f-266c-4d6e-90d4-b74ef8d60937" class="">image-20220807215630429</p><p id="0642fae1-e1e1-4f55-a7a4-9c44514fc31e" class="">当然，使用递归也可以实现，但是需要单独存放结果然后单独输出，不是很方便，所以说这里就不演示了。</p><h3 id="c4339092-11da-45f9-9576-ce5d3e685bb9" class="">树：二叉查找树和平衡二叉树</h3><p id="25bf7b7e-c551-41c1-9155-2007e31c649b" class=""><strong>注意：</strong>本部分只进行理论介绍，不做代码实现。</p><p id="a2d56a93-f36a-4773-aa0c-1981c04b0777" class="">还记得我们开篇讲到的二分搜索算法吗？通过不断缩小查找范围，最终我们可以以很高的效率找到有序数组中的目标位置。而二叉查找树则利用了类似的思想，我们可以借助其来像二分搜索那样快速查找。</p><p id="314b5386-c348-4a47-aa31-793847e4a396" class=""><strong>二叉查找树</strong>也叫二叉搜索树或是二叉排序树，它具有一定的规则：</p><ul id="02aa03f6-2c1e-4de9-b9bb-a6d44adaaa9d" class="bulleted-list"><li style="list-style-type:disc">左子树中所有结点的值，均小于其根结点的值。</li></ul><ul id="0a249790-9910-4540-8d7e-2c55ebe699f2" class="bulleted-list"><li style="list-style-type:disc">右子树中所有结点的值，均大于其根结点的值。</li></ul><ul id="57d02a05-43c4-4629-9c36-72b12261cdd1" class="bulleted-list"><li style="list-style-type:disc">二叉搜索树的子树也是二叉搜索树。</li></ul><p id="50d6e8dd-2a68-49e3-866b-01eb43bc258f" class="">一棵二叉搜索树长这样：</p><figure id="f566bd77-3c6d-49d9-930b-3a5a23b07f09" class="image"><a href="https://s2.loli.net/2022/08/14/k9G7Ad2cqezgEtJ.png"><img src="https://s2.loli.net/2022/08/14/k9G7Ad2cqezgEtJ.png"/></a></figure><p id="6100dded-b983-454d-bd48-f4b6f19e9cee" class="">image-20220814191444130</p><p id="2a5d3239-ec20-49f1-b0fa-33bfa2583647" class="">这棵树的根结点为18，而其根结点左边子树的根结点为10，包括后续结点，都是满足上述要求的。二叉查找树满足左边一定比当前结点小，右边一定比当前结点大的规则，比如我们现在需要在这颗树种查找值为15的结点：</p><ol type="1" id="f0a3d6a4-63fc-4022-966b-d4ce784e3774" class="numbered-list" start="1"><li>从根结点18开始，因为15小于18，所以从左边开始找。</li></ol><ol type="1" id="0ee5b583-8b3a-4334-ae2b-36794dd5f6a5" class="numbered-list" start="2"><li>接着来到10，发现10比15小，所以继续往右边走。</li></ol><ol type="1" id="9c9c96c7-cf16-4c70-8fdf-133d08090a14" class="numbered-list" start="3"><li>来到15，成功找到。</li></ol><p id="8f977cff-68ab-4f8e-b5c6-30520c380ac3" class="">实际上，我们在对普通二叉树进行搜索时，可能需要挨个进行查看比较，而有了二叉搜索树，查找效率就大大提升了，它就像我们前面的二分搜索那样。</p><p id="3e0f0be9-262d-445f-b88e-364d8af73efc" class="">利用二叉查找树，我们在搜索某个值的时候，效率会得到巨大提升。但是虽然看起来比较完美，也是存在缺陷的，比如现在我们依次将下面的值插入到这棵二叉树中：</p><pre id="76036e3d-7b22-4337-a6fb-d3fe54208ebd" class="code code-wrap"><code>20 15 13 8 6 3</code></pre><p id="cd036bc0-ee02-46a3-aa5f-67ed6e331bd2" class="">在插入完成后，我们会发现这棵二叉树竟然长这样：</p><figure id="bc45f0f9-2094-48b1-b4fb-578f6f2ad850" class="image"><a href="https://s2.loli.net/2022/08/15/E1Pf2pGv4b9Lj7t.png"><img src="https://s2.loli.net/2022/08/15/E1Pf2pGv4b9Lj7t.png"/></a></figure><p id="7417a84a-e036-4105-ab67-562caca0a92e" class="">image-20220815113242191</p><p id="aac961b6-efe2-4735-9e46-77df1ce208a0" class="">因为根据我们之前编写的插入规则，小的一律往左边放，现在正好来的就是这样一串递减的数字，最后就组成了这样的一棵只有一边的二叉树，这种情况，与其说它是一棵二叉树，不如说就是一个链表，如果这时我们想要查找某个结点，那么实际上查找的时间并没有得到任何优化，直接就退化成线性查找了。</p><p id="1902051a-240c-4d32-b875-9b20b8d06632" class="">所以，二叉查找树只有在理想情况下，查找效率才是最高的，而像这种极端情况，就性能而言几乎没有任何的提升。我们理想情况下，这样的效率是最高的：</p><figure id="7532e54b-ae89-499a-ba4a-23fda150cbc9" class="image"><a href="https://s2.loli.net/2022/08/15/k1jzXPoOMp9caHy.png"><img src="https://s2.loli.net/2022/08/15/k1jzXPoOMp9caHy.png"/></a></figure><p id="9183afad-738c-442b-badf-64303ae791d8" class="">image-20220815113705827</p><p id="23b70814-afe0-404d-8636-1dae6170ada9" class="">所以，我们在进行结点插入时，需要尽可能地避免这种一边倒的情况，这里就需要引入<strong>平衡二叉树</strong>的概念了。实际上我们发现，在插入时如果不去维护二叉树的平衡，某一边只会无限制地延伸下去，出现极度不平衡的情况，而我们理想中的二叉查找树左右是尽可能保持平衡的，<strong>平衡二叉树</strong>（AVL树）就是为了解决这样的问题而生的。</p><p id="5936904c-7f1c-4d9d-ba28-a35dfe293026" class="">它的性质如下：</p><ul id="bbf47b62-0936-4427-9e68-bbece04309b1" class="bulleted-list"><li style="list-style-type:disc">平衡二叉树一定是一棵二叉查找树。</li></ul><ul id="e537a14e-0834-44d3-8d00-1e6a65220f39" class="bulleted-list"><li style="list-style-type:disc">任意结点的左右子树也是一棵平衡二叉树。</li></ul><ul id="e27a87cd-dff2-4be4-96a9-8a2f296ace2c" class="bulleted-list"><li style="list-style-type:disc">从根节点开始，左右子树都高度差不能超过1，否则视为不平衡。</li></ul><p id="023f4e51-d1e7-4c51-802a-e64cfe056d9f" class="">可以看到，这些性质规定了平衡二叉树需要保持高度平衡，这样我们的查找效率才不会因为数据的插入而出现降低的情况。二叉树上节点的左子树高度 减去 右子树高度， 得到的结果称为该节点的<strong>平衡因子</strong>（Balance Factor），比如：</p><figure id="348128d6-e199-44f5-a53a-88d8a21744cd" class="image"><a href="https://s2.loli.net/2022/08/15/vaI9qji1KYOP8kt.png"><img src="https://s2.loli.net/2022/08/15/vaI9qji1KYOP8kt.png"/></a></figure><p id="43c42dc7-f7e4-48f4-9805-3f9250a37b27" class="">image-20220815210652973</p><p id="d124d2a8-5df6-41cc-8c38-fe6d104929d6" class="">通过计算平衡因子，我们就可以快速得到是否出现失衡的情况。比如下面的这棵二叉树，正在执行插入操作：</p><figure id="ff364f34-4a66-49bf-a701-dac7e1191e4f" class="image"><a href="https://s2.loli.net/2022/08/15/DMnPqGhawy5Z92V.png"><img src="https://s2.loli.net/2022/08/15/DMnPqGhawy5Z92V.png"/></a></figure><p id="548d674b-a1bd-429f-8547-da519f9e0b22" class="">image-20220815115219250</p><p id="77052904-f102-4921-b0ec-d4be81db6e37" class="">可以看到，当插入之后，不再满足平衡二叉树的定义时，就出现了失衡的情况，而对于这种失衡情况，为了继续保持平衡状态，我们就需要进行处理了。我们可能会遇到以下几种情况导致失衡：</p><figure id="80933aa6-3c76-4039-ad67-88e09b734c02" class="image"><a href="https://s2.loli.net/2022/08/15/KcOQVhlFxzwsIb9.png"><img src="https://s2.loli.net/2022/08/15/KcOQVhlFxzwsIb9.png"/></a></figure><p id="a748fa2e-b8f9-427e-bc0f-1afbed0cc442" class="">image-20220815115836604</p><p id="0f86f87f-b423-4d0e-b977-2294158769a1" class="">根据插入结点的不同偏向情况，分为LL型、LR型、RR型、RL型。针对于上面这几种情况，我们依次来看一下如何进行调整，使得这棵二叉树能够继续保持平衡：</p><p id="152a4b32-0620-43d0-9123-dd9119dd2a42" class="">动画网站：https://www.cs.usfca.edu/~galles/visualization/AVLtree.html（实在不理解可以看看动画是怎么走的）</p><ol type="1" id="d12864c9-2003-4c67-81b4-d9767194abd4" class="numbered-list" start="1"><li><strong>LL型调整</strong>（右旋）<figure id="e8e98742-69e1-4d30-a4f4-7ebb984da350" class="image"><a href="https://s2.loli.net/2022/08/15/KqBaWLJwOj34Ec8.png"><img src="https://s2.loli.net/2022/08/15/KqBaWLJwOj34Ec8.png"/></a></figure><p id="7f299b4b-feec-4383-93c3-678f9397567a" class="">image-20220815211641144</p><p id="39784927-41e3-4567-847f-8b76f92ef8a8" class="">首先我们来看这种情况，这是典型的LL型失衡，为了能够保证二叉树的平衡，我们需要将其进行<strong>旋转</strong>来维持平衡，去纠正最小不平衡子树即可。那么怎么进行旋转呢？对于LL型失衡，我们只需要进行右旋操作，首先我们先找到最小不平衡子树，注意是最小的那一个：</p><figure id="0fe28b9e-c395-4f88-845b-5f5d7d8e7b36" class="image"><a href="https://s2.loli.net/2022/08/15/q4aYvzrnjdTgAtK.png"><img src="https://s2.loli.net/2022/08/15/q4aYvzrnjdTgAtK.png"/></a></figure><p id="76c89e3c-ba70-42f8-9f2b-e54c1db65975" class="">image-20220815212552176</p><p id="abedc415-8434-40cc-b794-8f81c837dc04" class="">可以看到根结点的平衡因子是2，是目前最小的出现不平衡的点，所以说从根结点开始向左的三个结点需要进行右旋操作，右旋需要将这三个结点中间的结点作为新的根结点，而其他两个结点现在变成左右子树：</p><figure id="5e3b48ac-8fc2-4569-96e3-ddcd66a94ff1" class="image"><a href="https://s2.loli.net/2022/08/15/fJKz3FWclm9orVT.png"><img src="https://s2.loli.net/2022/08/15/fJKz3FWclm9orVT.png"/></a></figure><p id="103d2c36-444e-4b53-9277-4a307a34794f" class="">image-20220815213222964</p><p id="cc954d2f-0185-4001-9f98-8d6decf116e5" class="">这样，我们就完成了右旋操作，可以看到右旋之后，所有的结点继续保持平衡，并且依然是一棵二叉查找树。</p></li></ol><ol type="1" id="cea68b9a-12bb-4383-bbe7-aeff08f0aaeb" class="numbered-list" start="2"><li><strong>RR型调整</strong>（左旋）<p id="71e6dac2-d73a-41d4-9244-d8447a613c1e" class="">前面我们介绍了LL型以及右旋解决方案，相反的，当遇到RR型时，我们只需要进行左旋操作即可：</p><figure id="cfe4e990-c693-4faa-ac46-151bd4f7d464" class="image"><a href="https://s2.loli.net/2022/08/15/kIl8ZT6Psr7mNSg.png"><img src="https://s2.loli.net/2022/08/15/kIl8ZT6Psr7mNSg.png"/></a></figure><p id="2fe9ec80-3f13-4711-844d-b186947747bd" class="">image-20220815214026710</p><p id="2a7d1ab3-74e7-4053-b69a-0a3af45f8157" class="">操作和上面是一样的，只不过现在反过来了而已：</p><figure id="d330c0c0-489c-4abf-9bed-dab96bbb8a8a" class="image"><a href="https://s2.loli.net/2022/08/15/LB9DOJpyIlxQWTm.png"><img src="https://s2.loli.net/2022/08/15/LB9DOJpyIlxQWTm.png"/></a></figure><p id="ccafce9a-75c2-4532-9570-032a20217164" class="">image-20220815214408651</p><p id="def2b96b-621e-45e3-8189-9b7748c13f67" class="">这样，我们就完成了左旋操作，使得这棵二叉树继续保持平衡状态了。</p></li></ol><ol type="1" id="130bac01-aadc-4fef-bcc0-d0e44789f717" class="numbered-list" start="3"><li><strong>RL型调整</strong>（先右旋，再左旋）<p id="1e341f56-6878-4b9d-8a98-0a91f658619c" class="">剩下两种类型比较麻烦，需要旋转两次才行。我们来看看RL型长啥样：</p><figure id="7c6fe47b-6daa-4206-bc9b-d5d4ef64e358" class="image"><a href="https://s2.loli.net/2022/08/15/fwcrEIgBxWLVGXs.png"><img src="https://s2.loli.net/2022/08/15/fwcrEIgBxWLVGXs.png"/></a></figure><p id="e91bb51c-187a-499c-8ded-c6784eb1feb2" class="">image-20220815214859501</p><p id="368991ed-9842-4753-96d3-b7dc34c885e4" class="">可以看到现在的形状是一个回旋镖形状的，先右后左的一个状态，也就是RL型，针对于这种情况，我们需要先进行右旋操作，注意这里的右旋操作针对的是后两个结点：</p><figure id="db4b629e-a8a3-4a06-a81a-f9ba3068006b" class="image"><a href="https://s2.loli.net/2022/08/15/ukK6C4PNBwoaJbc.png"><img src="https://s2.loli.net/2022/08/15/ukK6C4PNBwoaJbc.png"/></a></figure><p id="f0388b7c-3f62-4314-8fb4-599957efd7aa" class="">image-20220815215929303</p><p id="abdb9e5e-9c6a-46d0-aef7-f9a22c9b441d" class="">其中右旋和左旋的操作，与之前一样，该怎么分配左右子树就怎么分配，完成两次旋转后，可以看到二叉树重新变回了平衡状态。</p></li></ol><ol type="1" id="cfff05b5-03ef-4830-8d75-39cfdfa4d7a2" class="numbered-list" start="4"><li><strong>LR型调整</strong>（先左旋，再右旋）<p id="fe8acedb-147c-4834-90c9-c4778bf55090" class="">和上面一样，我们来看看LR型长啥样，其实就是反着的：</p><figure id="34782efb-d144-4e72-9d78-c2b395c95619" class="image"><a href="https://s2.loli.net/2022/08/15/6Cj8VlgGekULXvP.png"><img src="https://s2.loli.net/2022/08/15/6Cj8VlgGekULXvP.png"/></a></figure><p id="231360f0-4c1f-4493-bd79-6ee3c912a42e" class="">image-20220815220609357</p><p id="c8e1be94-6660-4e5a-801a-684d1ea8e073" class="">形状是先向左再向右，这就是典型的LR型了，我们同样需要对其进行两次旋转：</p><figure id="012f5eeb-1bb3-4349-bbf1-65ab6d71a579" class="image"><a href="https://s2.loli.net/2022/08/15/y6WscFPxHuzTiaI.png"><img src="https://s2.loli.net/2022/08/15/y6WscFPxHuzTiaI.png"/></a></figure><p id="6b38cb08-fa42-4248-a6d5-d40fb582bfaf" class="">image-20220815221349044</p><p id="e96d277f-cbfd-4bff-a03d-f04747a11fae" class="">这里我们先进行的是左旋，然后再进行的右旋，这样二叉树就能继续保持平衡了。</p></li></ol><p id="7c88ca63-9e27-4190-9d94-5ead2f9be8e0" class="">这样，我们只需要在插入结点时注意维护整棵树的平衡因子，保证其处于稳定状态，这样就可以让这棵树一直处于高度平衡的状态，不会再退化了。</p><h3 id="23d17d04-7285-4707-b933-741f32b48c5d" class="">树：红黑树</h3><p id="3bb02cf7-2c06-4a25-92b7-d1062d4507f1" class=""><strong>注意：</strong>本部分只进行理论介绍，不做代码实现。</p><p id="a4aa14bd-46a8-4217-ad25-8886e97a9411" class="">很多人都说红黑树难，其实就那几条规则，跟着我推一遍其实还是很简单的，当然前提是一定要把前面的平衡二叉树搞明白。</p><p id="67cfb7eb-837a-40d4-84a1-61845d5185df" class="">前面我们讲解了二叉平衡树，通过在插入结点时维护树的平衡，这样就不会出现极端情况使得整棵树的查找效率急剧降低了。但是这样是否开销太大了一点，因为一旦平衡因子的绝对值超过1那么就失衡，这样每插入一个结点，就有很大的概率会导致失衡，我们能否不这么严格，但同时也要在一定程度上保证平衡呢？这就要提到红黑树了。</p><p id="ad5c477f-c1d5-4021-9ae8-2b89d62849ab" class="">在线动画网站：https://www.cs.usfca.edu/~galles/visualization/RedBlack.html</p><p id="b7f8d83b-9150-480b-a424-f1243d87c17e" class="">红黑树也是二叉查找树的一种，它大概长这样，可以看到结点有红有黑：</p><figure id="12effd40-96a3-4d1c-8e2a-f47024b2579c" class="image"><a href="https://s2.loli.net/2022/08/15/t86B7sxvYeP9TiR.png"><img src="https://s2.loli.net/2022/08/15/t86B7sxvYeP9TiR.png"/></a></figure><p id="b7adb780-9c57-4603-90a0-b5fdee53a6c6" class="">image-20220815222810537</p><p id="e44f59b5-1e29-4461-89c6-29986ebe127f" class="">它并不像平衡二叉树那样严格要求高度差不能超过1，而是只需要满足五个规则即可，它的规则如下：</p><ul id="e17c2c22-e480-48ba-87b7-004918ee4f0f" class="bulleted-list"><li style="list-style-type:disc">规则1：每个结点可以是黑色或是红色。</li></ul><ul id="5044d1e2-cc9c-4202-a544-a1e477cd30c8" class="bulleted-list"><li style="list-style-type:disc">规则2：根结点一定是黑色。</li></ul><ul id="4812638d-d5d1-4d16-8ef0-85da457e6318" class="bulleted-list"><li style="list-style-type:disc">规则3：红色结点的父结点和子结点不能为红色，也就是说不能有两个连续的红色。</li></ul><ul id="5ddba1a5-7d8a-4a57-862a-a019ae0fc3aa" class="bulleted-list"><li style="list-style-type:disc">规则4：所有的空结点都是黑色（空结点视为NIL，红黑树中是将空节点视为叶子结点）</li></ul><ul id="83e96f55-c5b7-41dd-8fb3-e2748aa70c18" class="bulleted-list"><li style="list-style-type:disc">规则5：每个结点到空节点（NIL）路径上出现的黑色结点的个数都相等。</li></ul><p id="248a8367-4e36-4586-85c3-f50a93ea9fac" class="">它相比平衡二叉树，通过不严格平衡和改变颜色，就能在一定程度上减少旋转次数，这样的话对于整体性能是有一定提升的，只不过我们在插入结点时，就有点麻烦了，我们需要同时考虑变色和旋转这两个操作了，但是会比平衡二叉树更简单。</p><p id="b5a7b15c-23fe-417e-b8b1-caf888f25a42" class="">那么什么时候需要变色，什么时候需要旋转呢？我们通过一个简单例子来看看：</p><figure id="cf8d6d0c-d154-4d17-a694-1d4765d83542" class="image"><a href="https://s2.loli.net/2022/08/16/wIj5qnhxFAHcyG7.png"><img src="https://s2.loli.net/2022/08/16/wIj5qnhxFAHcyG7.png"/></a></figure><p id="ee4ae0b4-086d-4037-b803-d24c7327c433" class="">image-20220816104917851</p><p id="8293e479-324c-4037-9be3-1d298b0bbbd3" class="">首先这棵红黑树只有一个根结点，因为根结点必须是黑色，所以说直接变成黑色。现在我们要插入一个新的结点了，所有新插入的结点，默认情况下都是红色：</p><figure id="f0504731-d98d-4d6a-9301-6f632f5b3a7e" class="image"><a href="https://s2.loli.net/2022/08/16/yHRXgbsvOM27xLr.png"><img src="https://s2.loli.net/2022/08/16/yHRXgbsvOM27xLr.png"/></a></figure><p id="4bdd1000-ded5-4155-b464-026c01a18f32" class="">image-20220816105119178</p><p id="fd221ea8-410d-4722-9790-e315617b5c92" class="">所以新来的结点7根据规则就直接放到11的左边就行了，然后注意7的左右两边都是NULL，那么默认都是黑色，这里就不画出来了。同样的，我们往右边也来一个：</p><figure id="164eb5e6-1406-4fb2-84d0-1143e63ce9e3" class="image"><a href="https://s2.loli.net/2022/08/16/kJiA71fQuKHnIdb.png"><img src="https://s2.loli.net/2022/08/16/kJiA71fQuKHnIdb.png"/></a></figure><p id="33101d6b-a40f-4a56-b066-1b742ebcc597" class="">image-20220816105553070</p><p id="4a95c936-5ef9-4310-8ad1-9746b0f81cb2" class="">现在我们继续插入一个结点：</p><figure id="2d113d58-9bfc-445f-9fef-98c0d6264177" class="image"><a href="https://s2.loli.net/2022/08/16/VEQLu5mb1tcTyzd.png"><img src="https://s2.loli.net/2022/08/16/VEQLu5mb1tcTyzd.png"/></a></figure><p id="024da72e-fd02-4929-8d77-1dcb978a2878" class="">image-20220816105656320</p><p id="beca0db7-ff0c-4add-b021-3d84182ad45b" class="">插入结点4之后，此时违反了红黑树的规则3，因为红色结点的父结点和子结点不能为红色，此时为了保持以红黑树的性质，我们就需要进行<strong>颜色变换</strong>才可以，那么怎么进行颜色变换呢？我们只需要直接将父结点和其兄弟结点同时修改为黑色（为啥兄弟结点也需要变成黑色？因为要满足性质5）然后将爷爷结点改成红色即可：</p><figure id="39fd99f3-301c-473d-b7a7-629b8dc436ec" class="image"><a href="https://s2.loli.net/2022/08/16/kuc1B3lqhNUwaSM.png"><img src="https://s2.loli.net/2022/08/16/kuc1B3lqhNUwaSM.png"/></a></figure><p id="6a3bdcc0-4121-4d7a-8385-8e5307f80b94" class="">image-20220816113259643</p><p id="0b6adc99-8304-4b4c-ab9e-6e8022c1bcd3" class="">当然这里还需注意一下，因为爷爷结点正常情况会变成红色，相当于新来了个红色的，这时还得继续往上看有没有破坏红黑树的规则才可以，直到没有为止，比如这里就破坏了性质一，爷爷结点现在是根结点（不是根结点就不需要管了），必须是黑色，所以说还要给它改成黑色才算结束：</p><figure id="7b9e18a3-e23c-4fe5-937c-f31023ddfd4f" class="image"><a href="https://s2.loli.net/2022/08/16/dpRX5DGsfWVwnQi.png"><img src="https://s2.loli.net/2022/08/16/dpRX5DGsfWVwnQi.png"/></a></figure><p id="fdd2ec49-51d9-4db6-8e09-c3c21f63f49e" class="">image-20220816113339344</p><p id="e32d8cd9-a008-492b-af46-0bc6c3af150c" class="">接着我们继续插入结点：</p><figure id="6033df41-dce8-4cbb-963d-b3dcbfc2f58d" class="image"><a href="https://s2.loli.net/2022/08/16/4ZAhv7R9YusI8q6.png"><img src="https://s2.loli.net/2022/08/16/4ZAhv7R9YusI8q6.png"/></a></figure><p id="f3faa6b3-cb7e-4836-a155-618ac986ccc6" class="">image-20220816113939172</p><p id="745f6f52-971b-4298-99ac-7c4beb32ea9f" class="">此时又来了一个插在4左边的结点，同样是连续红色，我们需要进行变色才可以讲解问题，但是我们发现，如果变色的话，那么从11开始到所有NIL结点经历的黑色结点数量就不对了：</p><figure id="add11c5f-7a1d-441b-9cba-17a2f8eed225" class="image"><a href="https://s2.loli.net/2022/08/16/n3M6Kfsb4jHtIci.png"><img src="https://s2.loli.net/2022/08/16/n3M6Kfsb4jHtIci.png"/></a></figure><p id="b4195270-423e-4d0d-b2e5-f45e4fe860c6" class="">image-20220816114245996</p><p id="cd36f1d1-8c0e-4e76-b5d6-9cc9aa43268f" class="">所以说对于这种<strong>父结点为红色，父结点的兄弟结点为黑色</strong>（NIL视为黑色）的情况，变色无法解决问题了，那么我们只能考虑旋转了，旋转规则和我们之前讲解的平衡二叉树是一样的，这实际上是一种LL型失衡：</p><figure id="23960318-1853-47e0-9583-48cd698dfcad" class="image"><a href="https://s2.loli.net/2022/08/16/POTaBfosmQiceWk.png"><img src="https://s2.loli.net/2022/08/16/POTaBfosmQiceWk.png"/></a></figure><p id="78c04edb-4140-4981-af27-6bdd2266b1d1" class="">image-20220816115015892</p><p id="9aa2ad48-a9c4-4782-8d98-b08d5b7ed036" class="">同样的，如果遇到了LR型失衡，跟前面一样，先左旋在右旋，然后进行变色即可：</p><figure id="de8616ca-f308-47ab-966b-f0bae6f4029c" class="image"><a href="https://s2.loli.net/2022/08/16/XqFr7hJwe38AakK.png"><img src="https://s2.loli.net/2022/08/16/XqFr7hJwe38AakK.png"/></a></figure><p id="6e22a32a-8ea9-42c8-a35b-a83b1315fe4b" class="">image-20220816115924938</p><p id="f8b0f91e-8c6a-453b-b267-11452a7d6e31" class="">而RR型和RL型同理，这里就不进行演示了，可以看到，红黑树实际上也是通过颜色规则在进行旋转调整的，当然旋转和变色的操作顺序可以交换。所以，在插入时比较关键的判断点如下：</p><ul id="899ab22e-ed9b-4fcc-a617-163595368c70" class="bulleted-list"><li style="list-style-type:disc">如果整棵树为NULL，直接作为根结点，变成黑色。</li></ul><ul id="67b92f18-ef7f-4cd3-9691-e847752706fa" class="bulleted-list"><li style="list-style-type:disc">如果父结点是黑色，直接插入就完事。</li></ul><ul id="bb5274d4-e05b-4d1b-b6eb-072deea99a7d" class="bulleted-list"><li style="list-style-type:disc">如果父结点为红色，且父结点的兄弟结点也是红色，直接变色即可（但是注意得继续往上看有没有破坏之前的结构）</li></ul><ul id="fa47f757-ef22-42ce-90fb-1aa71b7be042" class="bulleted-list"><li style="list-style-type:disc">如果父结点为红色，但父结点的兄弟结点为黑色，需要先根据情况（LL、RR、LR、RL）进行旋转，然后再变色。</li></ul><p id="63475ba9-5e85-4b32-aa90-6ba0270d18c7" class="">在了解这些步骤之后，我们其实已经可以尝试去编写一棵红黑树出来了，当然代码太过复杂，这里就不演示了。</p><h3 id="5c3a2d9e-17df-4944-8818-036a0b629415" class="">哈希表</h3><p id="b6f21600-e58f-4bc6-8378-279f1cdb2414" class="">在之前，我们已经学习了多种查找数据的方式，比如最简单的，如果数据量不大的情况下，我们可以直接通过顺序查找的方式在集合中搜索我们想要的元素；当数据量较大时，我们可以使用二分搜索来快速找到我们想要的数据，不过需要要求数据按照顺序排列，并且不允许中途对集合进行修改。</p><p id="21105d53-45f2-4106-a5bf-14d06019be96" class="">在学习完树形结构篇之后，我们可以利用二叉查找树来建立一个便于我们查找的树形结构，甚至可以将其优化为平衡二叉树或是红黑树来进一步提升稳定性。</p><p id="1edf2bdc-bbcb-4ffb-b448-b0df363748d9" class="">这些都能够极大地帮助我们查找数据，而散列表，则是我们数据结构系列内容的最后一块重要知识。</p><p id="62682927-6f87-48dc-8683-1383af3734f9" class="">散列（Hashing）通过散列函数（哈希函数）将要参与检索的数据与散列值（哈希值）关联起来，生成一种便于搜索的数据结构，我们称其为散列表（哈希表），也就是说，现在我们需要将一堆数据保存起来，这些数据会通过哈希函数进行计算，得到与其对应的哈希值，当我们下次需要查找这些数据时，只需要再次计算哈希值就能快速找到对应的元素了：</p><figure id="e736f9fd-897f-4502-9253-c2865efce273" class="image"><a href="https://s2.loli.net/2022/08/18/Tcj6Spy2Pt5ZIuW.png"><img src="https://s2.loli.net/2022/08/18/Tcj6Spy2Pt5ZIuW.png"/></a></figure><p id="6f16a181-61fc-4449-b4c2-cdfb470876b2" class="">image-20220818214145347</p><p id="04f40a27-223a-4687-a715-4b2cd0eb610a" class="">散列函数也叫哈希函数，哈希函数可以对一个目标计算出其对应的哈希值，并且，只要是同一个目标，无论计算多少次，得到的哈希值都是一样的结果，不同的目标计算出的结果介乎都不同。哈希函数在现实生活中应用十分广泛，比如很多下载网站都提供下载文件的MD5码校验，可以用来判别文件是否完整，哈希函数多种多样，目前应用最为广泛的是SHA-1和MD5，比如我们在下载IDEA之后，会看到有一个验证文件SHA-256校验和的选项，我们可以点进去看看：</p><figure id="ea11b87d-f713-4ffc-bc24-190c878bd2d6" class="image"><a href="https://s2.loli.net/2022/08/18/tD8AjiGwvJkdahE.png"><img src="https://s2.loli.net/2022/08/18/tD8AjiGwvJkdahE.png"/></a></figure><p id="d63305b0-799d-4224-9a73-9d43797d86eb" class="">image-20220818214908458</p><p id="49fc6185-d4c2-47fa-adba-8aa680940f26" class="">点进去之后，得到：</p><pre id="67a33a93-5a67-44fe-888f-f1c703fc602c" class="code code-wrap"><code>e54a026da11d05d9bb0172f4ef936ba2366f985b5424e7eecf9e9341804d65bf *ideaIU-2022.2.1.dmg</code></pre><p id="1396699a-577f-4162-a474-47dcd21d82ab" class="">这一串由数字和小写字母随意组合的一个字符串，就是安装包文件通过哈希算法计算得到的结果，那么这个东西有什么用呢？我们的网络可能有时候会出现卡顿的情况，导致我们下载的文件可能会出现不完整的情况，因为哈希函数对同一个文件计算得到的结果是一样的，我们可以在本地使用同样的哈希函数去计算下载文件的哈希值，如果与官方一致，那么就说明是同一个文件，如果不一致，那么说明文件在传输过程中出现了损坏。</p><p id="81739980-13d1-4e83-a312-a0130f0f8985" class="">可见，哈希函数在这些地方就显得非常实用，在我们的生活中起了很大的作用，它也可以用于布隆过滤器和负载均衡等场景，这里不多做介绍了。</p><p id="a5166c6e-8aaf-4433-9cbe-0cd5fef82808" class="">前面我们介绍了散列函数，我们知道可以通过散列函数计算一个目标的哈希值，那么这个哈希值计算出来有什么用呢，对我们的程序设计有什么意义呢？我们可以利用哈希值的特性，设计一张全新的表结构，这种表结构是专为哈希设立的，我们称其为哈希表（散列表）</p><figure id="c5e085af-dfcd-406c-82b7-c962446d6ea1" class="image"><a href="https://s2.loli.net/2022/08/18/M2o1vE7hHasN8DP.png"><img src="https://s2.loli.net/2022/08/18/M2o1vE7hHasN8DP.png"/></a></figure><p id="f14e9ee0-dd58-4106-8c6d-6650034fab75" class="">image-20220818220944783</p><p id="2e52c99f-134a-49ef-a964-2891effcfc1c" class="">我们可以将这些元素保存到哈希表中，而保存的位置则与其对应的哈希值有关，哈希值是通过哈希函数计算得到的，我们只需要将对应元素的关键字（一般是整数）提供给哈希函数就可以进行计算了，一般比较简单的哈希函数就是取模操作，哈希表长度是多少（长度最好是一个素数），模就是多少：</p><figure id="a50d6eb6-2327-43f4-93e4-06e394336477" class="image"><a href="https://s2.loli.net/2022/08/19/CAPhlJnQeLjMHfd.png"><img src="https://s2.loli.net/2022/08/19/CAPhlJnQeLjMHfd.png"/></a></figure><p id="d18a1735-737a-4cf7-a97c-db8a7605ca4b" class="">image-20220819170355221</p><p id="1a6dd52c-5f58-463a-9929-f835d6c760c4" class="">比如现在我们需要插入一个新的元素（关键字为17）到哈希表中：</p><figure id="0f64435c-a54f-4422-a6d6-351fb5600971" class="image"><a href="https://s2.loli.net/2022/08/19/ovieRjrzlXhKMC2.png"><img src="https://s2.loli.net/2022/08/19/ovieRjrzlXhKMC2.png"/></a></figure><p id="529adfc1-a18e-4c80-a0ae-afd146e47360" class="">image-20220819171430332</p><p id="40817849-510a-4350-abe7-a0b0499457d2" class="">插入的位置为计算出来的哈希值，比如上面是8，那么就在下标位置8插入元素，同样的，我们继续插入27：</p><figure id="5dcd0d14-c18c-4615-a324-9c065692a0d8" class="image"><a href="https://s2.loli.net/2022/08/19/pisuSAIZyf5JE7B.png"><img src="https://s2.loli.net/2022/08/19/pisuSAIZyf5JE7B.png"/></a></figure><p id="01933f0f-dcf6-41d7-8654-5ca694afac4b" class="">image-20220819210336314</p><p id="9d4109d0-1ec5-4323-977b-bbbf6cacb825" class="">这样，我们就可以将多种多样的数据保存到哈希表中了，注意保存的数据是无序的，因为我们也不清楚计算完哈希值最后会放到哪个位置。那么如果现在我们想要从哈希表中查找数据呢？比如我们现在需要查找哈希表中是否有14这个元素：</p><figure id="336405fe-1dee-4a1b-bfa6-25227bc4e484" class="image"><a href="https://s2.loli.net/2022/08/19/H1hAvQPjNui2RYt.png"><img src="https://s2.loli.net/2022/08/19/H1hAvQPjNui2RYt.png"/></a></figure><p id="5cc1c80e-0fc0-4f64-8e58-06678c4b6d05" class="">image-20220819211656628</p><p id="e9542039-fb9a-478a-9af4-effb073534e7" class="">同样的，直接去看哈希值对应位置上看看有没有这个元素，如果没有，那么就说明哈希表中没有这个元素。可以看到，哈希表在查找时只需要进行一次哈希函数计算就能直接找到对应元素的存储位置，效率极高。</p><p id="74a8bff6-32ef-4076-8cc8-d6a7458ee2b9" class="">我们来尝试编写一下：</p><pre id="4961ed6a-a6c4-4819-8f9c-bbf2ed836de4" class="code code-wrap"><code>public class HashTable&lt;E&gt; {    private final int TABLE_SIZE = 10;    private final Object[] TABLE = new Object[TABLE_SIZE];    public void insert(E element){        int index = hash(element);        TABLE[index] = element;    }    public boolean contains(E element){        int index = hash(element);        return TABLE[index] == element;    }    private int hash(Object object){   //哈希函数，计算出存放的位置        int hashCode = object.hashCode();        //每一个对象都有一个独一无二的哈希值，可以通过hashCode方法得到（只有极小的概率会出现相同的情况）        return hashCode % TABLE_SIZE;    }}</code></pre><p id="aa2898ad-03ba-47f7-be85-c2fcf6cc62a9" class="">这样，我们就实现了一个简单的哈希表和哈希函数，通过哈希表，我们可以将数据的查找时间复杂度提升到常数阶。</p><p id="93cc8ce7-0479-41fe-ac51-3c2fcf4ac3bb" class="">前面我介绍了哈希函数，通过哈希函数计算得到一个目标的哈希值，但是在某些情况下，哈希值可能会出现相同的情况：</p><figure id="a126b70f-0fbd-408e-a39f-4ec069d60d01" class="image"><a href="https://s2.loli.net/2022/08/19/XqpZd1YP5ulEJRy.png"><img src="https://s2.loli.net/2022/08/19/XqpZd1YP5ulEJRy.png"/></a></figure><p id="6b70e8b1-bd16-404f-b919-4a36ca135b58" class="">image-20220819215004653</p><p id="c71978c0-b9e3-4e52-b950-1c539bab3c3f" class="">比如现在同时插入14和23这两个元素，他们两个计算出来的哈希值是一样的，都需要在5号下标位置插入，这时就出现了打架的情况，那么到底是把哪一个放进去呢？这种情况，我们称为<strong>哈希碰撞</strong>（哈希冲突）</p><p id="8f59855a-20b6-4509-9389-3919c61cbfd1" class="">这种问题是很严重的，因为哈希函数的设计不同，难免会出现这种情况，这种情况是不可避免的，我们只能通过使用更加高级的哈希函数来尽可能避免这种情况，但是无法完全避免。当然，如果要完全解决这种问题，我们还需要去寻找更好的方法。这里我们只介绍一种比较重要的，会在后面集合类中用到的方案。</p><p id="70e3f0c5-8480-489a-aaa8-f71a09e1fbff" class="">实际上常见的哈希冲突解决方案是<strong>链地址法</strong>，当出现哈希冲突时，我们依然将其保存在对应的位置上，我们可以将其连接为一个链表的形式：</p><figure id="58fc6772-e538-49d1-8b60-8dd661ee24a1" class="image"><a href="https://s2.loli.net/2022/09/30/Hd1LDvkY6ScVTN2.png"><img src="https://s2.loli.net/2022/09/30/Hd1LDvkY6ScVTN2.png"/></a></figure><p id="6651ed99-d8c2-4e76-afc2-e1f9c20ac900" class="">image-20220820220237535</p><p id="e977c545-9593-46bd-a760-24d337af37c1" class="">当表中元素变多时，差不多就变成了这样，我们一般将其横过来看：</p><figure id="bc51924d-4965-4101-be4e-495491e01816" class="image"><a href="https://s2.loli.net/2022/09/30/kr4CcVEwI72AiDU.png"><img src="https://s2.loli.net/2022/09/30/kr4CcVEwI72AiDU.png"/></a></figure><p id="db5900a0-f2cf-43b8-8968-d96418a79d42" class="">image-20220820221104298</p><p id="3960cfa2-e57f-440a-9e22-912cb8766b85" class="">通过结合链表的形式，哈希冲突问题就可以得到解决了，但是同时也会出现一定的查找开销，因为现在有了链表，我们得挨个往后看才能找到，当链表变得很长时，查找效率也会变低，此时我们可以考虑结合其他的数据结构来提升效率。比如当链表长度达到8时，自动转换为一棵平衡二叉树或是红黑树，这样就可以在一定程度上缓解查找的压力了。</p><pre id="bf8fc2d1-f292-44db-90e8-57938a6cf458" class="code code-wrap"><code>public class HashTable&lt;E&gt; {    private final int TABLE_SIZE = 10;    private final Node&lt;E&gt;[] TABLE = new Node[TABLE_SIZE];    public HashTable(){        for (int i = 0; i &lt; TABLE_SIZE; i++)            TABLE[i] = new Node&lt;&gt;(null);    }    public void insert(E element){        int index = hash(element);        Node&lt;E&gt; prev = TABLE[index];        while (prev.next != null)            prev = prev.next;        prev.next = new Node&lt;&gt;(element);    }    public boolean contains(E element){        int index = hash(element);        Node&lt;E&gt; node = TABLE[index].next;        while (node != null) {            if(node.element == element)                return true;            node = node.next;        }        return false;    }    private int hash(Object object){        int hashCode = object.hashCode();        return hashCode % TABLE_SIZE;    }    private static class Node&lt;E&gt; {        private final E element;        private Node&lt;E&gt; next;        private Node(E element){            this.element = element;        }    }}</code></pre><p id="dc01eb8f-e71a-4fe3-a2ba-a1d001e2f9e0" class="">实际上这种方案代码写起来也会更简单，使用也更方便一些。</p><p id="30d95605-588d-4acf-8b88-71e6edb13768" class="">至此，数据结构相关内容，我们就讲解到这里，学习这些数据结构，实际上也是为了方便各位小伙伴对于后续结合类的学习，因为集合类的底层实现就是这些数据结构。</p><hr id="a5bc3d09-4dff-4f3e-8f2f-d802514efbdf"/><h2 id="22d42147-7574-4d0f-9578-cd2c3683ace2" class="">实战练习</h2><p id="0248ab55-ed89-4da6-add7-ca031277017c" class="">合理利用集合类，我们可以巧妙地解决各种各样的难题。</p><h3 id="2dc182ee-8312-4e13-a909-5823f4516579" class="">反转链表</h3><p id="36fb489a-04c0-4ef6-a64f-a20f257e347f" class="">本题来自LeetCode：<a href="https://leetcode.cn/problems/reverse-linked-list/">206. 反转链表</a></p><p id="41eb5148-d139-44dd-b5bd-098b4841cd16" class="">给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。</p><p id="4224b2a0-c6dd-4cb7-85ad-da68e0afc111" class="">示例 1：</p><figure id="872c7ed5-9192-415a-9678-310b9ec0e8bd" class="image"><a href="https://assets.leetcode.com/uploads/2021/02/19/rev1ex1.jpg"><img src="https://assets.leetcode.com/uploads/2021/02/19/rev1ex1.jpg"/></a></figure><p id="55f6d818-be0b-4f6d-aabb-1bab3c2243aa" class="">img</p><blockquote id="0aa96d02-51c1-4583-bc07-00f8a8dd4074" class="">输入：head = [1,2,3,4,5] 输出：[5,4,3,2,1]</blockquote><p id="d2e47e01-7add-4ebf-b5d5-370fafbe671d" class="">示例 2：</p><figure id="063628b7-22d0-461b-b98b-5f9ef6bc6263" class="image"><a href="https://assets.leetcode.com/uploads/2021/02/19/rev1ex2.jpg"><img src="https://assets.leetcode.com/uploads/2021/02/19/rev1ex2.jpg"/></a></figure><p id="07d4367e-3bdc-49c0-a983-0071aed448a8" class="">img</p><blockquote id="e8bd931b-d39e-450d-804e-05c53d894d7b" class="">输入：head = [1,2] 输出：[2,1]</blockquote><p id="bd681222-a83d-4fc6-98de-720fc23d0fa4" class="">这道题依然是考察各位小伙伴对于链表相关操作的掌握程度，我们如何才能将一个链表的顺序进行反转，关键就在于如何修改每个节点的指针指向。</p><h3 id="cbebe05e-6782-4a9e-98d3-8eb3f63c0477" class="">括号匹配问题</h3><p id="8ba40405-cde2-429d-a6b7-7195e2010eb8" class="">本题来自LeetCode：<a href="https://leetcode.cn/problems/valid-parentheses/">20. 有效的括号</a></p><p id="490ed8cd-660b-4c1e-afc2-640a5588f6d4" class="">给定一个只包括 ‘(’，‘)’，‘{’，‘}’，‘[’，’]’ 的字符串 s ，判断字符串是否有效。</p><p id="d8ac57b7-d0a4-40b6-b459-e7a3d1f12b99" class="">有效字符串需满足：</p><ol type="1" id="d3f96f2f-7fb4-4baf-aa26-9bbbd58c18f0" class="numbered-list" start="1"><li>左括号必须用相同类型的右括号闭合。</li></ol><ol type="1" id="6fdbb2d0-314a-4d14-a08a-7d5d98ff9eae" class="numbered-list" start="2"><li>左括号必须以正确的顺序闭合。</li></ol><p id="688f6356-0f41-46a1-9ff8-125dc710c9ae" class="">示例 1：</p><blockquote id="4b5ece40-793b-4286-95b5-09a7a5548c68" class="">输入：s = “()” 输出：true</blockquote><p id="ecd1def2-4e36-4c24-8f30-4cc72c1ff8ef" class="">示例 2：</p><blockquote id="9dfa3679-8b6c-49d4-a314-6a14262bec62" class="">输入：s = “()” 输出：true</blockquote><p id="ad26661e-80d8-49cb-b289-311965d7794e" class="">示例 3：</p><blockquote id="a53061a2-dbe7-477e-ac60-74751eaa210a" class="">输入：s = “(]” 输出：false</blockquote><p id="bb121d22-f2b5-4557-9b08-ef060fa78bc4" class=""><strong>示例 4：</strong></p><blockquote id="20592cb3-2192-4c9d-946e-0b10cf5cb004" class="">输入：s = “([)]” 输出：false</blockquote><p id="2c51fd82-0981-45dc-9233-71e489fd30d6" class=""><strong>示例 5：</strong></p><blockquote id="e807df0d-a568-4efb-ad77-b4bdb86e397a" class="">输入：s = “{[]}” 输出：true</blockquote><p id="6f8e1668-06bc-43bc-ac06-cf88e9832a1f" class="">题干很明确，就是需要我们去对这些括号完成匹配，如果给定字符串中的括号无法完成一一匹配的话，那么就表示匹配失败。实际上这种问题我们就可以利用前面学习的栈这种数据结构来解决，我们可以将所有括号的左半部分放入栈中，当遇到右半部分时，进行匹配，如果匹配失败，那么就失败，如果匹配成功，那么就消耗一个左半部分，直到括号消耗完毕。</p><h3 id="044daf32-4424-4d47-b4cb-db01304ee3f8" class="">实现计算器</h3><p id="a44f4923-e514-4173-a7c3-828022b4279c" class="">输入一个计算公式（含加减乘除运算符，没有负数但是有小数）得到结果，比如输入：1+4*3/1.321，得到结果为：2.2</p><p id="db2da3d9-32e1-40b2-80bf-67d5d69e86bd" class="">现在请你设计一个Java程序，实现计算器。</p></div></article></body></html>
