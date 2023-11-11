@@ -3,33 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vmess config</title>
+    <link rel="stylesheet" href="test.css">
+    <title>vmess configuration.</title>
 </head>
 <body>
-    <p>
-        address:43.153.111.207
-    </p>
-    <p>
-        port:443
-    </p>
-    <p>
-        network:ws
-    </p>
-    <p>
-        host:proxy.291123.xyz
-    </p>
-    <p>
-        path/gFDLh6O
-    </p>
-    <p>
-        TLS:tls
-    </p>
-    <h3>
-        Detail of config.
-    </h3>
-    <img src="config.png" alt="config_picture">
-
-    <p>download the v2ray proxy client: </p>
-    <a href="https://github.com/voidrayrain/xuruilin.github.io/releases/download/vmess-client/proxy-windows.zip">windows_x64  </a> <a href="https://github.com/voidrayrain/xuruilin.github.io/releases/download/vmess-client/proxy-debian.deb">debian_x64</a>
+    <h1>vmess link: </h1>
+    <input id="foo" type="text" value="vmess://eyAidiI6IjIiLCAicHMiOiIiLCAiYWRkIjoiNDMuMTU1LjE0NC4yMCIsICJwb3J0IjoiNDQzIiwgImlkIjoiMWZmMGIzOWQtNjVkZC00MzRmLTg0YzktNWE3MDVhNzc0MWIzIiwgImFpZCI6IjAiLCAibmV0Ijoid3MiLCAidHlwZSI6Im5vbmUiLCAiaG9zdCI6InByb3h5LjI5MTEyMy54eXoiLCAicGF0aCI6Ii9VTXRnMjE3c0NMdiIsICJ0bHMiOiJ0bHMiIH0=">
+    <span class="input-group-button">
+    <button class="btn" type="button" data-clipboard-demo data-clipboard-target="#foo">
+    <img class="clippy" src="clippy.svg" width="13" alt="Copy to clipboard">
+    </button>
+    </span>
 </body>
+<script src="dist/clipboard.min.js">
+    var clipboard = new ClipboardJS('.btn');
+</script>
 </html>

@@ -20,3 +20,13 @@ a:visited {
     text-decoration: none;
     color: blue;
 }
+
+p {
+    font-size: 20px;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+}
